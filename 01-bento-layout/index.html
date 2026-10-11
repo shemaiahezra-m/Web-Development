@@ -9,110 +9,32 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Patrick+Hand&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet" />
-  <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
-
-  <style>
-    :root {
-      --bg-cream: #FAF7F2;
-      --card-bg: #FFFFFF;
-      --border-dark: #1E1B18;
-      --pink-pastel: #FCE7F3;
-      --sage-pastel: #D1FAE5;
-      --yellow-pastel: #FEF08A;
-      --lavender-pastel: #EDE9FE;
-      --blue-pastel: #E0F2FE;
-    }
-
-    body {
-      background-color: var(--bg-cream);
-      color: var(--border-dark);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-image: radial-gradient(#d1d5db 1px, transparent 1px);
-      background-size: 24px 24px;
-    }
-
-    .font-hand { font-family: 'Patrick Hand', cursive; }
-    .font-fredoka { font-family: 'Fredoka', sans-serif; }
-
-    /* --- PLAYFUL ASYMMETRICAL BENTO CARD STYLES --- */
-    .bento-card {
-      background: var(--card-bg);
-      border: 2.5px solid var(--border-dark);
-      border-radius: 22px;
-      box-shadow: 4px 5px 0px var(--border-dark);
-      transition: all 0.25s ease;
-      position: relative;
-    }
-
-    .bento-card:hover {
-      transform: translateY(-5px) scale(1.01) !important;
-      box-shadow: 8px 10px 0px var(--border-dark);
-    }
-
-    /* Asymmetrical Rotations & Scrapbook Tilts */
-    .tilt-left { transform: rotate(-1.8deg); }
-    .tilt-right { transform: rotate(1.5deg); }
-    .tilt-slight { transform: rotate(-0.8deg); }
-
-    .tape-accent {
-      position: absolute;
-      top: -12px;
-      left: 50%;
-      transform: translateX(-50%) rotate(-2deg);
-      width: 90px;
-      height: 24px;
-      background: rgba(253, 224, 71, 0.85);
-      border: 1px dashed var(--border-dark);
-      z-index: 10;
-    }
-
-    .btn-bento {
-      border: 2px solid var(--border-dark);
-      border-radius: 14px;
-      font-weight: 700;
-      box-shadow: 2px 3px 0px var(--border-dark);
-      transition: all 0.15s ease;
-    }
-
-    .btn-bento:hover {
-      transform: translate(-1px, -1px);
-      box-shadow: 4px 5px 0px var(--border-dark);
-    }
-
-    .map-pin {
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-    .map-pin:hover {
-      transform: scale(1.3);
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body class="p-3 p-md-4">
+<body>
 
-  <div class="container-fluid max-w-7xl">
+  <div class="container-fluid dashboard-shell">
     
     <!-- HEADER -->
     <header class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-2 border-dark">
       <div>
         <h1 class="font-fredoka fw-bold text-danger m-0 fs-2">sidequest<span class="text-warning">!</span></h1>
-        <p class="font-hand text-muted m-0 fs-5">Your playful Metro South adventure guide ✨</p>
+        <p class="font-hand text-muted m-0 fs-5">Your playful Metro South adventure guide</p>
       </div>
-      <button class="btn btn-bento bg-warning font-fredoka px-3 py-2" onclick="alert('Bookmarks drawer coming right up!')">
-        <i class="bi bi-bookmark-heart-fill me-1"></i> Saved Spots (<span id="saved-count">0</span>)
+      <button class="btn btn-bento bg-warning font-fredoka px-3 py-2" onclick="toggleSaved()">
+        <svg class="ui-icon me-1" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-3.5L6 21z"/><path d="m15.5 7.5 .5 1 1.1.2-.8.8.2 1.1-1-.5-1 .5.2-1.1-.8-.8 1.1-.2z"/></svg> Saved Spots (<span id="saved-count">0</span>)
       </button>
     </header>
 
     <!-- LOCATION SELECTOR STRIP -->
-    <div class="row g-3 mb-4">
+    <div class="row g-4 mb-4">
       <div class="col-12">
-        <div class="bento-card p-3 bg-white text-center tilt-slight">
-          <span class="font-hand fs-5 text-muted d-block mb-1">📍 Choose your neighborhood map guide:</span>
+        <div class="bento-card location-strip flex-wrap px-3 py-2 bg-white">
+          <span class="neighborhood-label">NEIGHBORHOOD</span>
           <div class="d-flex justify-content-center gap-2 flex-wrap">
-            <button id="btn-makati" class="btn btn-bento bg-info text-white px-4 py-2" onclick="switchLoc('makati')">Makati (Legazpi)</button>
-            <button id="btn-alabang" class="btn btn-bento bg-light px-4 py-2" onclick="switchLoc('alabang')">Alabang (Molito)</button>
-            <button id="btn-bf" class="btn btn-bento bg-light px-4 py-2" onclick="switchLoc('bf')">BF Homes (Aguirre)</button>
+            <button id="btn-makati" class="btn btn-bento bg-info text-white px-4 py-2" aria-pressed="true" onclick="switchLoc('makati')">Makati (Legazpi)</button>
+            <button id="btn-alabang" class="btn btn-bento bg-light px-4 py-2" aria-pressed="false" onclick="switchLoc('alabang')">Alabang (Molito)</button>
+            <button id="btn-bf" class="btn btn-bento bg-light px-4 py-2" aria-pressed="false" onclick="switchLoc('bf')">BF Homes (Aguirre)</button>
           </div>
         </div>
       </div>
@@ -129,7 +51,7 @@
           <h2 class="font-fredoka fw-bold fs-1 lh-sm text-dark mb-3">Same city. <br><span class="text-primary">New quests.</span></h2>
           <p class="font-hand fs-5 mb-4 text-dark">Skip the routine mall trips! Discover outdoor parks, quiet coffee nooks, and hidden gems around Metro South.</p>
           <div class="mt-auto">
-            <input type="text" class="form-control rounded-pill border-2 border-dark" placeholder="🔍 Search spots..." />
+            <input id="searchInput" type="search" class="form-control rounded-pill border-2 border-dark" placeholder="Search spots..." aria-label="Search destinations" />
           </div>
         </div>
       </div>
@@ -139,41 +61,16 @@
         <div class="bento-card p-4 h-100 tilt-right" style="background-color: var(--lavender-pastel);">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <span class="badge bg-dark text-white rounded-pill px-3 py-1 font-fredoka">02 / MAP EXPLORER</span>
-            <small class="font-hand fs-5">Click pins to view details 📍</small>
+            <small class="map-hint font-hand fs-5"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5M10.8 7v7.6M7 10.8h7.6"/></svg> Explore the illustrated map</small>
           </div>
           <h3 id="locTitle" class="font-fredoka fw-bold mb-3">Makati Neighborhood Guide</h3>
           
-          <!-- Illustrated SVG Map Canvas -->
-          <div class="bg-white rounded-4 border border-2 border-dark p-3 text-center position-relative overflow-hidden" style="min-height: 280px;">
-            <svg viewBox="0 0 500 280" class="w-100 h-100">
-              <!-- Road System -->
-              <path d="M 30,140 Q 250,120 470,140" stroke="#818CF8" stroke-width="18" fill="none" stroke-linecap="round"/>
-              <path d="M 160,30 L 160,250" stroke="#818CF8" stroke-width="14" fill="none"/>
-              <path d="M 340,30 L 340,250" stroke="#818CF8" stroke-width="14" fill="none"/>
-              
-              <!-- Green Park -->
-              <rect x="190" y="50" width="120" height="70" rx="15" fill="#A7F3D0" stroke="#1E1B18" stroke-width="2"/>
-              <text x="250" y="90" text-anchor="middle" font-family="Patrick Hand" font-size="16" fill="#065F46">Legazpi Park</text>
-
-              <!-- Interactive Venue Pins -->
-              <g class="map-pin" onclick="alert('Yardstick Coffee: Esteban St. | Work-friendly with Sockets & WiFi')">
-                <circle cx="120" cy="180" r="16" fill="#F472B6" stroke="#1E1B18" stroke-width="2"/>
-                <text x="120" y="185" text-anchor="middle" font-size="12">☕</text>
-                <text x="120" y="210" text-anchor="middle" font-family="Patrick Hand" font-size="14" font-weight="bold">Yardstick</text>
-              </g>
-
-              <g class="map-pin" onclick="alert('Deuces Coffee: Perea St. | Pink aesthetic & Matcha lattes')">
-                <circle cx="380" cy="180" r="16" fill="#FEF08A" stroke="#1E1B18" stroke-width="2"/>
-                <text x="380" y="185" text-anchor="middle" font-size="12">🍵</text>
-                <text x="380" y="210" text-anchor="middle" font-family="Patrick Hand" font-size="14" font-weight="bold">Deuces</text>
-              </g>
-
-              <g class="map-pin" onclick="alert('The Curator: Palanca St. | Specialty coffee & Speakeasy vibes')">
-                <circle cx="250" cy="180" r="16" fill="#6EE7B7" stroke="#1E1B18" stroke-width="2"/>
-                <text x="250" y="185" text-anchor="middle" font-size="12">✨</text>
-                <text x="250" y="210" text-anchor="middle" font-family="Patrick Hand" font-size="14" font-weight="bold">Curator</text>
-              </g>
-            </svg>
+          <div class="map-preview bg-white rounded-4 border border-2 border-dark p-2 text-center">
+            <img id="neighborhoodMap" class="neighborhood-map" src="Assets/Map-Legazpi.jpg" alt="Illustrated Cafe Guide Map for Legazpi Village by KapeNiKate">
+          </div>
+          <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mt-2">
+            <small class="font-hand fs-5">Illustrated by <strong>@KapeNiKate</strong></small>
+            <button class="btn btn-bento bg-white px-3 py-2" type="button" onclick="openMap()"><svg class="ui-icon me-1" aria-hidden="true" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M3 16v5h5m13-5v5h-5M3 8l6-5m12 5-6-5M3 16l6 5m12-5-6 5"/></svg> Expand full map</button>
           </div>
         </div>
       </div>
@@ -183,44 +80,48 @@
         <div class="bento-card p-4 h-100 tilt-slight" style="background-color: var(--yellow-pastel);">
           <div class="tape-accent"></div>
           <span class="badge bg-dark text-white rounded-pill px-3 py-1 font-fredoka mb-2">03 / QUEST</span>
-          <h4 class="font-fredoka fw-bold mt-2">Try a drink you've never ordered! 🍹</h4>
-          <p class="font-hand fs-5 text-dark mb-4">Step out of your comfort zone! Order an Iced Spanish Latte or Dirty Matcha today.</p>
-          <button class="btn btn-bento bg-dark text-white w-100 py-2 font-fredoka" onclick="alert('Quest Completed! 🎉 Saved to memory log.')">
+          <h4 id="featuredQuest" class="font-fredoka fw-bold mt-2">Try a drink you have never ordered!</h4>
+          <p id="questDescription" class="font-hand fs-5 text-dark mb-2">Step out of your comfort zone and discover a new favorite.</p>
+          <p class="small fw-bold">Quest progress: <span id="questProgress">0</span> completed</p>
+          <button id="completeQuestBtn" class="btn btn-bento bg-dark text-white w-100 py-2 font-fredoka" onclick="completeQuest()">
             ✓ Complete Quest
           </button>
+          <button class="btn btn-link text-dark w-100 mt-1" onclick="resetQuests()">Reset progress</button>
         </div>
       </div>
 
     </div>
 
     <!-- LOWER ROW (BUDGET, SURPRISE ME, CHECKLIST) -->
-    <div class="row g-4">
+    <div class="row g-4 mt-1">
+      <div class="col-12"><h2 class="font-fredoka fw-bold mb-0">Quick tools <span class="font-hand fs-4 fw-normal">— tune your outing</span></h2></div>
       
       <div class="col-12 col-md-6 col-lg-4">
         <div class="bento-card p-4 tilt-right" style="background-color: var(--sage-pastel);">
-          <h4 class="font-fredoka fw-bold mb-2">💸 Budget Finds</h4>
+          <h4 class="font-fredoka fw-bold mb-2"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M7 9h.01M17 15h.01"/></svg> Budget Finds</h4>
           <p class="font-hand fs-5 mb-3">Set your spending limit:</p>
-          <input type="range" class="form-range" min="100" max="500" step="50" value="300" oninput="document.getElementById('budgetValue').innerText = this.value">
+          <input id="budgetRange" type="range" class="form-range" min="0" max="1000" step="50" value="500" aria-label="Maximum estimated spending">
           <div class="d-flex justify-content-between font-fredoka fw-bold mt-2">
-            <span>Free (₱0)</span>
-            <span class="text-danger">Max: ₱<span id="budgetValue">300</span></span>
+            <span>Max spend</span>
+            <span class="budget-value">Max: ₱<span id="budgetValue">500</span></span>
           </div>
         </div>
       </div>
 
       <div class="col-12 col-md-6 col-lg-4">
         <div class="bento-card p-4 text-center tilt-left" style="background-color: var(--blue-pastel);">
-          <h4 class="font-fredoka fw-bold mb-2">🎲 Surprise Me!</h4>
+          <h4 class="font-fredoka fw-bold mb-2"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 8h.01M16 8h.01M12 12h.01M8 16h.01M16 16h.01"/></svg> Surprise Me!</h4>
           <p class="font-hand fs-5 mb-3">Can't decide what to do today?</p>
           <button class="btn btn-bento bg-danger text-white px-4 py-2 font-fredoka" onclick="rollQuest()">
-            Roll a Sidequest! 🎯
+            Roll a Sidequest! <svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="m16 8 5-5"/></svg>
           </button>
+          <p id="surpriseResult" class="font-hand fs-5 mt-3 mb-0" aria-live="polite"></p>
         </div>
       </div>
 
       <div class="col-12 col-md-12 col-lg-4">
         <div class="bento-card p-4 tilt-slight" style="background-color: #FEE2E2;">
-          <h4 class="font-fredoka fw-bold mb-2">📋 Explorer Checklist</h4>
+          <h4 class="font-fredoka fw-bold mb-2"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5h6M8.5 10h7M8.5 14h7M8.5 18h4"/></svg> Explorer Checklist</h4>
           <ul class="list-unstyled font-hand fs-5 m-0">
             <li class="mb-1"><input type="checkbox" checked class="me-2" /> Visit a park for a 20-min breather</li>
             <li class="mb-1"><input type="checkbox" class="me-2" /> Try ceremonial matcha at Aguirre</li>
@@ -233,8 +134,54 @@
 
   </div>
 
+  <main class="container-fluid dashboard-shell">
+    <section class="bento-card p-3 p-md-4 mb-4" aria-labelledby="destinationsHeading">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div><span class="badge bg-dark rounded-pill mb-2">04 / DESTINATION DECK</span><h2 id="destinationsHeading" class="font-fredoka fw-bold m-0">Find your next favorite</h2></div>
+        <button id="clearFilters" class="btn btn-bento bg-light px-3 py-2" type="button">Clear filters</button>
+      </div>
+      <div class="d-flex gap-2 flex-wrap mb-3" id="categoryFilters" aria-label="Filter by category"></div>
+      <p id="resultSummary" class="text-muted small mb-3" aria-live="polite"></p>
+      <div id="destinationList" class="row g-4"></div>
+      <div id="emptyState" class="text-center py-4 d-none"><div class="empty-icon"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg></div><h3 class="font-fredoka">No quests found!</h3><p>Try another budget or clear your filters.</p><button class="btn btn-bento bg-warning px-3 py-2" onclick="clearFilters()">Clear filters</button></div>
+    </section>
+    <section id="savedSection" class="bento-card p-3 p-md-4 mb-4 d-none" aria-labelledby="savedHeading">
+      <h2 id="savedHeading" class="font-fredoka fw-bold"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M20.8 8.6c0 5.2-8.8 10.2-8.8 10.2S3.2 13.8 3.2 8.6A4.6 4.6 0 0 1 12 6.4a4.6 4.6 0 0 1 8.8 2.2Z"/></svg> Saved spots</h2><div id="savedList" class="row g-4"></div>
+    </section>
+    <dialog id="detailsDialog" class="details-dialog" aria-labelledby="detailsTitle"></dialog>
+    <dialog id="mapDialog" class="map-dialog" aria-labelledby="mapDialogTitle">
+      <div class="map-dialog-header p-3 d-flex justify-content-between align-items-center gap-3 flex-wrap">
+        <div><h2 id="mapDialogTitle" class="font-fredoka fw-bold fs-4 mb-0">Neighborhood map</h2><small>Illustrated by @KapeNiKate</small></div>
+        <div class="d-flex align-items-center gap-2"><label for="mapZoom" class="small fw-bold">Zoom <span id="mapZoomValue">100%</span></label><input id="mapZoom" type="range" min="100" max="200" value="100" step="10" aria-label="Zoom map"><button class="btn btn-bento bg-white" type="button" onclick="document.getElementById('mapDialog').close()" aria-label="Close map"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+      </div>
+      <div id="mapCanvas" class="map-canvas"><img id="largeMap" src="Assets/Map-Legazpi.jpg" alt="Illustrated Cafe Guide Map for Legazpi Village by KapeNiKate"></div>
+    </dialog>
+  </main>
+
   <script>
+    const places = [
+      {id:'yardstick',name:'Yardstick Coffee',loc:'makati',area:'Legazpi',address:'Esteban St., Legazpi Village',price:250,icon:'coffee',color:'#FCE7F3',tags:['Coffee','Study-friendly'],description:'A relaxed specialty coffee stop with a welcoming work-friendly vibe.'},
+      {id:'deuces',name:'Deuces Coffee',loc:'makati',area:'Legazpi',address:'Perea St., Legazpi Village',price:220,icon:'leaf',color:'#FEF08A',tags:['Coffee','Matcha'],description:'Coffee and matcha drinks for a bright neighborhood café break.'},
+      {id:'curator',name:'The Curator',loc:'makati',area:'Legazpi',address:'Palanca St., Legazpi Village',price:300,icon:'sparkles',color:'#D1FAE5',tags:['Coffee'],description:'Specialty coffee with a cozy, tucked-away atmosphere.'},
+      {id:'molito',name:'Molito Lifestyle Center',loc:'alabang',area:'Molito',address:'Commerce Ave., Alabang',price:400,icon:'leaf',color:'#D1FAE5',tags:['Coffee','Outdoor'],description:'An open-air destination with cafés, dining, and leafy walkways.'},
+      {id:'manam',name:'Café Seventy',loc:'alabang',area:'Molito',address:'Molito Complex, Alabang',price:350,icon:'coffee',color:'#FCE7F3',tags:['Coffee','Study-friendly'],description:'A casual café pick for a coffee break or catch-up.'},
+      {id:'aguirre',name:'Matcha Stop',loc:'bf',area:'Aguirre',address:'Aguirre Ave., BF Homes',price:200,icon:'leaf',color:'#D1FAE5',tags:['Matcha','Coffee'],description:'A neighborhood drink stop for matcha fans.'},
+      {id:'bfpark',name:'BF Community Green',loc:'bf',area:'Aguirre',address:'BF Homes, Parañaque',price:0,icon:'tree',color:'#E0F2FE',tags:['Outdoor','Free activities'],description:'Take a free breather and enjoy a little time outdoors.'}
+    ];
+    const categories = ['Coffee','Matcha','Study-friendly','Outdoor','Free activities'];
+    const mapAssets = {
+      makati: {src:'Assets/Map-Legazpi.jpg',alt:'Illustrated Cafe Guide Map for Legazpi Village by KapeNiKate',title:'Legazpi Village, Makati'},
+      alabang: {src:'Assets/Map-Alabang.jpg',alt:'Illustrated Cafe Guide Map for Alabang by KapeNiKate',title:'Alabang Cafe Guide'},
+      bf: {src:'Assets/Map-BF%20Homes.jpg',alt:'Illustrated Cafe Guide Map for BF Homes, Parañaque by KapeNiKate',title:'BF Homes Cafe Guide'}
+    };
+    let activeLoc='makati', activeCategory='', searchTerm='', budget=500;
+    let saved = JSON.parse(localStorage.getItem('sidequestSaved') || '[]');
+    let questCount = Number(localStorage.getItem('sidequestQuestCount') || 0);
+    let currentQuest = 'Try a drink you have never ordered!';
+    const titles = {makati:'Makati Neighborhood Guide (Legazpi)',alabang:'Alabang Cafe Guide (Molito)',bf:'BF Homes Guide (Aguirre Ave)'};
+
     function switchLoc(loc) {
+      activeLoc=loc;
       const titles = {
         makati: "Makati Neighborhood Guide (Legazpi)",
         alabang: "Alabang Cafe Guide (Molito)",
@@ -245,17 +192,75 @@
       document.getElementById('btn-makati').className = loc === 'makati' ? 'btn btn-bento bg-info text-white px-4 py-2' : 'btn btn-bento bg-light px-4 py-2';
       document.getElementById('btn-alabang').className = loc === 'alabang' ? 'btn btn-bento bg-info text-white px-4 py-2' : 'btn btn-bento bg-light px-4 py-2';
       document.getElementById('btn-bf').className = loc === 'bf' ? 'btn btn-bento bg-info text-white px-4 py-2' : 'btn btn-bento bg-light px-4 py-2';
+      document.getElementById('btn-makati').setAttribute('aria-pressed',loc==='makati');
+      document.getElementById('btn-alabang').setAttribute('aria-pressed',loc==='alabang');
+      document.getElementById('btn-bf').setAttribute('aria-pressed',loc==='bf');
+      render();
     }
 
-    function rollQuest() {
-      const quests = [
-        "Go on a solo date and read a book at Legazpi Active Park! 📖",
-        "Try a ceremonial matcha latte at a spot in Aguirre, BF Homes! 🍵",
-        "Take 3 digital camera-style photos of hidden street murals in Alabang! 📸",
-        "Find a cozy café with free Wi-Fi and work/journal for 30 mins! ✍️"
-      ];
-      alert("🎯 YOUR GENERATED SIDEQUEST:\n\n" + quests[Math.floor(Math.random() * quests.length)]);
+    function iconSvg(name, className='ui-icon') {
+      const paths = {
+        coffee:'<path d="M4 9h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM17 11h1.5a2.5 2.5 0 0 1 0 5H17M3 22h17M8 3c-1 1 1 1 0 2m5-2c-1 1 1 1 0 2"/>',
+        leaf:'<path d="M20.5 3.5C12 3 5 6.5 5 13a5 5 0 0 0 5 5c6.5 0 10-7 10.5-14.5Z"/><path d="M3.5 21c3-5 6-8 12-11"/>',
+        sparkles:'<path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3ZM19 15l1 2.5 2.5 1-2.5 1L19 22l-1-2.5-2.5-1 2.5-1L19 15ZM5 2l.8 2.2L8 5l-2.2.8L5 8l-.8-2.2L2 5l2.2-.8L5 2Z"/>',
+        tree:'<path d="M12 22v-6M9 22h6M12 2 5 11h4l-5 6h16l-5-6h4z"/>',
+        pin:'<path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
+        bookmark:'<path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-3.5L6 21z"/>',
+        heart:'<path d="M20.8 8.6c0 5.2-8.8 10.2-8.8 10.2S3.2 13.8 3.2 8.6A4.6 4.6 0 0 1 12 6.4a4.6 4.6 0 0 1 8.8 2.2Z"/>',
+        arrow:'<path d="M7 17 17 7M7 7h10v10"/>',
+        close:'<path d="m6 6 12 12M18 6 6 18"/>',
+        target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="m16 8 5-5"/>',
+        compass:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
+        search:'<circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/>'
+      };
+      return `<svg class="${className}" aria-hidden="true" viewBox="0 0 24 24">${paths[name] || paths.sparkles}</svg>`;
     }
+    function filteredPlaces() {
+      return places.filter(p => p.loc===activeLoc && p.price<=budget && (!activeCategory || p.tags.includes(activeCategory)) && (!searchTerm || `${p.name} ${p.area} ${p.address} ${p.tags.join(' ')}`.toLowerCase().includes(searchTerm)));
+    }
+    function placeCard(p) {
+      const isSaved=saved.includes(p.id);
+      return `<div class="col-12 col-md-6 col-lg-4"><article class="bento-card h-100 overflow-hidden"><div class="destination-art" style="background:${p.color}" aria-hidden="true"><span class="destination-art-icon">${iconSvg(p.icon,'art-icon')}</span><span class="place-category">${p.tags[0]}</span><button class="save-art-btn btn btn-bento ${isSaved?'bg-warning':'bg-white'}" aria-label="${isSaved?'Remove saved spot':'Save spot'}" title="${isSaved?'Remove saved spot':'Save spot'}" onclick="toggleSave('${p.id}')">${iconSvg('bookmark')}</button></div><div class="p-3"><div class="d-flex justify-content-between gap-2"><h3 class="font-fredoka fw-bold fs-4">${p.name}</h3><span class="badge text-bg-light align-self-start">₱${p.price}</span></div><p class="small text-muted mb-2">${iconSvg('pin','ui-icon ui-icon-small')} ${p.area} · ${p.address}</p><div class="d-flex gap-1 flex-wrap mb-3">${p.tags.map(t=>`<span class="badge rounded-pill text-bg-light border">${t}</span>`).join('')}</div><button class="btn btn-bento bg-info text-white w-100" onclick="showDetails('${p.id}')">View details ${iconSvg('arrow')}</button></div></article></div>`;
+    }
+    function render() {
+      const list=filteredPlaces();
+      document.getElementById('destinationList').innerHTML=list.map(placeCard).join('');
+      document.getElementById('emptyState').classList.toggle('d-none',list.length>0);
+      document.getElementById('resultSummary').textContent=`${list.length} destination${list.length===1?'':'s'} in ${activeLoc==='bf'?'BF Homes':activeLoc==='alabang'?'Alabang':'Makati'}`;
+      document.getElementById('saved-count').textContent=saved.length;
+      const savedPlaces=places.filter(p=>saved.includes(p.id));
+      document.getElementById('savedList').innerHTML=savedPlaces.length?savedPlaces.map(placeCard).join(''):'<p class="font-hand fs-5">No saved spots yet. Tap a bookmark on a destination to keep it here.</p>';
+      const map=mapAssets[activeLoc];
+      document.getElementById('locTitle').textContent=titles[activeLoc];
+      document.getElementById('neighborhoodMap').src=map.src;
+      document.getElementById('neighborhoodMap').alt=map.alt;
+      document.getElementById('mapDialogTitle').textContent=map.title;
+      document.getElementById('largeMap').src=map.src;
+      document.getElementById('largeMap').alt=map.alt;
+      document.getElementById('questProgress').textContent=questCount;
+    }
+    function toggleSave(id){saved=saved.includes(id)?saved.filter(x=>x!==id):[...saved,id];localStorage.setItem('sidequestSaved',JSON.stringify(saved));render();}
+    function toggleSaved(){document.getElementById('savedSection').classList.toggle('d-none');document.getElementById('savedSection').scrollIntoView({behavior:'smooth',block:'nearest'});}
+    function showDetails(id){const p=places.find(x=>x.id===id);const dialog=document.getElementById('detailsDialog');dialog.innerHTML=`<div class="details-art" style="background:${p.color}"><span>${iconSvg(p.icon,'art-icon')}</span><button class="btn btn-bento bg-white" aria-label="Close details" onclick="document.getElementById('detailsDialog').close()">${iconSvg('close')}</button></div><div class="p-4"><span class="badge bg-dark rounded-pill mb-2">${p.area} · ₱${p.price} est.</span><h2 id="detailsTitle" class="font-fredoka fw-bold">${p.name}</h2><p>${p.description}</p><p class="mb-1"><strong>Address:</strong> ${p.address}</p><div class="d-flex gap-1 flex-wrap mb-4">${p.tags.map(t=>`<span class="badge rounded-pill text-bg-light border">${t}</span>`).join('')}</div><div class="d-flex gap-2 flex-wrap"><a class="btn btn-bento bg-info text-white flex-grow-1" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name+' '+p.address)}" target="_blank" rel="noopener">Get directions ${iconSvg('arrow')}</a><button class="btn btn-bento ${saved.includes(p.id)?'bg-warning':'bg-light'}" onclick="toggleSave('${p.id}');showDetails('${p.id}')">${iconSvg('bookmark')} ${saved.includes(p.id)?'Saved':'Save spot'}</button></div></div>`;dialog.showModal();}
+    function openMap(){document.getElementById('mapZoom').value=100;document.getElementById('mapZoomValue').textContent='100%';document.getElementById('largeMap').style.width='100%';document.getElementById('mapDialog').showModal();}
+    function clearFilters(){searchTerm='';activeCategory='';budget=1000;document.getElementById('searchInput').value='';document.getElementById('budgetRange').value='1000';document.getElementById('budgetValue').textContent='1000';document.querySelectorAll('.category-filter').forEach(b=>b.classList.remove('active'));render();}
+    function completeQuest(){if(document.getElementById('completeQuestBtn').disabled)return;questCount++;localStorage.setItem('sidequestQuestCount',questCount);document.getElementById('completeQuestBtn').textContent='✓ Quest completed!';document.getElementById('completeQuestBtn').disabled=true;render();}
+    function resetQuests(){questCount=0;localStorage.setItem('sidequestQuestCount','0');document.getElementById('completeQuestBtn').textContent='✓ Complete Quest';document.getElementById('completeQuestBtn').disabled=false;render();}
+    function rollQuest() {
+      const matches=filteredPlaces();if(!matches.length){document.getElementById('surpriseResult').textContent='No destinations match these filters yet. Clear filters to roll again.';return;}
+      const p=matches[Math.floor(Math.random()*matches.length)];currentQuest=`Visit ${p.name} and try something new!`;document.getElementById('featuredQuest').textContent=currentQuest;document.getElementById('questDescription').textContent=`Your sidequest: explore ${p.area} and enjoy a stop at ${p.name}. Estimated spend: ₱${p.price}.`;document.getElementById('surpriseResult').textContent=currentQuest;document.getElementById('completeQuestBtn').textContent='✓ Complete Quest';document.getElementById('completeQuestBtn').disabled=false;
+    }
+    document.getElementById('searchInput').addEventListener('input',e=>{searchTerm=e.target.value.trim().toLowerCase();render();});
+    document.getElementById('budgetRange').addEventListener('input',e=>{budget=Number(e.target.value);document.getElementById('budgetValue').textContent=budget;render();});
+    document.getElementById('clearFilters').addEventListener('click',clearFilters);
+    document.getElementById('mapZoom').addEventListener('input',e=>{const zoom=Number(e.target.value);document.getElementById('mapZoomValue').textContent=`${zoom}%`;document.getElementById('largeMap').style.width=`${zoom}%`;});
+    const mapCanvas=document.getElementById('mapCanvas');let mapDrag=null;
+    mapCanvas.addEventListener('pointerdown',e=>{mapDrag={x:e.clientX,y:e.clientY,left:mapCanvas.scrollLeft,top:mapCanvas.scrollTop};mapCanvas.setPointerCapture(e.pointerId);});
+    mapCanvas.addEventListener('pointermove',e=>{if(!mapDrag)return;mapCanvas.scrollLeft=mapDrag.left-(e.clientX-mapDrag.x);mapCanvas.scrollTop=mapDrag.top-(e.clientY-mapDrag.y);});
+    const endMapDrag=()=>{mapDrag=null;};mapCanvas.addEventListener('pointerup',endMapDrag);mapCanvas.addEventListener('pointercancel',endMapDrag);
+    document.getElementById('categoryFilters').innerHTML=`<button type="button" class="btn btn-bento bg-light category-filter active" data-category="">All</button>`+categories.map(c=>`<button type="button" class="btn btn-bento bg-light category-filter" data-category="${c}">${c}</button>`).join('');
+    document.getElementById('categoryFilters').addEventListener('click',e=>{const b=e.target.closest('[data-category]');if(!b)return;activeCategory=b.dataset.category;document.querySelectorAll('.category-filter').forEach(x=>x.classList.toggle('active',x===b));render();});
+    render();
   </script>
 </body>
 </html>
