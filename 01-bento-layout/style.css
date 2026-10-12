@@ -757,12 +757,48 @@ body {
   transform: translateX(0);
 }
 
-.saved-drawer-list .destination-card {
-  min-height: 0;
+.saved-drawer-list {
+  display: grid;
+  gap: .8rem;
+  align-content: start;
 }
 
-.saved-drawer-list > div {
-  margin-bottom: 1rem;
+.saved-spot-item {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  min-width: 0;
+  padding: .65rem;
+  border: 2px solid var(--border-dark);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 3px 3px 0 var(--border-dark);
+}
+
+.saved-spot-thumb {
+  display: block;
+  flex: 0 0 68px;
+  width: 68px;
+  height: 68px;
+  border: 1.5px solid var(--border-dark);
+  border-radius: 9px;
+  object-fit: cover;
+}
+
+.saved-spot-placeholder {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+}
+
+.saved-spot-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.saved-spot-actions .btn {
+  padding: .2rem .45rem;
+  font-size: .72rem;
 }
 
 .dashboard-shell {

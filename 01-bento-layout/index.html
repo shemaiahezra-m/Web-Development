@@ -61,9 +61,10 @@
           <div class="col-12">
             <section class="bento-card p-4 h-100 tilt-left" style="background-color: var(--pink-pastel);" aria-labelledby="discoverHeading">
               <div class="tape-accent"></div>
-              <span class="badge bg-dark text-white rounded-pill px-3 py-1 font-fredoka mb-3">01 / DISCOVER</span>
-              <h2 id="discoverHeading" class="font-fredoka fw-bold fs-1 lh-sm text-dark mb-3">Same city. <br><span class="text-primary">New quests.</span></h2>
-              <p class="font-hand fs-5 mb-3 text-dark">Skip the routine mall trips! Discover outdoor parks, quiet coffee nooks, and hidden gems around Metro South.</p>
+              <span class="badge bg-dark text-white rounded-pill px-3 py-1 font-fredoka mb-3">01 / WELCOME</span>
+              <h2 id="discoverHeading" class="font-fredoka fw-bold fs-1 lh-sm text-dark mb-3">welcome to <br><span class="text-primary">sidequest!</span></h2>
+              <p class="font-hand fs-5 mb-3 text-dark">Skip routine trips. Discover local nooks, quiet coffee spots, and hidden gems around Metro South.</p>
+              <button class="btn btn-bento bg-dark text-white w-100 py-2 font-fredoka" type="button" onclick="scrollToDeck()">Start exploring below <span aria-hidden="true">↓</span></button>
             </section>
           </div>
           <div class="col-12">
@@ -94,7 +95,7 @@
       </div>
     </div>
 
-    <section class="destination-section mb-4" aria-labelledby="destinationsHeading">
+    <section id="spotsDeck" class="destination-section mb-4" aria-labelledby="destinationsHeading">
       <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-3">
         <div><span class="badge bg-dark rounded-pill mb-2">03 / SPOTS DECK</span><h2 id="destinationsHeading" class="font-fredoka fw-bold m-0">Find your next favorite</h2></div>
         <button id="clearFilters" class="btn btn-bento bg-light px-3 py-2" type="button">Clear filters</button>
@@ -226,6 +227,10 @@
       render();
     }
 
+    function scrollToDeck() {
+      document.getElementById('spotsDeck').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
     function iconSvg(name, className = 'ui-icon') {
       const paths = {
         coffee: '<path d="M4 9h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM17 11h1.5a2.5 2.5 0 0 1 0 5H17M3 22h17M8 3c-1 1 1 1 0 2m5-2c-1 1 1 1 0 2"/>',
@@ -252,6 +257,13 @@
     function amenityMarkup(p) {
       return (p.amenities || []).map(amenity => `<span class="amenity-badge">${amenity}</span>`).join('');
     }
+    function savedSpotCard(p) {
+      const location = p.address || p.area;
+      const thumb = p.photo
+        ? `<img class="saved-spot-thumb" src="${p.photo}" alt="${p.name} photo">`
+        : `<div class="saved-spot-thumb saved-spot-placeholder" style="background:${p.color}" role="img" aria-label="${p.name} photo placeholder">${iconSvg(p.icon)}</div>`;
+      return `<article class="saved-spot-item">${thumb}<div class="saved-spot-copy"><div class="d-flex justify-content-between align-items-start gap-2"><h3 class="font-fredoka fs-6 fw-bold text-truncate mb-1" title="${p.name}">${p.name}</h3><span class="small fw-bold text-nowrap">${priceLabel(p)}</span></div><p class="small text-muted text-truncate mb-2" title="${location}">${location}</p><div class="saved-spot-actions d-flex gap-2"><button class="btn btn-sm btn-bento bg-info text-dark" type="button" onclick="showDetails('${p.id}')">View ${iconSvg('arrow', 'ui-icon ui-icon-small')}</button><button class="btn btn-sm btn-bento bg-light" type="button" onclick="toggleSave('${p.id}')">Remove</button></div></div></article>`;
+    }
     function placeCard(p, index = 0, total = 1, editorial = false) {
       const isSaved = saved.includes(p.id);
       const featured = editorial && index === 0;
@@ -270,7 +282,7 @@
       document.getElementById('resultSummary').textContent = `${list.length} destination${list.length === 1 ? '' : 's'} in ${activeLoc === 'bf' ? 'BF Homes' : activeLoc === 'alabang' ? 'Alabang' : 'Makati'}`;
       document.getElementById('saved-count').textContent = saved.length;
       const savedPlaces = places.filter(p => saved.includes(p.id));
-      document.getElementById('savedList').innerHTML = savedPlaces.length ? savedPlaces.map(placeCard).join('') : '<p class="font-hand fs-5">No saved spots yet. Tap a bookmark on a destination to keep it here.</p>';
+      document.getElementById('savedList').innerHTML = savedPlaces.length ? savedPlaces.map(savedSpotCard).join('') : '<p class="font-hand fs-5">No saved spots yet. Tap a bookmark on a destination to keep it here.</p>';
       const map = mapAssets[activeLoc];
       document.getElementById('locTitle').textContent = titles[activeLoc];
       document.getElementById('neighborhoodMap').src = map.src;
