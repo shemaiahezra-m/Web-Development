@@ -7,7 +7,6 @@
   <title>Sidequest! — Playful Bento Adventure Guide</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- Google Fonts -->
   <link
     href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Patrick+Hand&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap"
     rel="stylesheet" />
@@ -15,6 +14,15 @@
 </head>
 
 <body>
+
+  <div id="loadingOverlay" class="loading-overlay" role="status" aria-live="polite" aria-label="Loading Sidequest">
+    <div class="loading-lockup text-center">
+      <h1 class="loading-logo font-fredoka fw-bold text-danger m-0">
+        sidequest<span class="loading-exclamation text-warning">!<span class="loading-exclamation-fill" aria-hidden="true">!</span></span>
+      </h1>
+      <p class="font-hand text-muted mt-2 mb-0">unsealing today’s adventure...</p>
+    </div>
+  </div>
 
   <div class="container-fluid dashboard-shell">
 
@@ -25,7 +33,8 @@
         <h1 class="font-fredoka fw-bold text-danger m-0 fs-2">sidequest<span class="text-warning">!</span></h1>
         <p class="font-hand text-muted m-0 fs-5">Your playful Metro South adventure guide</p>
       </div>
-      <button class="btn btn-bento bg-warning text-dark font-fredoka px-3 py-2" onclick="toggleSaved()" aria-controls="savedDrawer" aria-expanded="false">
+      <button class="btn btn-bento bg-warning text-dark font-fredoka px-3 py-2" onclick="toggleSaved()"
+        aria-controls="savedDrawer" aria-expanded="false">
         <svg class="ui-icon me-1" aria-hidden="true" viewBox="0 0 24 24">
           <path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-3.5L6 21z" />
           <path d="m15.5 7.5 .5 1 1.1.2-.8.8.2 1.1-1-.5-1 .5.2-1.1-.8-.8 1.1-.2z" />
@@ -41,12 +50,17 @@
             <div class="col-12 col-xl-auto"><span class="neighborhood-label">NEIGHBORHOOD</span></div>
             <div class="col-12 col-xl">
               <div class="d-flex justify-content-start justify-content-xl-center gap-2 flex-wrap">
-                <button id="btn-makati" class="btn btn-bento bg-info text-dark px-3 py-2" aria-pressed="true" onclick="switchLoc('makati')">Makati (Legazpi)</button>
-                <button id="btn-alabang" class="btn btn-bento bg-light px-3 py-2" aria-pressed="false" onclick="switchLoc('alabang')">Alabang (Molito-Westgate)</button>
-                <button id="btn-bf" class="btn btn-bento bg-light px-3 py-2" aria-pressed="false" onclick="switchLoc('bf')">BF Homes (Aguirre)</button>
+                <button id="btn-makati" class="btn btn-bento bg-info text-dark px-3 py-2" aria-pressed="true"
+                  onclick="switchLoc('makati')">Makati (Legazpi)</button>
+                <button id="btn-alabang" class="btn btn-bento bg-light px-3 py-2" aria-pressed="false"
+                  onclick="switchLoc('alabang')">Alabang (Molito-Westgate)</button>
+                <button id="btn-bf" class="btn btn-bento bg-light px-3 py-2" aria-pressed="false"
+                  onclick="switchLoc('bf')">BF Homes (Aguirre)</button>
               </div>
             </div>
-            <div class="col-12 col-xl-3"><input id="searchInput" type="search" class="form-control rounded-pill border-2 border-dark" placeholder="Search destinations..." aria-label="Search destinations" /></div>
+            <div class="col-12 col-xl-3"><input id="searchInput" type="search"
+                class="form-control rounded-pill border-2 border-dark" placeholder="Search destinations..."
+                aria-label="Search destinations" /></div>
           </div>
         </div>
       </div>
@@ -54,42 +68,72 @@
 
   </div>
   <main class="container-fluid dashboard-shell">
-    <!-- FEATURE ROW: DISCOVERY ON THE LEFT, MAP ON THE RIGHT -->
+    <!-- FEATURE ROW -->
     <div class="row g-4 mb-4">
       <aside class="col-12 col-lg-5">
         <div class="row g-4">
           <div class="col-12">
-            <section class="bento-card p-4 h-100 tilt-left" style="background-color: var(--pink-pastel);" aria-labelledby="discoverHeading">
+            <section class="bento-card p-4 h-100 tilt-left" style="background-color: var(--pink-pastel);"
+              aria-labelledby="discoverHeading">
               <div class="tape-accent"></div>
-              <span class="badge bg-dark text-white rounded-pill px-3 py-1 font-fredoka mb-3">01 / WELCOME</span>
-              <h2 id="discoverHeading" class="font-fredoka fw-bold fs-1 lh-sm text-dark mb-3">welcome to <br><span class="text-primary">sidequest!</span></h2>
-              <p class="font-hand fs-5 mb-3 text-dark">Skip routine trips. Discover local nooks, quiet coffee spots, and hidden gems around Metro South.</p>
-              <button class="btn btn-bento bg-dark text-white w-100 py-2 font-fredoka" type="button" onclick="scrollToDeck()">Start exploring below <span aria-hidden="true">↓</span></button>
+              <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+                <span class="badge bg-dark text-white rounded-pill px-3 py-1 font-fredoka">01 / WELCOME PASS</span>
+                <span class="badge bg-white text-dark border border-dark active-neighborhood-badge"><svg class="ui-icon ui-icon-small" aria-hidden="true" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg> Active: <span id="activeNeighborhoodLabel">Makati</span></span>
+              </div>
+              <h2 id="discoverHeading" class="font-fredoka fw-bold fs-1 lh-sm text-dark mb-2">welcome to <br><span class="text-primary">sidequest!</span></h2>
+              <p class="font-hand fs-5 mb-3 text-dark">Your playful guide to quiet coffee nooks, local spots, and hidden gems around Metro South.</p>
+              <div class="hero-pass-stats mb-3">
+                <div class="hero-pass-stat"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M4 9h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM17 11h1.5a2.5 2.5 0 0 1 0 5H17M3 22h17M8 3c-1 1 1 1 0 2m5-2c-1 1 1 1 0 2"/></svg><span><strong id="activeSpotCount">7</strong><small>local spots</small></span></div>
+                <div class="hero-pass-stat"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><span><strong>3</strong><small>neighborhoods</small></span></div>
+                <div class="hero-pass-stat"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3ZM19 15l1 2.5 2.5 1-2.5 1L19 22l-1-2.5-2.5-1 2.5-1L19 15ZM5 2l.8 2.2L8 5l-2.2.8L5 8l-.8-2.2L2 5l2.2-.8L5 2Z"/></svg><span><strong>Daily</strong><small>sidequests</small></span></div>
+              </div>
+              <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-bento bg-warning text-dark flex-fill py-2 font-fredoka" type="button" onclick="rollAndShowQuest()">Roll today’s quest</button>
+                <button class="btn btn-bento bg-white text-dark flex-fill py-2 font-fredoka" type="button" onclick="scrollToDeck()">Browse spots below <span aria-hidden="true">↓</span></button>
+              </div>
             </section>
           </div>
           <div class="col-12">
-            <section class="bento-card p-4 h-100" style="background-color: var(--sage-pastel);" aria-labelledby="budgetHeading">
-              <h2 id="budgetHeading" class="font-fredoka fw-bold fs-4 mb-2"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M7 9h.01M17 15h.01"/></svg> Budget Finds</h2>
+            <section class="bento-card p-4 h-100" style="background-color: var(--sage-pastel);"
+              aria-labelledby="budgetHeading">
+              <h2 id="budgetHeading" class="font-fredoka fw-bold fs-4 mb-2"><svg class="ui-icon" aria-hidden="true"
+                  viewBox="0 0 24 24">
+                  <rect x="3" y="5" width="18" height="14" rx="2" />
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M7 9h.01M17 15h.01" />
+                </svg> Budget Finds</h2>
               <p class="font-hand fs-5 mb-3">Set your spending limit:</p>
-              <input id="budgetRange" type="range" class="form-range" min="0" max="1000" step="50" value="500" aria-label="Maximum estimated spending">
-              <div class="d-flex justify-content-between font-fredoka fw-bold mt-2"><span>Max spend</span><span class="budget-value">Max: ₱<span id="budgetValue">500</span></span></div>
-              <p class="small mb-0 mt-2">Spots without supplied prices stay visible; itinerary totals include priced stops only.</p>
+              <input id="budgetRange" type="range" class="form-range" min="0" max="1000" step="50" value="500"
+                aria-label="Maximum estimated spending">
+              <div class="d-flex justify-content-between font-fredoka fw-bold mt-2"><span>Max spend</span><span
+                  class="budget-value">Max: ₱<span id="budgetValue">500</span></span></div>
+              <p class="small mb-0 mt-2">Spots without supplied prices stay visible; itinerary totals include priced
+                stops only.</p>
             </section>
           </div>
         </div>
       </aside>
 
       <div class="col-12 col-lg-7">
-        <section class="bento-card map-anchor p-4 h-100 tilt-right" style="background-color: var(--lavender-pastel);" aria-labelledby="locTitle">
+        <section class="bento-card map-anchor p-4 h-100 tilt-right" style="background-color: var(--lavender-pastel);"
+          aria-labelledby="locTitle">
           <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
             <span class="badge bg-dark text-white rounded-pill px-3 py-1 font-fredoka">02 / MAP EXPLORER</span>
-            <small class="map-hint font-hand fs-5"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5M10.8 7v7.6M7 10.8h7.6"/></svg> Explore the illustrated map</small>
+            <small class="map-hint font-hand fs-5"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24">
+                <circle cx="10.8" cy="10.8" r="6.8" />
+                <path d="m16 16 5 5M10.8 7v7.6M7 10.8h7.6" />
+              </svg> Explore the illustrated map</small>
           </div>
           <h2 id="locTitle" class="font-fredoka fw-bold mb-3">Makati Neighborhood Guide</h2>
-          <div class="map-preview bg-white rounded-4 border border-2 border-dark p-2 text-center"><img id="neighborhoodMap" class="neighborhood-map" src="Assets/Map-Legazpi.jpg" alt="Illustrated Cafe Guide Map for Legazpi Village by KapeNiKate"></div>
+          <div class="map-preview bg-white rounded-4 border border-2 border-dark p-2 text-center"><img
+              id="neighborhoodMap" class="neighborhood-map" src="Assets/Map-Legazpi.jpg"
+              alt="Illustrated Cafe Guide Map for Legazpi Village by KapeNiKate"></div>
           <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mt-2">
             <small class="font-hand fs-5">Illustrated by <strong>@KapeNiKate</strong></small>
-            <button class="btn btn-bento bg-white px-3 py-2" type="button" onclick="openMap()"><svg class="ui-icon me-1" aria-hidden="true" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M3 16v5h5m13-5v5h-5M3 8l6-5m12 5-6-5M3 16l6 5m12-5-6 5"/></svg> Expand full map</button>
+            <button class="btn btn-bento bg-white px-3 py-2" type="button" onclick="openMap()"><svg class="ui-icon me-1"
+                aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M8 3H3v5M16 3h5v5M3 16v5h5m13-5v5h-5M3 8l6-5m12 5-6-5M3 16l6 5m12-5-6 5" />
+              </svg> Expand full map</button>
           </div>
         </section>
       </div>
@@ -97,72 +141,138 @@
 
     <section id="spotsDeck" class="destination-section mb-4" aria-labelledby="destinationsHeading">
       <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-3">
-        <div><span class="badge bg-dark rounded-pill mb-2">03 / SPOTS DECK</span><h2 id="destinationsHeading" class="font-fredoka fw-bold m-0">Find your next favorite</h2></div>
+        <div><span class="badge bg-dark rounded-pill mb-2">03 / SPOTS DECK</span>
+          <h2 id="destinationsHeading" class="font-fredoka fw-bold m-0">Find your next favorite</h2>
+        </div>
         <button id="clearFilters" class="btn btn-bento bg-light px-3 py-2" type="button">Clear filters</button>
       </div>
-      <div id="categoryFilters" class="d-flex gap-2 flex-wrap mb-3" role="group" aria-label="Filter destinations by category"></div>
+      <div id="categoryFilters" class="d-flex gap-2 flex-wrap mb-3" role="group"
+        aria-label="Filter destinations by category"></div>
       <p id="resultSummary" class="text-muted small mb-3" aria-live="polite"></p>
       <div id="destinationList" class="row g-2 g-md-3"></div>
-      <div id="emptyState" class="text-center py-4 d-none"><div class="empty-icon"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg></div><h3 class="font-fredoka">No quests found!</h3><p>Try another budget or clear your filters.</p><button class="btn btn-bento bg-warning px-3 py-2" onclick="clearFilters()">Clear filters</button></div>
+      <div id="emptyState" class="text-center py-4 d-none">
+        <div class="empty-icon"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9" />
+            <path d="m15.5 8.5-2 5-5 2 2-5z" />
+          </svg></div>
+        <h3 class="font-fredoka">No quests found!</h3>
+        <p>Try another budget or clear your filters.</p><button class="btn btn-bento bg-warning px-3 py-2"
+          onclick="clearFilters()">Clear filters</button>
+      </div>
     </section>
 
     <section class="mb-4" aria-labelledby="toolsHeading">
-      <div class="mb-3"><span class="badge bg-dark rounded-pill mb-2">04 / ADVENTURE PLANNER</span><h2 id="toolsHeading" class="font-fredoka fw-bold mb-0">Make a plan <span class="font-hand fs-4 fw-normal">— pick a small adventure</span></h2></div>
+      <div class="mb-3"><span class="badge bg-dark rounded-pill mb-2">04 / ADVENTURE PLANNER</span>
+        <h2 id="toolsHeading" class="font-fredoka fw-bold mb-0">Make a plan <span class="font-hand fs-4 fw-normal">—
+            pick a small adventure</span></h2>
+      </div>
       <div class="row g-4">
         <div class="col-12 col-md-6">
-          <section class="bento-card p-3 p-md-4 h-100 tilt-left quest-card planner-journal" style="background-color: var(--yellow-pastel);" aria-labelledby="questHeading">
+          <section id="questCard" class="bento-card p-3 p-md-4 h-100 tilt-left quest-card planner-journal"
+            style="background-color: var(--yellow-pastel);" aria-labelledby="questHeading">
             <span class="badge bg-dark text-white rounded-pill px-3 py-1 font-fredoka mb-2">SIDEQUEST GENERATOR</span>
             <h3 id="questHeading" class="font-fredoka fw-bold mt-2">Quest corner</h3>
             <h4 id="featuredQuest" class="font-fredoka fw-bold">Try a drink you have never ordered!</h4>
-            <p id="questDescription" class="font-hand fs-5 text-dark mb-2">Step out of your comfort zone and discover a new favorite.</p>
-            <div id="mysteryEnvelope" class="mystery-envelope mb-3" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
+            <p id="questDescription" class="font-hand fs-5 text-dark mb-2">Step out of your comfort zone and discover a
+              new favorite.</p>
+            <div id="mysteryEnvelope" class="mystery-envelope mb-3" aria-hidden="true"><svg class="ui-icon"
+                viewBox="0 0 24 24">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="m3 7 9 6 9-6" />
+              </svg></div>
             <p id="surpriseResult" class="font-hand fs-5 mt-2 mb-2" aria-live="polite"></p>
-            <div class="d-flex justify-content-between align-items-center mb-2"><span class="small fw-bold">Quest progress</span><strong class="quest-count"><span id="questProgress">0</span></strong></div>
+            <div class="d-flex justify-content-between align-items-center mb-2"><span class="small fw-bold">Quest
+                progress</span><strong class="quest-count"><span id="questProgress">0</span></strong></div>
             <div class="d-grid gap-2 mb-3">
-              <button class="btn btn-bento bg-danger text-white py-2 font-fredoka envelope-button" onclick="rollQuest()">Unseal Mystery Envelope</button>
-              <button id="completeQuestBtn" class="btn btn-bento bg-dark text-white py-2 font-fredoka" onclick="completeQuest()">Complete Quest</button>
+              <button class="btn btn-bento bg-danger text-white py-2 font-fredoka envelope-button"
+                onclick="rollQuest()">Unseal Mystery Envelope</button>
+              <button id="completeQuestBtn" class="btn btn-bento bg-dark text-white py-2 font-fredoka"
+                onclick="completeQuest()">Complete Quest</button>
             </div>
             <div class="checklist-divider"></div>
             <h3 class="font-fredoka fw-bold fs-4 mt-3 mb-2">Explorer Checklist</h3>
             <ul id="explorerChecklist" class="checklist-list list-unstyled font-hand fs-5 m-0">
-              <li class="checklist-item"><input id="check-park" data-checklist-key="park" type="checkbox" /><label for="check-park"><span>Visit a park for a 20-min breather</span></label></li>
-              <li class="checklist-item"><input id="check-matcha" data-checklist-key="matcha" type="checkbox" /><label for="check-matcha"><span>Try ceremonial matcha at Aguirre</span></label></li>
-              <li class="checklist-item"><input id="check-cafe" data-checklist-key="cafe" type="checkbox" /><label for="check-cafe"><span>Work-from-cafe session at Molito</span></label></li>
+              <li class="checklist-item"><input id="check-park" data-checklist-key="park" type="checkbox" /><label
+                  for="check-park"><span>Visit a park for a 20-min breather</span></label></li>
+              <li class="checklist-item"><input id="check-matcha" data-checklist-key="matcha" type="checkbox" /><label
+                  for="check-matcha"><span>Try ceremonial matcha at Aguirre</span></label></li>
+              <li class="checklist-item"><input id="check-cafe" data-checklist-key="cafe" type="checkbox" /><label
+                  for="check-cafe"><span>Work-from-cafe session at Molito</span></label></li>
             </ul>
             <button class="btn btn-link text-dark px-0 mt-2" onclick="resetQuests()">Reset quest progress</button>
           </section>
         </div>
         <div class="col-12 col-md-6">
-          <section id="itineraryCard" class="itinerary-card bento-card p-3 p-md-4 h-100" aria-labelledby="itineraryHeading">
+          <section id="itineraryCard" class="itinerary-card bento-card p-3 p-md-4 h-100"
+            aria-labelledby="itineraryHeading">
             <div class="d-flex justify-content-between align-items-start gap-2">
-              <div><span class="badge bg-dark rounded-pill mb-2">MY DAY PLANNER</span><h3 id="itineraryHeading" class="font-fredoka fw-bold mb-1">Your sidequest itinerary</h3><p class="font-hand fs-5 mb-0">Suggested time slots follow the order you add spots.</p></div>
+              <div><span class="badge bg-dark rounded-pill mb-2">MY DAY PLANNER</span>
+                <h3 id="itineraryHeading" class="font-fredoka fw-bold mb-1">Your sidequest itinerary</h3>
+                <p class="font-hand fs-5 mb-0">Suggested time slots follow the order you add spots.</p>
+              </div>
               <span class="receipt-stamp" aria-hidden="true">DAY<br>OUT</span>
             </div>
             <ul id="itineraryList" class="itinerary-list list-unstyled my-3 mb-0"></ul>
             <div class="itinerary-summary border-top border-dark pt-2 mt-auto">
-              <div class="budget-meter-copy d-flex justify-content-between align-items-center gap-2"><span class="font-fredoka fw-bold">Total estimated spend</span><strong id="itineraryTotal" class="font-fredoka fs-4">₱0</strong></div>
-              <div class="progress itinerary-progress mt-2" role="progressbar" aria-label="Itinerary spend compared with selected budget" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="itineraryBudgetFill" class="progress-bar bg-success" style="width: 0%"></div></div>
-              <p id="itineraryBudgetStatus" class="small fw-bold my-2" aria-live="polite">Spending within selected budget.</p>
-              <div class="itinerary-route-summary d-flex justify-content-between align-items-center border-top pt-2"><span>Total stops</span><strong id="itineraryStops">0 spots</strong><span id="itineraryDuration" class="route-provider-note">No schedule yet</span><span class="route-provider-note">Walking route details via Google Maps</span></div>
-              <div class="d-grid mt-3"><a id="itineraryRouteButton" class="btn btn-bento bg-info text-dark disabled" href="#" target="_blank" rel="noopener" aria-disabled="true">Open Full Route in Maps <svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></svg></a></div>
+              <div class="budget-meter-copy d-flex justify-content-between align-items-center gap-2"><span
+                  class="font-fredoka fw-bold">Total estimated spend</span><strong id="itineraryTotal"
+                  class="font-fredoka fs-4">₱0</strong></div>
+              <div class="progress itinerary-progress mt-2" role="progressbar"
+                aria-label="Itinerary spend compared with selected budget" aria-valuemin="0" aria-valuemax="100"
+                aria-valuenow="0">
+                <div id="itineraryBudgetFill" class="progress-bar bg-success" style="width: 0%"></div>
+              </div>
+              <p id="itineraryBudgetStatus" class="small fw-bold my-2" aria-live="polite">Spending within selected
+                budget.</p>
+              <div class="itinerary-route-summary d-flex justify-content-between align-items-center border-top pt-2">
+                <span>Total stops</span><strong id="itineraryStops">0 spots</strong><span id="itineraryDuration"
+                  class="route-provider-note">No schedule yet</span><span class="route-provider-note">Walking route
+                  details via Google Maps</span></div>
+              <div class="d-grid mt-3"><a id="itineraryRouteButton" class="btn btn-bento bg-info text-dark disabled"
+                  href="#" target="_blank" rel="noopener" aria-disabled="true">Open Full Route in Maps <svg
+                    class="ui-icon" aria-hidden="true" viewBox="0 0 24 24">
+                    <path d="M7 17 17 7M7 7h10v10" />
+                  </svg></a></div>
             </div>
-            <div class="d-flex gap-2 flex-wrap mt-3"><button class="btn btn-bento bg-warning" type="button" onclick="autoPlanDay()"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/></svg> Auto-Plan My Day</button><button class="btn btn-bento bg-light" type="button" onclick="clearItinerary()">Clear plan</button><button id="downloadReceiptButton" class="btn btn-bento bg-white" type="button" onclick="downloadReceipt()" disabled>Download Receipt</button></div>
+            <div class="d-flex gap-2 flex-wrap mt-3"><button class="btn btn-bento bg-warning" type="button"
+                onclick="autoPlanDay()"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24">
+                  <path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z" />
+                </svg> Auto-Plan My Day</button><button class="btn btn-bento bg-light" type="button"
+                onclick="clearItinerary()">Clear plan</button><button id="downloadReceiptButton"
+                class="btn btn-bento bg-white" type="button" onclick="downloadReceipt()" disabled>Download
+                Receipt</button></div>
           </section>
         </div>
       </div>
     </section>
     <div id="savedDrawerBackdrop" class="saved-drawer-backdrop" onclick="toggleSaved(false)"></div>
     <aside id="savedDrawer" class="saved-drawer" aria-labelledby="savedHeading" aria-hidden="true">
-      <div class="d-flex justify-content-between align-items-center gap-3 mb-3"><h2 id="savedHeading" class="font-fredoka fw-bold mb-0">Saved spots</h2><button class="btn btn-bento bg-white" type="button" onclick="toggleSaved(false)" aria-label="Close saved spots"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+      <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+        <h2 id="savedHeading" class="font-fredoka fw-bold mb-0">Saved spots</h2><button class="btn btn-bento bg-white"
+          type="button" onclick="toggleSaved(false)" aria-label="Close saved spots"><svg class="ui-icon"
+            aria-hidden="true" viewBox="0 0 24 24">
+            <path d="m6 6 12 12M18 6 6 18" />
+          </svg></button>
+      </div>
       <div id="savedList" class="saved-drawer-list"></div>
     </aside>
     <dialog id="detailsDialog" class="details-dialog" aria-labelledby="detailsTitle"></dialog>
     <dialog id="mapDialog" class="map-dialog" aria-labelledby="mapDialogTitle">
       <div class="map-dialog-header p-3 d-flex justify-content-between align-items-center gap-3 flex-wrap">
-        <div><h2 id="mapDialogTitle" class="font-fredoka fw-bold fs-4 mb-0">Neighborhood map</h2><small>Illustrated by @KapeNiKate</small></div>
-        <div class="d-flex align-items-center gap-2"><label for="mapZoom" class="small fw-bold">Zoom <span id="mapZoomValue">100%</span></label><input id="mapZoom" type="range" min="100" max="200" value="100" step="10" aria-label="Zoom map"><button class="btn btn-bento bg-white" type="button" onclick="document.getElementById('mapDialog').close()" aria-label="Close map"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+        <div>
+          <h2 id="mapDialogTitle" class="font-fredoka fw-bold fs-4 mb-0">Neighborhood map</h2><small>Illustrated by
+            @KapeNiKate</small>
+        </div>
+        <div class="d-flex align-items-center gap-2"><label for="mapZoom" class="small fw-bold">Zoom <span
+              id="mapZoomValue">100%</span></label><input id="mapZoom" type="range" min="100" max="200" value="100"
+            step="10" aria-label="Zoom map"><button class="btn btn-bento bg-white" type="button"
+            onclick="document.getElementById('mapDialog').close()" aria-label="Close map"><svg class="ui-icon"
+              aria-hidden="true" viewBox="0 0 24 24">
+              <path d="m6 6 12 12M18 6 6 18" />
+            </svg></button></div>
       </div>
-      <div id="mapCanvas" class="map-canvas"><img id="largeMap" src="Assets/Map-Legazpi.jpg" alt="Illustrated Cafe Guide Map for Legazpi Village by KapeNiKate"></div>
+      <div id="mapCanvas" class="map-canvas"><img id="largeMap" src="Assets/Map-Legazpi.jpg"
+          alt="Illustrated Cafe Guide Map for Legazpi Village by KapeNiKate"></div>
     </dialog>
   </main>
   <script>
@@ -215,6 +325,7 @@
     let questCount = Number(localStorage.getItem('sidequestQuestCount') || 0);
     let currentQuest = 'Try a drink you have never ordered!';
     const titles = { makati: 'Makati Neighborhood Guide (Legazpi)', alabang: 'Alabang Cafe Guide (Molito-Westgate)', bf: 'BF Homes Guide (Aguirre Ave)' };
+    const neighborhoodLabels = { makati: 'Makati', alabang: 'Alabang', bf: 'BF Homes' };
 
     function switchLoc(loc) {
       activeLoc = loc;
@@ -229,6 +340,11 @@
 
     function scrollToDeck() {
       document.getElementById('spotsDeck').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function rollAndShowQuest() {
+      rollQuest();
+      document.getElementById('questCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     function iconSvg(name, className = 'ui-icon') {
@@ -280,6 +396,8 @@
       document.getElementById('destinationList').innerHTML = list.map((place, index) => placeCard(place, index, list.length, true)).join('');
       document.getElementById('emptyState').classList.toggle('d-none', list.length > 0);
       document.getElementById('resultSummary').textContent = `${list.length} destination${list.length === 1 ? '' : 's'} in ${activeLoc === 'bf' ? 'BF Homes' : activeLoc === 'alabang' ? 'Alabang' : 'Makati'}`;
+      document.getElementById('activeNeighborhoodLabel').textContent = neighborhoodLabels[activeLoc];
+      document.getElementById('activeSpotCount').textContent = places.filter(place => place.loc === activeLoc).length;
       document.getElementById('saved-count').textContent = saved.length;
       const savedPlaces = places.filter(p => saved.includes(p.id));
       document.getElementById('savedList').innerHTML = savedPlaces.length ? savedPlaces.map(savedSpotCard).join('') : '<p class="font-hand fs-5">No saved spots yet. Tap a bookmark on a destination to keep it here.</p>';
@@ -416,6 +534,18 @@
     document.getElementById('categoryFilters').innerHTML = `<button type="button" class="btn btn-bento bg-light category-filter active" data-category="" aria-pressed="true">All</button>` + categories.map(c => `<button type="button" class="btn btn-bento bg-light category-filter" data-category="${c}" aria-pressed="false">${c}</button>`).join('');
     document.getElementById('categoryFilters').addEventListener('click', e => { const b = e.target.closest('[data-category]'); if (!b) return; activeCategory = b.dataset.category; document.querySelectorAll('.category-filter').forEach(x => { const selected = x === b; x.classList.toggle('active', selected); x.setAttribute('aria-pressed', selected); }); render(); });
     render();
+
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      loadingOverlay.classList.add('reduce-motion', 'is-dismissed');
+      loadingOverlay.setAttribute('aria-hidden', 'true');
+    } else {
+      window.setTimeout(() => {
+        loadingOverlay.classList.add('is-dismissed');
+        loadingOverlay.setAttribute('aria-hidden', 'true');
+      }, 1500);
+    }
   </script>
 </body>
 
