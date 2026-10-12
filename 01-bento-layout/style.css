@@ -19,8 +19,13 @@ body {
   background-size: 24px 24px;
 }
 
-.font-hand { font-family: 'Patrick Hand', cursive; }
-.font-fredoka { font-family: 'Fredoka', sans-serif; }
+.font-hand {
+  font-family: 'Patrick Hand', cursive;
+}
+
+.font-fredoka {
+  font-family: 'Fredoka', sans-serif;
+}
 
 /* Bento Card Styles */
 .bento-card {
@@ -38,9 +43,20 @@ body {
 }
 
 /* Rotations & Scrapbook Tilts */
-.tilt-left { --card-rotation: -1.8deg; transform: rotate(var(--card-rotation)); }
-.tilt-right { --card-rotation: 1.5deg; transform: rotate(var(--card-rotation)); }
-.tilt-slight { --card-rotation: -0.8deg; transform: rotate(var(--card-rotation)); }
+.tilt-left {
+  --card-rotation: -1.8deg;
+  transform: rotate(var(--card-rotation));
+}
+
+.tilt-right {
+  --card-rotation: 1.5deg;
+  transform: rotate(var(--card-rotation));
+}
+
+.tilt-slight {
+  --card-rotation: -0.8deg;
+  transform: rotate(var(--card-rotation));
+}
 
 .tape-accent {
   position: absolute;
@@ -66,12 +82,16 @@ body {
   transform: translate(-1px, -1px);
   box-shadow: 4px 5px 0px var(--border-dark);
 }
+
 .btn-bento:focus-visible {
   outline: 3px solid var(--border-dark);
   outline-offset: 3px;
 }
 
-.category-filter.active { background:#212529!important; color:#fff!important; }
+.category-filter.active {
+  background: #212529 !important;
+  color: #fff !important;
+}
 
 .location-strip {
   display: flex;
@@ -93,12 +113,14 @@ body {
   height: 1.25rem;
   accent-color: #166534;
 }
+
 #budgetRange::-webkit-slider-runnable-track {
   height: .55rem;
   background: #86b99a;
   border: 2px solid #1e1b18;
   border-radius: 1rem;
 }
+
 #budgetRange::-moz-range-track {
   height: .55rem;
   background: #86b99a;
@@ -115,11 +137,45 @@ body {
   padding: .75rem 4.25rem .75rem 1rem;
   border-bottom: 2px solid var(--border-dark);
 }
+
+.destination-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+}
+
+.destination-card > .p-3 {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.destination-card > .p-3 > .btn {
+  margin-top: auto;
+}
+
 .save-art-btn {
   position: absolute;
   top: .65rem;
   right: .65rem;
   z-index: 1;
+}
+
+.destination-featured .destination-art {
+  min-height: 104px;
+  justify-content: flex-start;
+  gap: .9rem;
+}
+
+@media (max-width: 767.98px) {
+  .destination-card {
+    min-height: 0;
+  }
+}
+
+.destination-featured .art-icon {
+  width: 3.25rem;
+  height: 3.25rem;
 }
 
 .details-dialog {
@@ -134,10 +190,12 @@ body {
   border-radius: 22px;
   box-shadow: 8px 10px 0 var(--border-dark);
 }
+
 .details-dialog::backdrop {
   background: rgb(30 27 24 / 58%);
   backdrop-filter: blur(3px);
 }
+
 .details-art {
   min-height: 130px;
   display: flex;
@@ -146,6 +204,7 @@ body {
   position: relative;
   border-bottom: 2px solid var(--border-dark);
 }
+
 .details-art button {
   position: absolute;
   top: .75rem;
@@ -154,17 +213,19 @@ body {
 }
 
 .map-preview {
-  height: 340px;
+  height: clamp(280px, 34vw, 420px);
   display: grid;
   place-items: center;
   overflow: hidden;
 }
+
 .neighborhood-map {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
+
 .map-dialog {
   width: min(96vw, 1200px);
   height: min(94vh, 1000px);
@@ -178,19 +239,23 @@ body {
   border-radius: 22px;
   box-shadow: 8px 10px 0 var(--border-dark);
 }
+
 .map-dialog::backdrop {
   background: rgb(30 27 24 / 68%);
   backdrop-filter: blur(3px);
 }
+
 .map-dialog-header {
   min-height: 76px;
   background: #fff;
   border-bottom: 2px solid var(--border-dark);
 }
+
 .map-dialog-header input[type="range"] {
   width: 130px;
   accent-color: #166534;
 }
+
 .map-canvas {
   height: calc(100% - 76px);
   padding: .75rem;
@@ -200,7 +265,11 @@ body {
   touch-action: none;
   user-select: none;
 }
-.map-canvas:active { cursor: grabbing; }
+
+.map-canvas:active {
+  cursor: grabbing;
+}
+
 .map-canvas img {
   display: block;
   width: 100%;
@@ -209,12 +278,151 @@ body {
   pointer-events: none;
 }
 
+.amenity-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+}
+
+.amenity-badge {
+  padding: .2rem .45rem;
+  border: 1.5px solid var(--border-dark);
+  border-radius: 999px;
+  background: #fff;
+  font-size: .68rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.itinerary-card {
+  background: #fffdf5;
+  border-radius: 10px 24px 18px 14px;
+  border-style: dashed;
+  transform: rotate(.35deg);
+}
+
+.receipt-stamp {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border: 2px solid var(--border-dark);
+  border-radius: 50%;
+  color: #dc2626;
+  font: 700 .7rem/1 'Fredoka', sans-serif;
+  text-align: center;
+  transform: rotate(8deg);
+}
+
+.itinerary-list {
+  display: grid;
+  gap: .5rem;
+}
+
+.itinerary-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .65rem .75rem;
+  border-bottom: 1px dashed #9ca3af;
+}
+
+.itinerary-item span {
+  display: grid;
+  gap: .1rem;
+}
+
+.itinerary-item small {
+  color: #6b7280;
+}
+
+.itinerary-item button {
+  border: 1.5px solid var(--border-dark);
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.itinerary-empty {
+  padding: 1rem 0;
+  color: #6b7280;
+}
+
+.mystery-envelope {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 56px;
+  margin-inline: auto;
+  border: 2px solid var(--border-dark);
+  border-radius: 8px;
+  background: #fca5a5;
+  box-shadow: 3px 4px 0 var(--border-dark);
+  transform: rotate(-3deg);
+}
+
+.mystery-envelope span {
+  font-size: 2rem;
+}
+
+.mystery-envelope.reveal {
+  animation: envelopeFlip .65s ease;
+}
+
+@keyframes envelopeFlip {
+  0% { transform: rotate(-3deg) scale(1); }
+  45% { transform: rotate(8deg) scale(1.12); }
+  100% { transform: rotate(-3deg) scale(1); }
+}
+
+.saved-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1040;
+  background: rgb(30 27 24 / 42%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+
+.saved-drawer-backdrop.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.saved-drawer {
+  position: fixed;
+  inset: 0 0 0 auto;
+  z-index: 1050;
+  width: min(92vw, 420px);
+  padding: 1.25rem;
+  overflow-y: auto;
+  background: var(--bg-cream);
+  border-left: 2.5px solid var(--border-dark);
+  box-shadow: -8px 0 0 var(--border-dark);
+  transform: translateX(105%);
+  transition: transform .25s ease;
+}
+
+.saved-drawer.is-open {
+  transform: translateX(0);
+}
+
+.saved-drawer-list .destination-card {
+  min-height: 0;
+}
+
+.saved-drawer-list > div {
+  margin-bottom: 1rem;
+}
+
 .dashboard-shell {
   width: 100%;
   max-width: 1264px;
   padding-inline: clamp(16px, 3vw, 32px);
   margin-inline: auto;
 }
+
 .neighborhood-label {
   color: #1e1b18;
   font-size: .78rem;
@@ -222,6 +430,7 @@ body {
   letter-spacing: .09em;
   white-space: nowrap;
 }
+
 .ui-icon {
   display: inline-block;
   width: 1.2em;
@@ -233,7 +442,12 @@ body {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.ui-icon-small { width: 1em; height: 1em; }
+
+.ui-icon-small {
+  width: 1em;
+  height: 1em;
+}
+
 .art-icon {
   width: 3.5rem;
   height: 3.5rem;
@@ -243,7 +457,12 @@ body {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.destination-art-icon { display: grid; place-items: center; }
+
+.destination-art-icon {
+  display: grid;
+  place-items: center;
+}
+
 .place-category {
   border: 2px solid var(--border-dark);
   border-radius: 999px;
@@ -255,6 +474,20 @@ body {
   text-transform: uppercase;
   letter-spacing: .04em;
 }
-.save-art-btn { display: grid; place-items: center; padding: .5rem; }
-.empty-icon .ui-icon { width: 2.5rem; height: 2.5rem; stroke-width: 2.5; }
-.details-art .art-icon { width: 4rem; height: 4rem; }
+
+.save-art-btn {
+  display: grid;
+  place-items: center;
+  padding: .5rem;
+}
+
+.empty-icon .ui-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  stroke-width: 2.5;
+}
+
+.details-art .art-icon {
+  width: 4rem;
+  height: 4rem;
+}
