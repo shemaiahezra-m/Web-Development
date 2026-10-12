@@ -49,13 +49,13 @@
           <div class="row g-2 align-items-center">
             <div class="col-12 col-xl-auto"><span class="neighborhood-label">NEIGHBORHOOD</span></div>
             <div class="col-12 col-xl">
-              <div class="d-flex justify-content-start justify-content-xl-center gap-2 flex-wrap">
-                <button id="btn-makati" class="btn btn-bento bg-info text-dark px-3 py-2" aria-pressed="true"
-                  onclick="switchLoc('makati')">Makati (Legazpi)</button>
-                <button id="btn-alabang" class="btn btn-bento bg-light px-3 py-2" aria-pressed="false"
-                  onclick="switchLoc('alabang')">Alabang (Molito-Westgate)</button>
-                <button id="btn-bf" class="btn btn-bento bg-light px-3 py-2" aria-pressed="false"
-                  onclick="switchLoc('bf')">BF Homes (Aguirre)</button>
+              <div class="neighborhood-options d-grid d-xl-flex justify-content-start justify-content-xl-center gap-2">
+                <button id="btn-makati" class="btn btn-bento bg-info text-dark" aria-label="Makati (Legazpi)" aria-pressed="true"
+                  onclick="switchLoc('makati')"><span class="d-xl-none">Makati</span><span class="d-none d-xl-inline">Makati (Legazpi)</span></button>
+                <button id="btn-alabang" class="btn btn-bento bg-light" aria-label="Alabang (Molito-Westgate)" aria-pressed="false"
+                  onclick="switchLoc('alabang')"><span class="d-xl-none">Alabang</span><span class="d-none d-xl-inline">Alabang (Molito-Westgate)</span></button>
+                <button id="btn-bf" class="btn btn-bento bg-light" aria-label="BF Homes (Aguirre)" aria-pressed="false"
+                  onclick="switchLoc('bf')"><span class="d-xl-none">BF Homes</span><span class="d-none d-xl-inline">BF Homes (Aguirre)</span></button>
               </div>
             </div>
             <div class="col-12 col-xl-3"><input id="searchInput" type="search"
@@ -245,6 +245,9 @@
         </div>
       </div>
     </section>
+    <footer class="site-footer font-hand text-center" aria-label="Copyright notice">
+      © 2026 Sidequest! — Made with curiosity by <a href="https://github.com/shemaiahezra-m" target="_blank" rel="noopener noreferrer">@shemaiahezra-m</a>
+    </footer>
     <div id="savedDrawerBackdrop" class="saved-drawer-backdrop" onclick="toggleSaved(false)"></div>
     <aside id="savedDrawer" class="saved-drawer" aria-labelledby="savedHeading" aria-hidden="true">
       <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
