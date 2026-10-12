@@ -42,7 +42,7 @@
             <div class="col-12 col-xl">
               <div class="d-flex justify-content-start justify-content-xl-center gap-2 flex-wrap">
                 <button id="btn-makati" class="btn btn-bento bg-info text-dark px-3 py-2" aria-pressed="true" onclick="switchLoc('makati')">Makati (Legazpi)</button>
-                <button id="btn-alabang" class="btn btn-bento bg-light px-3 py-2" aria-pressed="false" onclick="switchLoc('alabang')">Alabang (Molito)</button>
+                <button id="btn-alabang" class="btn btn-bento bg-light px-3 py-2" aria-pressed="false" onclick="switchLoc('alabang')">Alabang (Molito-Westgate)</button>
                 <button id="btn-bf" class="btn btn-bento bg-light px-3 py-2" aria-pressed="false" onclick="switchLoc('bf')">BF Homes (Aguirre)</button>
               </div>
             </div>
@@ -72,6 +72,7 @@
               <p class="font-hand fs-5 mb-3">Set your spending limit:</p>
               <input id="budgetRange" type="range" class="form-range" min="0" max="1000" step="50" value="500" aria-label="Maximum estimated spending">
               <div class="d-flex justify-content-between font-fredoka fw-bold mt-2"><span>Max spend</span><span class="budget-value">Max: ₱<span id="budgetValue">500</span></span></div>
+              <p class="small mb-0 mt-2">Spots without supplied prices stay visible; itinerary totals include priced stops only.</p>
             </section>
           </div>
         </div>
@@ -133,7 +134,7 @@
         <div class="col-12 col-md-6">
           <section id="itineraryCard" class="itinerary-card bento-card p-3 p-md-4 h-100" aria-labelledby="itineraryHeading">
             <div class="d-flex justify-content-between align-items-start gap-2">
-              <div><span class="badge bg-dark rounded-pill mb-2">MY DAY PLANNER</span><h3 id="itineraryHeading" class="font-fredoka fw-bold mb-1">Your sidequest itinerary</h3><p class="font-hand fs-5 mb-0">Pick a few stops and make a day of it.</p></div>
+              <div><span class="badge bg-dark rounded-pill mb-2">MY DAY PLANNER</span><h3 id="itineraryHeading" class="font-fredoka fw-bold mb-1">Your sidequest itinerary</h3><p class="font-hand fs-5 mb-0">Suggested time slots follow the order you add spots.</p></div>
               <span class="receipt-stamp" aria-hidden="true">DAY<br>OUT</span>
             </div>
             <ul id="itineraryList" class="itinerary-list list-unstyled my-3 mb-0"></ul>
@@ -141,7 +142,7 @@
               <div class="budget-meter-copy d-flex justify-content-between align-items-center gap-2"><span class="font-fredoka fw-bold">Total estimated spend</span><strong id="itineraryTotal" class="font-fredoka fs-4">₱0</strong></div>
               <div class="progress itinerary-progress mt-2" role="progressbar" aria-label="Itinerary spend compared with selected budget" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="itineraryBudgetFill" class="progress-bar bg-success" style="width: 0%"></div></div>
               <p id="itineraryBudgetStatus" class="small fw-bold my-2" aria-live="polite">Spending within selected budget.</p>
-              <div class="itinerary-route-summary d-flex justify-content-between align-items-center border-top pt-2"><span>Total stops</span><strong id="itineraryStops">0 spots</strong><span class="route-provider-note">Walking route details via Google Maps</span></div>
+              <div class="itinerary-route-summary d-flex justify-content-between align-items-center border-top pt-2"><span>Total stops</span><strong id="itineraryStops">0 spots</strong><span id="itineraryDuration" class="route-provider-note">No schedule yet</span><span class="route-provider-note">Walking route details via Google Maps</span></div>
               <div class="d-grid mt-3"><a id="itineraryRouteButton" class="btn btn-bento bg-info text-dark disabled" href="#" target="_blank" rel="noopener" aria-disabled="true">Open Full Route in Maps <svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></svg></a></div>
             </div>
             <div class="d-flex gap-2 flex-wrap mt-3"><button class="btn btn-bento bg-warning" type="button" onclick="autoPlanDay()"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/></svg> Auto-Plan My Day</button><button class="btn btn-bento bg-light" type="button" onclick="clearItinerary()">Clear plan</button><button id="downloadReceiptButton" class="btn btn-bento bg-white" type="button" onclick="downloadReceipt()" disabled>Download Receipt</button></div>
@@ -165,15 +166,31 @@
   </main>
   <script>
     const places = [
-      { id: 'yardstick', name: 'Yardstick Coffee', loc: 'makati', area: 'Legazpi', address: 'Esteban St., Legazpi Village', price: 250, icon: 'coffee', color: '#FCE7F3', tags: ['Coffee', 'Study-friendly'], amenities: ['Wi-Fi', 'Power', 'Open now'], description: 'A relaxed specialty coffee stop with a welcoming work-friendly vibe.' },
-      { id: 'deuces', name: 'Deuces Coffee', loc: 'makati', area: 'Legazpi', address: 'Perea St., Legazpi Village', price: 220, icon: 'leaf', color: '#FEF08A', tags: ['Coffee', 'Matcha'], amenities: ['Wi-Fi', 'Parking', 'Open now'], description: 'Coffee and matcha drinks for a bright neighborhood café break.' },
-      { id: 'curator', name: 'The Curator', loc: 'makati', area: 'Legazpi', address: 'Palanca St., Legazpi Village', price: 300, icon: 'sparkles', color: '#D1FAE5', tags: ['Coffee'], amenities: ['Power', 'Open now'], description: 'Specialty coffee with a cozy, tucked-away atmosphere.' },
-      { id: 'molito', name: 'Molito Lifestyle Center', loc: 'alabang', area: 'Molito', address: 'Commerce Ave., Alabang', price: 400, icon: 'leaf', color: '#D1FAE5', tags: ['Coffee', 'Outdoor'], amenities: ['Parking', 'Open now'], description: 'An open-air destination with cafés, dining, and leafy walkways.' },
-      { id: 'manam', name: 'Café Seventy', loc: 'alabang', area: 'Molito', address: 'Molito Complex, Alabang', price: 350, icon: 'coffee', color: '#FCE7F3', tags: ['Coffee', 'Study-friendly'], amenities: ['Wi-Fi', 'Power'], description: 'A casual café pick for a coffee break or catch-up.' },
-      { id: 'aguirre', name: 'Matcha Stop', loc: 'bf', area: 'Aguirre', address: 'Aguirre Ave., BF Homes', price: 200, icon: 'leaf', color: '#D1FAE5', tags: ['Matcha', 'Coffee'], amenities: ['Wi-Fi', 'Open now'], description: 'A neighborhood drink stop for matcha fans.' },
-      { id: 'bfpark', name: 'BF Community Green', loc: 'bf', area: 'Aguirre', address: 'BF Homes, Parañaque', price: 0, icon: 'tree', color: '#E0F2FE', tags: ['Outdoor', 'Free activities'], amenities: ['Parking', 'Open now'], description: 'Take a free breather and enjoy a little time outdoors.' }
+      { id: 'cafe-dalisay', name: 'Cafe Dalisay', loc: 'makati', area: 'Legazpi', address: 'Legazpi Village, Makati', price: 180, icon: 'coffee', color: '#FCE7F3', photo: 'Assets/Makati/M-Cafe Dalisay.jpg', tags: ['Coffee', 'Study-friendly'], amenities: ['Wi-Fi', 'Open Now'], description: 'Neighborhood coffee & cozy local nook' },
+      { id: 'sulok', name: 'Sulok', loc: 'makati', area: 'Legazpi', address: 'Legazpi Village, Makati', price: 190, icon: 'coffee', color: '#FEF08A', photo: 'Assets/Makati/M-Sulok.jpeg', tags: ['Coffee', 'Sweet Coffee'], amenities: ['Wi-Fi', 'Open Now'], description: 'Sweet coffee & specialty brews' },
+      { id: 'black-bean', name: 'The Black Bean', loc: 'makati', area: 'Legazpi', address: 'Legazpi Village, Makati', price: 280, icon: 'coffee', color: '#D1FAE5', photo: 'Assets/Makati/M-Black Bean.png', tags: ['Coffee', 'Foodie'], amenities: ['Power', 'Open Now'], description: 'Coffee and hearty cafe food' },
+      { id: 'yardstick', name: 'Yardstick Coffee', loc: 'makati', area: 'Legazpi', address: 'Esteban St., Legazpi Village, Makati', price: 250, icon: 'coffee', color: '#FCE7F3', photo: 'Assets/Makati/M-Yardstick.jpg', photoCredit: 'Spot.ph', tags: ['Coffee', 'Study-friendly'], amenities: ['Wi-Fi', 'Power', 'Open Now'], description: 'Coffee exploration & iconic third-wave espresso' },
+      { id: 'oolah', name: 'Oolah', loc: 'makati', area: 'Legazpi', address: 'Legazpi Village, Makati', price: 220, icon: 'leaf', color: '#E0F2FE', photo: 'Assets/Makati/M-Oolah.jpeg', tags: ['Matcha', 'Aesthetic'], amenities: ['Wi-Fi', 'Open Now'], description: 'Ceremonial matcha & aesthetic drinks' },
+      { id: 'bad-cafe', name: 'Bad Cafe', loc: 'makati', area: 'Legazpi', address: 'Legazpi Village, Makati', price: 260, icon: 'coffee', color: '#FCE7F3', photo: 'Assets/Makati/M-Bad Cafe.jpg', tags: ['Coffee', 'Foodie'], amenities: ['Power', 'Open Now'], description: 'Coffee, Japanese-inspired comfort food & baked goods' },
+      { id: 'panco-cafe', name: 'Panco Cafe', loc: 'makati', area: 'Legazpi', address: 'Don Chino Roces / Legazpi Area, Makati', price: 290, icon: 'coffee', color: '#FEF08A', photo: 'Assets/Makati/M-Panco Cafe.jpeg', tags: ['Coffee', 'Brunch', 'Foodie'], amenities: ['Open Now'], description: 'Melbourne-meets-Pinoy brunch & café food' },
+      { id: 'brunch-bureau', name: 'Brunch Bureau', loc: 'alabang', area: 'Molito', address: null, price: null, icon: 'coffee', color: '#FCE7F3', photo: 'Assets/Alabang/A-Brunch Bureau.jpg', tags: ['Brunch & Bites'], amenities: [], description: 'Brunch date' },
+      { id: 'exchange-alley', name: 'Exchange Alley Coffee House', loc: 'alabang', area: 'Molito', address: null, price: null, icon: 'coffee', color: '#FEF08A', photo: 'Assets/Alabang/A-Exchange Alley Coffee House.jpg', tags: ['Coffee Run'], amenities: [], description: 'Specialty coffee' },
+      { id: 'bungalow-cafe', name: 'Bungalow Café & Bakery', loc: 'alabang', area: 'Molito', address: null, price: null, icon: 'coffee', color: '#D1FAE5', photo: 'Assets/Alabang/A-Bungalow Café & Bakery.webp', tags: ['Café & Bakery'], amenities: [], description: 'Coffee and pastries' },
+      { id: 'beyond-booth', name: 'Beyond the Booth', loc: 'alabang', area: 'Molito', address: null, price: null, icon: 'sparkles', color: '#EDE9FE', photo: 'Assets/Alabang/A-Beyond the Booth.jpeg', tags: ['Photo Op'], amenities: [], description: 'Photobooth with friends' },
+      { id: 'coopers-coffee-haus', name: 'Cooper’s Coffee Haus', loc: 'alabang', area: 'Westgate', address: null, price: null, icon: 'coffee', color: '#E0F2FE', photo: 'Assets/Alabang/A-Cooper’s Coffee Haus.jpeg', tags: ['Coffee Run'], amenities: [], description: 'Coffee break' },
+      { id: 'cafe-breton', name: 'Café Breton', loc: 'alabang', area: 'Westgate', address: null, price: null, icon: 'sparkles', color: '#FEF08A', photo: 'Assets/Alabang/A-Café Breton.jpg', tags: ['Dessert & Bites'], amenities: [], description: 'Crêpes and dessert' },
+      { id: 'littlehaus', name: 'Littlehaus', loc: 'bf', area: 'BF Homes', address: null, price: null, icon: 'coffee', color: '#FCE7F3', photo: 'Assets/BF Homes/B- littlehaus.jpeg', tags: ['Café & Brunch'], amenities: [], description: 'Café & Brunch' },
+      { id: 'curious-coffee', name: 'Curious Coffee', loc: 'bf', area: 'BF Homes', address: null, price: null, icon: 'coffee', color: '#FEF08A', photo: 'Assets/BF Homes/B-Curious Coffee.jpeg', tags: ['Specialty Coffee'], amenities: [], description: 'Specialty Coffee' },
+      { id: 'gold-cup', name: 'Gold Cup', loc: 'bf', area: 'BF Homes', address: null, price: null, icon: 'coffee', color: '#D1FAE5', photo: 'Assets/BF Homes/B-Gold Cup.jpeg', tags: ['Coffee Run'], amenities: [], description: 'Coffee Run' },
+      { id: 'oh-hey-there-matcha', name: 'Oh Hey There Matcha', loc: 'bf', area: 'BF Homes', address: null, price: null, icon: 'leaf', color: '#E0F2FE', photo: 'Assets/BF Homes/B-Oh Hey There Matcha.jpeg', tags: ['Matcha & Drinks'], amenities: [], description: 'Matcha & Drinks' },
+      { id: 'siesta-horchata', name: 'Siesta Horchata', loc: 'bf', area: 'BF Homes', address: null, price: null, icon: 'sparkles', color: '#EDE9FE', photo: 'Assets/BF Homes/B-Siesta Horchata.jpeg', tags: ['Specialty Drinks'], amenities: [], description: 'Specialty Drinks' }
     ];
-    const categories = ['Coffee', 'Matcha', 'Study-friendly', 'Outdoor', 'Free activities'];
+    const categories = ['Coffee', 'Matcha', 'Study-friendly', 'Sweet Coffee', 'Foodie', 'Aesthetic', 'Brunch', 'Brunch & Bites', 'Café & Brunch', 'Coffee Run', 'Specialty Coffee', 'Café & Bakery', 'Photo Op', 'Dessert & Bites', 'Matcha & Drinks', 'Specialty Drinks', 'Outdoor', 'Free activities'];
+    const itineraryTimeSlots = [
+      { label: 'Morning', time: '10:00 AM', minutes: 600 },
+      { label: 'Afternoon', time: '01:30 PM', minutes: 810 },
+      { label: 'Evening / Dinner', time: '06:00 PM', minutes: 1080 }
+    ];
     const mapAssets = {
       makati: { src: 'Assets/Map-Legazpi.jpg', alt: 'Illustrated Cafe Guide Map for Legazpi Village by KapeNiKate', title: 'Legazpi Village, Makati' },
       alabang: { src: 'Assets/Map-Alabang.jpg', alt: 'Illustrated Cafe Guide Map for Alabang by KapeNiKate', title: 'Alabang Cafe Guide' },
@@ -182,9 +199,13 @@
     let activeLoc = 'makati', activeCategory = '', searchTerm = '', budget = 500;
     let saved = JSON.parse(localStorage.getItem('sidequestSaved') || '[]');
     let itinerary = JSON.parse(localStorage.getItem('sidequestItinerary') || '[]');
+    saved = saved.filter(id => places.some(place => place.id === id));
+    itinerary = itinerary.filter(id => places.some(place => place.id === id));
+    localStorage.setItem('sidequestSaved', JSON.stringify(saved));
+    localStorage.setItem('sidequestItinerary', JSON.stringify(itinerary));
     let questCount = Number(localStorage.getItem('sidequestQuestCount') || 0);
     let currentQuest = 'Try a drink you have never ordered!';
-    const titles = { makati: 'Makati Neighborhood Guide (Legazpi)', alabang: 'Alabang Cafe Guide (Molito)', bf: 'BF Homes Guide (Aguirre Ave)' };
+    const titles = { makati: 'Makati Neighborhood Guide (Legazpi)', alabang: 'Alabang Cafe Guide (Molito-Westgate)', bf: 'BF Homes Guide (Aguirre Ave)' };
 
     function switchLoc(loc) {
       activeLoc = loc;
@@ -205,13 +226,20 @@
         tree: '<path d="M12 22v-6M9 22h6M12 2 5 11h4l-5 6h16l-5-6h4z"/>',
         pin: '<path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
         bookmark: '<path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-3.5L6 21z"/>',
+        check: '<path d="m5 12.5 4.3 4.3L19 7"/>',
         arrow: '<path d="M7 17 17 7M7 7h10v10"/>',
         close: '<path d="m6 6 12 12M18 6 6 18"/>'
       };
       return `<svg class="${className}" aria-hidden="true" viewBox="0 0 24 24">${paths[name] || paths.sparkles}</svg>`;
     }
     function filteredPlaces() {
-      return places.filter(p => p.loc === activeLoc && p.price <= budget && (!activeCategory || p.tags.includes(activeCategory)) && (!searchTerm || `${p.name} ${p.area} ${p.address} ${p.tags.join(' ')}`.toLowerCase().includes(searchTerm)));
+      return places.filter(p => p.loc === activeLoc && (p.price == null || p.price <= budget) && (!activeCategory || p.tags.includes(activeCategory)) && (!searchTerm || `${p.name} ${p.area} ${p.address || ''} ${p.tags.join(' ')}`.toLowerCase().includes(searchTerm)));
+    }
+    function priceLabel(p) { return Number.isFinite(p.price) ? `₱${p.price}` : 'To be verified'; }
+    function itineraryTotalLabel(selected) {
+      const knownTotal = selected.reduce((sum, p) => sum + (Number.isFinite(p.price) ? p.price : 0), 0);
+      const unknownCount = selected.filter(p => !Number.isFinite(p.price)).length;
+      return unknownCount ? `${knownTotal ? `₱${knownTotal} + ` : ''}${unknownCount} budget${unknownCount === 1 ? '' : 's'} to verify` : `₱${knownTotal}`;
     }
     function amenityMarkup(p) {
       return (p.amenities || []).map(amenity => `<span class="amenity-badge">${amenity}</span>`).join('');
@@ -219,12 +247,13 @@
     function placeCard(p, index = 0, total = 1, editorial = false) {
       const isSaved = saved.includes(p.id);
       const featured = editorial && index === 0;
-      const columnClass = !editorial ? 'col-12 col-md-6 col-lg-4' : 'col-6 col-md-4';
+      const columnClass = !editorial ? 'col-12 col-md-6 col-lg-4' : 'col-6 col-md-4 col-lg-3';
       const inItinerary = itinerary.includes(p.id);
       const photo = p.photo
-        ? `<img class="destination-photo" src="${p.photo}" alt="${p.name} venue photo">`
+        ? `<img class="destination-photo" src="${p.photo}" alt="${p.name} photo">${p.photoCredit ? `<small class="photo-credit">Photo: ${p.photoCredit}</small>` : ''}`
         : `<div class="destination-photo-placeholder" style="--photo-tone:${p.color}" aria-label="Venue photo slot"><span>${iconSvg(p.icon, 'art-icon')}</span><small>PHOTO SLOT</small></div>`;
-      return `<div class="${columnClass}"><article class="bento-card destination-card h-100 overflow-hidden ${featured ? 'destination-featured' : ''}"><div class="destination-art">${photo}<span class="place-category">${p.tags[0]}</span><button class="save-art-btn btn btn-bento ${isSaved ? 'bg-warning' : 'bg-white'}" aria-label="${isSaved ? 'Remove saved spot' : 'Save spot'}" title="${isSaved ? 'Remove saved spot' : 'Save spot'}" onclick="toggleSave('${p.id}')">${iconSvg('bookmark')}</button></div><div class="destination-card-body p-2 p-md-3 d-flex flex-column flex-grow-1">${featured ? '<span class="badge bg-dark rounded-pill mb-2">FEATURED PICK</span>' : ''}<div class="d-flex justify-content-between align-items-start gap-1"><h3 class="destination-title text-truncate font-fredoka fw-bold mb-1">${p.name}</h3><span class="badge text-bg-light align-self-start text-nowrap">₱${p.price}</span></div><p class="destination-location small text-muted text-truncate mb-2" title="${p.area} · ${p.address}">${iconSvg('pin', 'ui-icon ui-icon-small')} ${p.area} · ${p.address}</p><div class="d-flex gap-1 flex-wrap mb-2">${p.tags.map(t => `<span class="badge rounded-pill text-bg-light border destination-tag">${t}</span>`).join('')}</div><div class="amenity-list mb-2">${amenityMarkup(p)}</div><button class="destination-action btn btn-sm btn-bento bg-light w-100 mb-2" aria-label="${inItinerary ? 'Remove ' + p.name + ' from itinerary' : 'Add ' + p.name + ' to itinerary'}" aria-pressed="${inItinerary}" onclick="toggleItinerary('${p.id}')">${inItinerary ? 'Added to plan' : '+ Add to plan'}</button><button class="destination-action btn btn-sm btn-bento bg-info text-dark w-100 mt-auto" onclick="showDetails('${p.id}')">View details ${iconSvg('arrow')}</button></div></article></div>`;
+      const location = p.address || p.area;
+      return `<div class="${columnClass}"><article class="bento-card destination-card h-100 overflow-hidden ${featured ? 'destination-featured' : ''}"><div class="destination-art">${photo}<span class="place-category">${p.tags[0]}</span><button class="save-art-btn btn btn-bento ${isSaved ? 'bg-warning' : 'bg-white'}" aria-label="${isSaved ? 'Remove saved spot' : 'Save spot'}" title="${isSaved ? 'Remove saved spot' : 'Save spot'}" onclick="toggleSave('${p.id}')">${iconSvg('bookmark')}</button></div><div class="destination-card-body p-2 p-md-3 d-flex flex-column flex-grow-1">${featured ? '<span class="badge bg-dark rounded-pill mb-2">FEATURED PICK</span>' : ''}<div class="d-flex justify-content-between align-items-start gap-1"><h3 class="destination-title text-truncate font-fredoka fw-bold mb-1">${p.name}</h3><span class="badge text-bg-light align-self-start text-nowrap">${priceLabel(p)}</span></div><p class="destination-location small text-muted text-truncate mb-2" title="${location}">${iconSvg('pin', 'ui-icon ui-icon-small')} ${location}</p><div class="d-flex gap-1 flex-wrap mb-2">${p.tags.map(t => `<span class="badge rounded-pill text-bg-light border destination-tag">${t}</span>`).join('')}</div><div class="amenity-list mb-2">${amenityMarkup(p)}</div><div class="d-flex gap-2 mt-auto pt-2"><button class="destination-action btn-add-plan btn btn-sm btn-bento flex-fill text-truncate ${inItinerary ? 'is-added' : ''}" aria-label="${inItinerary ? 'Remove ' + p.name + ' from itinerary' : 'Add ' + p.name + ' to itinerary'}" aria-pressed="${inItinerary}" onclick="toggleItinerary('${p.id}')">${inItinerary ? `${iconSvg('check')}<span class="d-md-none">Added</span><span class="d-none d-md-inline">Added to plan</span>` : '<span class="d-md-none">+ Add</span><span class="d-none d-md-inline">+ Add to plan</span>'}</button><button class="destination-action btn btn-sm btn-bento bg-info text-dark flex-fill text-truncate" onclick="showDetails('${p.id}')"><span class="d-md-none">Details</span><span class="d-none d-md-inline">View details</span> ${iconSvg('arrow')}</button></div></div></article></div>`;
     }
     function render() {
       const list = filteredPlaces();
@@ -249,8 +278,65 @@
     function renderItinerary() {
       const list = document.getElementById('itineraryList');
       const selected = itinerary.map(id => places.find(p => p.id === id)).filter(Boolean);
-      list.innerHTML = selected.length ? selected.map((p, index) => `<li class="itinerary-item"><span class="itinerary-index">${index + 1}</span><span class="itinerary-details"><strong>${p.name}</strong><small>${p.area} · ${p.address}</small></span><strong class="itinerary-price">₱${p.price}</strong><button class="btn btn-sm" type="button" onclick="toggleItinerary('${p.id}')" aria-label="Remove ${p.name}">${iconSvg('close')}</button></li>`).join('') : `<li class="itinerary-empty font-hand"><span class="itinerary-empty-icon" aria-hidden="true">${iconSvg('sparkles')}</span><span>Your adventure bag is empty. Add a spot from the deck to start your day.</span></li>`;
-      document.getElementById('itineraryTotal').textContent = `₱${selected.reduce((total, p) => total + p.price, 0)}`;
+      list.innerHTML = selected.length ? selected.map((p, index) => {
+        const slot = itineraryTimeSlots[index] || { label: 'Flexible stop', time: 'Time TBD' };
+        return `<li class="itinerary-item"><div class="itinerary-time-row"><span class="itinerary-time-badge">${slot.label} · ${slot.time}</span><button class="btn btn-sm" type="button" onclick="toggleItinerary('${p.id}')" aria-label="Remove ${p.name}">${iconSvg('close')}</button></div><div class="itinerary-stop-heading"><strong>${p.name}</strong><strong class="itinerary-price">${priceLabel(p)}</strong></div><p class="itinerary-address">${p.address || p.area}</p><div class="itinerary-tags">${p.tags.map(tag => `<span class="badge rounded-pill text-bg-light border">${tag}</span>`).join('')}</div></li>${index < selected.length - 1 ? '<li class="route-connector" aria-hidden="true"><span>Continue to next stop</span></li>' : ''}`;
+      }).join('') : `<li class="itinerary-empty font-hand"><span class="itinerary-empty-icon" aria-hidden="true">${iconSvg('sparkles')}</span><span>Your adventure bag is empty. Add a spot from the deck to start your day.</span></li>`;
+      const total = selected.reduce((sum, p) => sum + (Number.isFinite(p.price) ? p.price : 0), 0);
+      const unknownPriceCount = selected.filter(p => !Number.isFinite(p.price)).length;
+      const overBudget = total > budget;
+      const percentage = budget > 0 ? Math.min((total / budget) * 100, 100) : (total > 0 ? 100 : 0);
+      const budgetMeter = document.querySelector('.itinerary-progress');
+      const budgetFill = document.getElementById('itineraryBudgetFill');
+      const routeButton = document.getElementById('itineraryRouteButton');
+      document.getElementById('itineraryTotal').textContent = itineraryTotalLabel(selected);
+      document.getElementById('itineraryStops').textContent = `${selected.length} ${selected.length === 1 ? 'spot' : 'spots'}`;
+      const lastSlot = itineraryTimeSlots[Math.min(selected.length - 1, itineraryTimeSlots.length - 1)];
+      const duration = selected.length === 0 ? 'No schedule yet'
+        : selected.length === 1 ? `Scheduled: ${itineraryTimeSlots[0].time}`
+          : selected.length > itineraryTimeSlots.length ? 'Flexible stops need a time'
+            : `Planned span: ${(lastSlot.minutes - itineraryTimeSlots[0].minutes) / 60} hours`;
+      document.getElementById('itineraryDuration').textContent = duration;
+      budgetFill.style.width = `${percentage}%`;
+      budgetFill.className = `progress-bar ${overBudget ? 'bg-danger' : 'bg-success'}`;
+      budgetMeter.setAttribute('aria-valuenow', String(Math.round(percentage)));
+      document.getElementById('itineraryBudgetStatus').textContent = unknownPriceCount
+        ? `${unknownPriceCount} stop${unknownPriceCount === 1 ? '' : 's'} budget to verify; subtotal covers priced stops only.`
+        : overBudget ? `₱${total - budget} over the selected budget.` : `₱${budget - total} remaining in the selected budget.`;
+      document.getElementById('downloadReceiptButton').disabled = selected.length === 0;
+      routeButton.classList.toggle('disabled', selected.length === 0);
+      routeButton.setAttribute('aria-disabled', String(selected.length === 0));
+      routeButton.href = selected.length ? itineraryRouteUrl(selected) : '#';
+    }
+    function itineraryRouteUrl(selected) {
+      const stops = selected.map(p => `${p.name}, ${p.address || p.area}`);
+      if (stops.length === 1) return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(stops[0])}`;
+      const route = new URLSearchParams({ api: '1', origin: stops[0], destination: stops[stops.length - 1], travelmode: 'walking' });
+      if (stops.length > 2) route.set('waypoints', stops.slice(1, -1).join('|'));
+      return `https://www.google.com/maps/dir/?${route.toString()}`;
+    }
+    function escapeXml(value) {
+      return String(value).replace(/[<>&\"]/g, char => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[char]));
+    }
+    function downloadReceipt() {
+      const selected = itinerary.map(id => places.find(p => p.id === id)).filter(Boolean);
+      if (!selected.length) return;
+      const total = itineraryTotalLabel(selected);
+      const height = 230 + selected.length * 88;
+      const rows = selected.map((p, index) => {
+        const slot = itineraryTimeSlots[index] || { label: 'Flexible stop', time: 'Time TBD' };
+        return `<g transform="translate(24 ${120 + index * 88})"><text x="42" y="-10" font-family="Arial" font-size="10" font-weight="700" letter-spacing="1">${escapeXml(`${slot.label} · ${slot.time}`.toUpperCase())}</text><text x="42" y="12" font-family="Arial" font-size="16" font-weight="700">${escapeXml(p.name)}</text><text x="42" y="32" font-family="Arial" font-size="12" fill="#555">${escapeXml(p.address || p.area)} · ${escapeXml(p.tags[0])}</text><text x="470" y="14" text-anchor="end" font-family="Arial" font-size="15" font-weight="700">${escapeXml(priceLabel(p))}</text><line x1="42" y1="50" x2="470" y2="50" stroke="#aaa" stroke-dasharray="3 4"/></g>`;
+      }).join('');
+      const totalY = 130 + selected.length * 88;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="520" height="${height}" viewBox="0 0 520 ${height}"><rect x="4" y="4" width="512" height="${height - 8}" rx="16" fill="#fffdf5" stroke="#1E1B18" stroke-width="3" stroke-dasharray="8 5"/><text x="24" y="42" font-family="Arial" font-size="13" font-weight="700" letter-spacing="2">SIDEQUEST! · DAY OUT</text><text x="24" y="76" font-family="Arial" font-size="25" font-weight="700">Your sidequest itinerary</text><line x1="24" y1="94" x2="496" y2="94" stroke="#1E1B18" stroke-width="2"/>${rows}<line x1="24" y1="${totalY - 16}" x2="496" y2="${totalY - 16}" stroke="#1E1B18" stroke-width="2"/><text x="24" y="${totalY + 12}" font-family="Arial" font-size="15" font-weight="700">TOTAL · ${selected.length} STOPS</text><text x="496" y="${totalY + 14}" text-anchor="end" font-family="Arial" font-size="22" font-weight="700">${escapeXml(total)}</text></svg>`;
+      const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'sidequest-itinerary.svg';
+      document.body.append(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
     function clearItinerary() { itinerary = []; localStorage.setItem('sidequestItinerary', JSON.stringify(itinerary)); render(); }
     function autoPlanDay() {
@@ -269,7 +355,17 @@
       drawer.setAttribute('aria-hidden', String(!open));
       document.querySelector('[aria-controls="savedDrawer"]').setAttribute('aria-expanded', String(open));
     }
-    function showDetails(id) { const p = places.find(x => x.id === id); const dialog = document.getElementById('detailsDialog'); const hero = p.photo ? `<img class="details-photo" src="${p.photo}" alt="${p.name} venue photo">` : `<div class="details-photo-placeholder" style="--photo-tone:${p.color}">${iconSvg(p.icon, 'art-icon')}<span>Venue photo</span></div>`; dialog.innerHTML = `<div class="details-art">${hero}<button class="btn btn-bento bg-white" aria-label="Close details" onclick="document.getElementById('detailsDialog').close()">${iconSvg('close')}</button></div><div class="p-4"><span class="badge bg-dark rounded-pill mb-2">${p.area} · ₱${p.price} est.</span><h2 id="detailsTitle" class="font-fredoka fw-bold">${p.name}</h2><p>${p.description}</p><p class="mb-1"><strong>Address:</strong> ${p.address}</p><div class="d-flex gap-1 flex-wrap mb-4">${p.tags.map(t => `<span class="badge rounded-pill text-bg-light border">${t}</span>`).join('')}</div><div class="d-flex gap-2 flex-wrap"><a class="btn btn-bento bg-info text-dark flex-grow-1" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name + ' ' + p.address)}" target="_blank" rel="noopener">Get directions ${iconSvg('arrow')}</a><button class="btn btn-bento ${saved.includes(p.id) ? 'bg-warning' : 'bg-light'}" onclick="toggleSave('${p.id}');showDetails('${p.id}')">${iconSvg('bookmark')} ${saved.includes(p.id) ? 'Saved' : 'Save spot'}</button><button class="btn btn-bento bg-light" aria-pressed="${itinerary.includes(p.id)}" onclick="toggleItinerary('${p.id}');showDetails('${p.id}')">${itinerary.includes(p.id) ? 'Added to plan' : '+ Add to plan'}</button></div></div>`; if (!dialog.open) dialog.showModal(); }
+    function showDetails(id) {
+      const p = places.find(x => x.id === id);
+      const dialog = document.getElementById('detailsDialog');
+      const inItinerary = itinerary.includes(p.id);
+      const hero = p.photo
+        ? `<img class="details-photo" src="${p.photo}" alt="${p.name} photo">${p.photoCredit ? `<small class="photo-credit">Photo: ${p.photoCredit}</small>` : ''}`
+        : `<div class="details-photo-placeholder" style="--photo-tone:${p.color}">${iconSvg(p.icon, 'art-icon')}<span>Photo slot</span></div>`;
+      const location = p.address || p.area;
+      dialog.innerHTML = `<div class="details-art">${hero}<button class="btn btn-bento bg-white" aria-label="Close details" onclick="document.getElementById('detailsDialog').close()">${iconSvg('close')}</button></div><div class="p-4"><span class="badge bg-dark rounded-pill mb-2">${p.area} · ${priceLabel(p)}${Number.isFinite(p.price) ? ' est.' : ''}</span><h2 id="detailsTitle" class="font-fredoka fw-bold">${p.name}</h2><p>${p.description}</p><p class="mb-1"><strong>${p.address ? 'Address' : 'Area'}:</strong> ${location}</p><div class="d-flex gap-1 flex-wrap mb-4">${p.tags.map(t => `<span class="badge rounded-pill text-bg-light border">${t}</span>`).join('')}</div><div class="d-flex gap-2 flex-wrap"><a class="btn btn-bento bg-info text-dark flex-grow-1" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name + ' ' + location)}" target="_blank" rel="noopener">${p.address ? 'Get directions' : 'Find on Google Maps'} ${iconSvg('arrow')}</a><button class="btn btn-bento ${saved.includes(p.id) ? 'bg-warning' : 'bg-light'}" onclick="toggleSave('${p.id}');showDetails('${p.id}')">${iconSvg('bookmark')} ${saved.includes(p.id) ? 'Saved' : 'Save spot'}</button><button class="btn btn-add-plan btn-bento ${inItinerary ? 'is-added' : ''}" aria-pressed="${inItinerary}" onclick="toggleItinerary('${p.id}');showDetails('${p.id}')">${inItinerary ? `${iconSvg('check')} Added to plan` : '+ Add to plan'}</button></div></div>`;
+      if (!dialog.open) dialog.showModal();
+    }
     function openMap() { document.getElementById('mapZoom').value = 100; document.getElementById('mapZoomValue').textContent = '100%'; document.getElementById('largeMap').style.width = '100%'; document.getElementById('mapDialog').showModal(); }
     function clearFilters() { searchTerm = ''; activeCategory = ''; budget = 1000; document.getElementById('searchInput').value = ''; document.getElementById('budgetRange').value = '1000'; document.getElementById('budgetValue').textContent = '1000'; document.querySelectorAll('.category-filter').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); }); const allCategoryButton = document.querySelector('.category-filter[data-category=""]'); allCategoryButton.classList.add('active'); allCategoryButton.setAttribute('aria-pressed', 'true'); render(); }
     function completeQuest() { if (document.getElementById('completeQuestBtn').disabled) return; questCount++; localStorage.setItem('sidequestQuestCount', questCount); document.getElementById('completeQuestBtn').textContent = 'Quest completed'; document.getElementById('completeQuestBtn').disabled = true; render(); }
@@ -280,7 +376,7 @@
       envelope.classList.remove('reveal');
       void envelope.offsetWidth;
       envelope.classList.add('reveal');
-      const p = matches[Math.floor(Math.random() * matches.length)]; currentQuest = `Visit ${p.name} and try something new!`; document.getElementById('featuredQuest').textContent = currentQuest; document.getElementById('questDescription').textContent = `Your sidequest: explore ${p.area} and enjoy a stop at ${p.name}. Estimated spend: ₱${p.price}.`; document.getElementById('surpriseResult').textContent = currentQuest; document.getElementById('completeQuestBtn').textContent = 'Complete Quest'; document.getElementById('completeQuestBtn').disabled = false;
+      const p = matches[Math.floor(Math.random() * matches.length)]; currentQuest = `Visit ${p.name} and try something new!`; document.getElementById('featuredQuest').textContent = currentQuest; document.getElementById('questDescription').textContent = `Your sidequest: explore ${p.area} and enjoy a stop at ${p.name}. Budget: ${priceLabel(p)}.`; document.getElementById('surpriseResult').textContent = currentQuest; document.getElementById('completeQuestBtn').textContent = 'Complete Quest'; document.getElementById('completeQuestBtn').disabled = false;
     }
     let checklistState = {};
     try { checklistState = JSON.parse(localStorage.getItem('sidequestChecklist') || '{}') || {}; } catch (error) { checklistState = {}; }

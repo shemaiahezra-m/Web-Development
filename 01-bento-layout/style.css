@@ -122,7 +122,9 @@ body {
 }
 
 .destination-art {
+  height: 120px;
   min-height: 120px;
+  flex: 0 0 120px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -169,6 +171,20 @@ body {
   letter-spacing: .04em;
 }
 
+.photo-credit {
+  position: absolute;
+  bottom: .45rem;
+  left: .55rem;
+  z-index: 1;
+  padding: .15rem .35rem;
+  border: 1px solid var(--border-dark);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 88%);
+  color: var(--border-dark);
+  font-size: .58rem;
+  font-weight: 700;
+}
+
 .destination-card {
   display: flex;
   flex-direction: column;
@@ -200,6 +216,29 @@ body {
   padding: .3rem .45rem;
   font-size: .78rem;
   line-height: 1.2;
+  white-space: nowrap;
+}
+
+.btn-add-plan {
+  border: 2px solid var(--border-dark);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--border-dark);
+  font-weight: 700;
+  box-shadow: 2px 2px 0 var(--border-dark);
+  transition: background-color .18s ease, color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.btn-add-plan.is-added {
+  background: var(--border-dark);
+  color: #fff;
+  box-shadow: none;
+  transform: translateY(2px);
+}
+
+.btn-add-plan.is-added:hover {
+  background: #343039;
+  color: #fff;
 }
 
 .amenity-list {
@@ -409,38 +448,45 @@ body {
 }
 
 .itinerary-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: .35rem .65rem;
+  padding: .65rem .75rem;
+  border: 1.5px solid rgb(30 27 24 / 28%);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 2px 2px 0 rgb(30 27 24 / 18%);
+}
+
+.itinerary-time-row,
+.itinerary-stop-heading,
+.itinerary-address,
+.itinerary-tags {
+  grid-column: 1 / -1;
+}
+
+.itinerary-time-row,
+.itinerary-stop-heading,
+.itinerary-tags {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: .65rem .75rem;
-  border-bottom: 1px dashed #9ca3af;
+  gap: .5rem;
 }
 
-.itinerary-item span {
-  display: grid;
-  gap: .1rem;
-}
-
-.itinerary-index {
-  display: grid !important;
-  flex: 0 0 1.65rem;
-  width: 1.65rem;
-  height: 1.65rem;
-  place-items: center;
+.itinerary-time-badge {
+  padding: .25rem .55rem;
   border: 1.5px solid var(--border-dark);
-  border-radius: 50%;
-  background: var(--yellow-pastel);
-  font: 700 .8rem/1 'Fredoka', sans-serif;
+  border-radius: 999px;
+  background: #212529;
+  color: #fff;
+  font: 700 .66rem/1.2 'Fredoka', sans-serif;
+  letter-spacing: .035em;
+  text-transform: uppercase;
 }
 
-.itinerary-details {
-  flex: 1;
-  min-width: 0;
-}
-
-.itinerary-details small {
-  overflow-wrap: anywhere;
+.itinerary-stop-heading {
+  font-family: 'Fredoka', sans-serif;
 }
 
 .itinerary-price {
@@ -448,13 +494,15 @@ body {
   font-family: 'Fredoka', sans-serif;
 }
 
-.itinerary-item small {
-  color: #6b7280;
+.itinerary-address {
+  margin: 0;
+  color: #5b6470;
+  font-size: .78rem;
+  overflow-wrap: anywhere;
 }
 
 .itinerary-item button {
   display: grid;
-  flex: 0 0 2rem;
   width: 2rem;
   height: 2rem;
   place-items: center;
@@ -467,6 +515,56 @@ body {
 .itinerary-item button .ui-icon {
   width: .9rem;
   height: .9rem;
+}
+
+.route-connector {
+  display: grid;
+  grid-template-columns: .5rem 1fr;
+  column-gap: .6rem;
+  min-height: 1rem;
+  margin-left: 1.4rem;
+  color: #5b6470;
+  font-size: .72rem;
+}
+
+.route-connector::before {
+  content: "";
+  justify-self: center;
+  border-left: 2px dashed #6b7280;
+}
+
+.route-connector span {
+  align-self: center;
+}
+
+.itinerary-progress {
+  height: .7rem;
+  overflow: hidden;
+  border: 1.5px solid var(--border-dark);
+  border-radius: 999px;
+  background: #fff;
+}
+
+.itinerary-progress .progress-bar {
+  transition: width .3s ease, background-color .2s ease;
+}
+
+.itinerary-route-summary {
+  flex-wrap: wrap;
+  gap: .35rem .75rem;
+  border-color: rgb(30 27 24 / 38%) !important;
+  font-size: .88rem;
+}
+
+.route-provider-note {
+  width: 100%;
+  color: #5b6470;
+  font-size: .75rem;
+}
+
+.itinerary-summary + .d-grid .btn.disabled {
+  pointer-events: none;
+  opacity: .55;
 }
 
 .itinerary-empty {
