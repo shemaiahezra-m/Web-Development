@@ -122,9 +122,9 @@ body {
 }
 
 .destination-art {
-  height: 120px;
-  min-height: 120px;
-  flex: 0 0 120px;
+  height: 110px;
+  min-height: 110px;
+  flex: 0 0 110px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -188,12 +188,10 @@ body {
 .destination-card {
   display: flex;
   flex-direction: column;
-  min-height: 420px;
 }
 
 .destination-card-body {
   display: flex;
-  flex: 1;
   flex-direction: column;
 }
 
@@ -252,16 +250,6 @@ body {
   top: .65rem;
   right: .65rem;
   z-index: 1;
-}
-
-.destination-featured .destination-art {
-  min-height: 120px;
-}
-
-@media (max-width: 767.98px) {
-  .destination-card {
-    min-height: 0;
-  }
 }
 
 .destination-featured .art-icon {
