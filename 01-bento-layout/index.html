@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sidequest! — Playful Bento Adventure Guide</title>
   
-  <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Patrick+Hand&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet" />
@@ -16,12 +15,12 @@
   <div class="container-fluid dashboard-shell">
     
     <!-- HEADER -->
-    <header class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-2 border-dark">
+    <header class="dashboard-header d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4 pb-2 border-bottom border-2 border-dark">
       <div>
         <h1 class="font-fredoka fw-bold text-danger m-0 fs-2">sidequest<span class="text-warning">!</span></h1>
         <p class="font-hand text-muted m-0 fs-5">Your playful Metro South adventure guide</p>
       </div>
-      <button class="btn btn-bento bg-warning font-fredoka px-3 py-2" onclick="toggleSaved()">
+      <button class="btn btn-bento bg-warning text-dark font-fredoka px-3 py-2" onclick="toggleSaved()">
         <svg class="ui-icon me-1" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-3.5L6 21z"/><path d="m15.5 7.5 .5 1 1.1.2-.8.8.2 1.1-1-.5-1 .5.2-1.1-.8-.8 1.1-.2z"/></svg> Saved Spots (<span id="saved-count">0</span>)
       </button>
     </header>
@@ -32,7 +31,7 @@
         <div class="bento-card location-strip flex-wrap px-3 py-2 bg-white">
           <span class="neighborhood-label">NEIGHBORHOOD</span>
           <div class="d-flex justify-content-center gap-2 flex-wrap">
-            <button id="btn-makati" class="btn btn-bento bg-info text-white px-4 py-2" aria-pressed="true" onclick="switchLoc('makati')">Makati (Legazpi)</button>
+            <button id="btn-makati" class="btn btn-bento bg-info text-dark px-4 py-2" aria-pressed="true" onclick="switchLoc('makati')">Makati (Legazpi)</button>
             <button id="btn-alabang" class="btn btn-bento bg-light px-4 py-2" aria-pressed="false" onclick="switchLoc('alabang')">Alabang (Molito)</button>
             <button id="btn-bf" class="btn btn-bento bg-light px-4 py-2" aria-pressed="false" onclick="switchLoc('bf')">BF Homes (Aguirre)</button>
           </div>
@@ -122,10 +121,10 @@
       <div class="col-12 col-md-12 col-lg-4">
         <div class="bento-card p-4 tilt-slight" style="background-color: #FEE2E2;">
           <h4 class="font-fredoka fw-bold mb-2"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5h6M8.5 10h7M8.5 14h7M8.5 18h4"/></svg> Explorer Checklist</h4>
-          <ul class="list-unstyled font-hand fs-5 m-0">
-            <li class="mb-1"><input type="checkbox" checked class="me-2" /> Visit a park for a 20-min breather</li>
-            <li class="mb-1"><input type="checkbox" class="me-2" /> Try ceremonial matcha at Aguirre</li>
-            <li class="mb-1"><input type="checkbox" class="me-2" /> Work-from-cafe session at Molito</li>
+          <ul id="explorerChecklist" class="list-unstyled font-hand fs-5 m-0">
+            <li class="mb-1"><input id="check-park" data-checklist-key="park" type="checkbox" class="me-2" /><label for="check-park">Visit a park for a 20-min breather</label></li>
+            <li class="mb-1"><input id="check-matcha" data-checklist-key="matcha" type="checkbox" class="me-2" /><label for="check-matcha">Try ceremonial matcha at Aguirre</label></li>
+            <li class="mb-1"><input id="check-cafe" data-checklist-key="cafe" type="checkbox" class="me-2" /><label for="check-cafe">Work-from-cafe session at Molito</label></li>
           </ul>
         </div>
       </div>
@@ -140,7 +139,7 @@
         <div><span class="badge bg-dark rounded-pill mb-2">04 / DESTINATION DECK</span><h2 id="destinationsHeading" class="font-fredoka fw-bold m-0">Find your next favorite</h2></div>
         <button id="clearFilters" class="btn btn-bento bg-light px-3 py-2" type="button">Clear filters</button>
       </div>
-      <div class="d-flex gap-2 flex-wrap mb-3" id="categoryFilters" aria-label="Filter by category"></div>
+      <div class="d-flex gap-2 flex-wrap mb-3" id="categoryFilters" role="group" aria-label="Filter destinations by category"></div>
       <p id="resultSummary" class="text-muted small mb-3" aria-live="polite"></p>
       <div id="destinationList" class="row g-4"></div>
       <div id="emptyState" class="text-center py-4 d-none"><div class="empty-icon"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg></div><h3 class="font-fredoka">No quests found!</h3><p>Try another budget or clear your filters.</p><button class="btn btn-bento bg-warning px-3 py-2" onclick="clearFilters()">Clear filters</button></div>
@@ -182,16 +181,9 @@
 
     function switchLoc(loc) {
       activeLoc=loc;
-      const titles = {
-        makati: "Makati Neighborhood Guide (Legazpi)",
-        alabang: "Alabang Cafe Guide (Molito)",
-        bf: "BF Homes Guide (Aguirre Ave)"
-      };
-      document.getElementById('locTitle').innerText = titles[loc] || "Neighborhood Map";
-
-      document.getElementById('btn-makati').className = loc === 'makati' ? 'btn btn-bento bg-info text-white px-4 py-2' : 'btn btn-bento bg-light px-4 py-2';
-      document.getElementById('btn-alabang').className = loc === 'alabang' ? 'btn btn-bento bg-info text-white px-4 py-2' : 'btn btn-bento bg-light px-4 py-2';
-      document.getElementById('btn-bf').className = loc === 'bf' ? 'btn btn-bento bg-info text-white px-4 py-2' : 'btn btn-bento bg-light px-4 py-2';
+      document.getElementById('btn-makati').className = loc === 'makati' ? 'btn btn-bento bg-info text-dark px-4 py-2' : 'btn btn-bento bg-light px-4 py-2';
+      document.getElementById('btn-alabang').className = loc === 'alabang' ? 'btn btn-bento bg-info text-dark px-4 py-2' : 'btn btn-bento bg-light px-4 py-2';
+      document.getElementById('btn-bf').className = loc === 'bf' ? 'btn btn-bento bg-info text-dark px-4 py-2' : 'btn btn-bento bg-light px-4 py-2';
       document.getElementById('btn-makati').setAttribute('aria-pressed',loc==='makati');
       document.getElementById('btn-alabang').setAttribute('aria-pressed',loc==='alabang');
       document.getElementById('btn-bf').setAttribute('aria-pressed',loc==='bf');
@@ -206,12 +198,8 @@
         tree:'<path d="M12 22v-6M9 22h6M12 2 5 11h4l-5 6h16l-5-6h4z"/>',
         pin:'<path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
         bookmark:'<path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-3.5L6 21z"/>',
-        heart:'<path d="M20.8 8.6c0 5.2-8.8 10.2-8.8 10.2S3.2 13.8 3.2 8.6A4.6 4.6 0 0 1 12 6.4a4.6 4.6 0 0 1 8.8 2.2Z"/>',
         arrow:'<path d="M7 17 17 7M7 7h10v10"/>',
-        close:'<path d="m6 6 12 12M18 6 6 18"/>',
-        target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="m16 8 5-5"/>',
-        compass:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
-        search:'<circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/>'
+        close:'<path d="m6 6 12 12M18 6 6 18"/>'
       };
       return `<svg class="${className}" aria-hidden="true" viewBox="0 0 24 24">${paths[name] || paths.sparkles}</svg>`;
     }
@@ -220,7 +208,7 @@
     }
     function placeCard(p) {
       const isSaved=saved.includes(p.id);
-      return `<div class="col-12 col-md-6 col-lg-4"><article class="bento-card h-100 overflow-hidden"><div class="destination-art" style="background:${p.color}" aria-hidden="true"><span class="destination-art-icon">${iconSvg(p.icon,'art-icon')}</span><span class="place-category">${p.tags[0]}</span><button class="save-art-btn btn btn-bento ${isSaved?'bg-warning':'bg-white'}" aria-label="${isSaved?'Remove saved spot':'Save spot'}" title="${isSaved?'Remove saved spot':'Save spot'}" onclick="toggleSave('${p.id}')">${iconSvg('bookmark')}</button></div><div class="p-3"><div class="d-flex justify-content-between gap-2"><h3 class="font-fredoka fw-bold fs-4">${p.name}</h3><span class="badge text-bg-light align-self-start">₱${p.price}</span></div><p class="small text-muted mb-2">${iconSvg('pin','ui-icon ui-icon-small')} ${p.area} · ${p.address}</p><div class="d-flex gap-1 flex-wrap mb-3">${p.tags.map(t=>`<span class="badge rounded-pill text-bg-light border">${t}</span>`).join('')}</div><button class="btn btn-bento bg-info text-white w-100" onclick="showDetails('${p.id}')">View details ${iconSvg('arrow')}</button></div></article></div>`;
+      return `<div class="col-12 col-md-6 col-lg-4"><article class="bento-card h-100 overflow-hidden"><div class="destination-art" style="background:${p.color}" aria-hidden="true"><span class="destination-art-icon">${iconSvg(p.icon,'art-icon')}</span><span class="place-category">${p.tags[0]}</span><button class="save-art-btn btn btn-bento ${isSaved?'bg-warning':'bg-white'}" aria-label="${isSaved?'Remove saved spot':'Save spot'}" title="${isSaved?'Remove saved spot':'Save spot'}" onclick="toggleSave('${p.id}')">${iconSvg('bookmark')}</button></div><div class="p-3"><div class="d-flex justify-content-between gap-2"><h3 class="font-fredoka fw-bold fs-4">${p.name}</h3><span class="badge text-bg-light align-self-start">₱${p.price}</span></div><p class="small text-muted mb-2">${iconSvg('pin','ui-icon ui-icon-small')} ${p.area} · ${p.address}</p><div class="d-flex gap-1 flex-wrap mb-3">${p.tags.map(t=>`<span class="badge rounded-pill text-bg-light border">${t}</span>`).join('')}</div><button class="btn btn-bento bg-info text-dark w-100" onclick="showDetails('${p.id}')">View details ${iconSvg('arrow')}</button></div></article></div>`;
     }
     function render() {
       const list=filteredPlaces();
@@ -241,15 +229,22 @@
     }
     function toggleSave(id){saved=saved.includes(id)?saved.filter(x=>x!==id):[...saved,id];localStorage.setItem('sidequestSaved',JSON.stringify(saved));render();}
     function toggleSaved(){document.getElementById('savedSection').classList.toggle('d-none');document.getElementById('savedSection').scrollIntoView({behavior:'smooth',block:'nearest'});}
-    function showDetails(id){const p=places.find(x=>x.id===id);const dialog=document.getElementById('detailsDialog');dialog.innerHTML=`<div class="details-art" style="background:${p.color}"><span>${iconSvg(p.icon,'art-icon')}</span><button class="btn btn-bento bg-white" aria-label="Close details" onclick="document.getElementById('detailsDialog').close()">${iconSvg('close')}</button></div><div class="p-4"><span class="badge bg-dark rounded-pill mb-2">${p.area} · ₱${p.price} est.</span><h2 id="detailsTitle" class="font-fredoka fw-bold">${p.name}</h2><p>${p.description}</p><p class="mb-1"><strong>Address:</strong> ${p.address}</p><div class="d-flex gap-1 flex-wrap mb-4">${p.tags.map(t=>`<span class="badge rounded-pill text-bg-light border">${t}</span>`).join('')}</div><div class="d-flex gap-2 flex-wrap"><a class="btn btn-bento bg-info text-white flex-grow-1" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name+' '+p.address)}" target="_blank" rel="noopener">Get directions ${iconSvg('arrow')}</a><button class="btn btn-bento ${saved.includes(p.id)?'bg-warning':'bg-light'}" onclick="toggleSave('${p.id}');showDetails('${p.id}')">${iconSvg('bookmark')} ${saved.includes(p.id)?'Saved':'Save spot'}</button></div></div>`;dialog.showModal();}
+    function showDetails(id){const p=places.find(x=>x.id===id);const dialog=document.getElementById('detailsDialog');dialog.innerHTML=`<div class="details-art" style="background:${p.color}"><span>${iconSvg(p.icon,'art-icon')}</span><button class="btn btn-bento bg-white" aria-label="Close details" onclick="document.getElementById('detailsDialog').close()">${iconSvg('close')}</button></div><div class="p-4"><span class="badge bg-dark rounded-pill mb-2">${p.area} · ₱${p.price} est.</span><h2 id="detailsTitle" class="font-fredoka fw-bold">${p.name}</h2><p>${p.description}</p><p class="mb-1"><strong>Address:</strong> ${p.address}</p><div class="d-flex gap-1 flex-wrap mb-4">${p.tags.map(t=>`<span class="badge rounded-pill text-bg-light border">${t}</span>`).join('')}</div><div class="d-flex gap-2 flex-wrap"><a class="btn btn-bento bg-info text-dark flex-grow-1" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name+' '+p.address)}" target="_blank" rel="noopener">Get directions ${iconSvg('arrow')}</a><button class="btn btn-bento ${saved.includes(p.id)?'bg-warning':'bg-light'}" onclick="toggleSave('${p.id}');showDetails('${p.id}')">${iconSvg('bookmark')} ${saved.includes(p.id)?'Saved':'Save spot'}</button></div></div>`;dialog.showModal();}
     function openMap(){document.getElementById('mapZoom').value=100;document.getElementById('mapZoomValue').textContent='100%';document.getElementById('largeMap').style.width='100%';document.getElementById('mapDialog').showModal();}
-    function clearFilters(){searchTerm='';activeCategory='';budget=1000;document.getElementById('searchInput').value='';document.getElementById('budgetRange').value='1000';document.getElementById('budgetValue').textContent='1000';document.querySelectorAll('.category-filter').forEach(b=>b.classList.remove('active'));render();}
+    function clearFilters(){searchTerm='';activeCategory='';budget=1000;document.getElementById('searchInput').value='';document.getElementById('budgetRange').value='1000';document.getElementById('budgetValue').textContent='1000';document.querySelectorAll('.category-filter').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-pressed','false');});const allCategoryButton=document.querySelector('.category-filter[data-category=""]');allCategoryButton.classList.add('active');allCategoryButton.setAttribute('aria-pressed','true');render();}
     function completeQuest(){if(document.getElementById('completeQuestBtn').disabled)return;questCount++;localStorage.setItem('sidequestQuestCount',questCount);document.getElementById('completeQuestBtn').textContent='✓ Quest completed!';document.getElementById('completeQuestBtn').disabled=true;render();}
     function resetQuests(){questCount=0;localStorage.setItem('sidequestQuestCount','0');document.getElementById('completeQuestBtn').textContent='✓ Complete Quest';document.getElementById('completeQuestBtn').disabled=false;render();}
     function rollQuest() {
       const matches=filteredPlaces();if(!matches.length){document.getElementById('surpriseResult').textContent='No destinations match these filters yet. Clear filters to roll again.';return;}
       const p=matches[Math.floor(Math.random()*matches.length)];currentQuest=`Visit ${p.name} and try something new!`;document.getElementById('featuredQuest').textContent=currentQuest;document.getElementById('questDescription').textContent=`Your sidequest: explore ${p.area} and enjoy a stop at ${p.name}. Estimated spend: ₱${p.price}.`;document.getElementById('surpriseResult').textContent=currentQuest;document.getElementById('completeQuestBtn').textContent='✓ Complete Quest';document.getElementById('completeQuestBtn').disabled=false;
     }
+    let checklistState={};
+    try { checklistState=JSON.parse(localStorage.getItem('sidequestChecklist') || '{}') || {}; } catch (error) { checklistState={}; }
+    document.querySelectorAll('[data-checklist-key]').forEach(input=>{
+      const key=input.dataset.checklistKey;
+      input.checked=checklistState[key]===true;
+      input.addEventListener('change',()=>{checklistState[key]=input.checked;localStorage.setItem('sidequestChecklist',JSON.stringify(checklistState));});
+    });
     document.getElementById('searchInput').addEventListener('input',e=>{searchTerm=e.target.value.trim().toLowerCase();render();});
     document.getElementById('budgetRange').addEventListener('input',e=>{budget=Number(e.target.value);document.getElementById('budgetValue').textContent=budget;render();});
     document.getElementById('clearFilters').addEventListener('click',clearFilters);
@@ -258,8 +253,8 @@
     mapCanvas.addEventListener('pointerdown',e=>{mapDrag={x:e.clientX,y:e.clientY,left:mapCanvas.scrollLeft,top:mapCanvas.scrollTop};mapCanvas.setPointerCapture(e.pointerId);});
     mapCanvas.addEventListener('pointermove',e=>{if(!mapDrag)return;mapCanvas.scrollLeft=mapDrag.left-(e.clientX-mapDrag.x);mapCanvas.scrollTop=mapDrag.top-(e.clientY-mapDrag.y);});
     const endMapDrag=()=>{mapDrag=null;};mapCanvas.addEventListener('pointerup',endMapDrag);mapCanvas.addEventListener('pointercancel',endMapDrag);
-    document.getElementById('categoryFilters').innerHTML=`<button type="button" class="btn btn-bento bg-light category-filter active" data-category="">All</button>`+categories.map(c=>`<button type="button" class="btn btn-bento bg-light category-filter" data-category="${c}">${c}</button>`).join('');
-    document.getElementById('categoryFilters').addEventListener('click',e=>{const b=e.target.closest('[data-category]');if(!b)return;activeCategory=b.dataset.category;document.querySelectorAll('.category-filter').forEach(x=>x.classList.toggle('active',x===b));render();});
+    document.getElementById('categoryFilters').innerHTML=`<button type="button" class="btn btn-bento bg-light category-filter active" data-category="" aria-pressed="true">All</button>`+categories.map(c=>`<button type="button" class="btn btn-bento bg-light category-filter" data-category="${c}" aria-pressed="false">${c}</button>`).join('');
+    document.getElementById('categoryFilters').addEventListener('click',e=>{const b=e.target.closest('[data-category]');if(!b)return;activeCategory=b.dataset.category;document.querySelectorAll('.category-filter').forEach(x=>{const selected=x===b;x.classList.toggle('active',selected);x.setAttribute('aria-pressed',selected);});render();});
     render();
   </script>
 </body>

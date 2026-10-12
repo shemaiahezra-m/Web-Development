@@ -10,6 +10,8 @@
 }
 
 body {
+  margin: 0;
+  padding-block: 24px;
   background-color: var(--bg-cream);
   color: var(--border-dark);
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -20,25 +22,25 @@ body {
 .font-hand { font-family: 'Patrick Hand', cursive; }
 .font-fredoka { font-family: 'Fredoka', sans-serif; }
 
-/* --- PLAYFUL ASYMMETRICAL BENTO CARD STYLES --- */
+/* Bento Card Styles */
 .bento-card {
   background: var(--card-bg);
   border: 2.5px solid var(--border-dark);
   border-radius: 22px;
   box-shadow: 4px 5px 0px var(--border-dark);
-  transition: all 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
   position: relative;
 }
 
-.bento-card:hover {
-  transform: translateY(-5px) scale(1.01) !important;
-  box-shadow: 8px 10px 0px var(--border-dark);
+.bento-card:is(article, .tilt-left, .tilt-right, .tilt-slight):hover {
+  transform: translateY(-4px) scale(1.01) rotate(var(--card-rotation, 0deg));
+  box-shadow: 6px 7px 0px var(--border-dark);
 }
 
-/* Asymmetrical Rotations & Scrapbook Tilts */
-.tilt-left { transform: rotate(-1.8deg); }
-.tilt-right { transform: rotate(1.5deg); }
-.tilt-slight { transform: rotate(-0.8deg); }
+/* Rotations & Scrapbook Tilts */
+.tilt-left { --card-rotation: -1.8deg; transform: rotate(var(--card-rotation)); }
+.tilt-right { --card-rotation: 1.5deg; transform: rotate(var(--card-rotation)); }
+.tilt-slight { --card-rotation: -0.8deg; transform: rotate(var(--card-rotation)); }
 
 .tape-accent {
   position: absolute;
@@ -64,14 +66,11 @@ body {
   transform: translate(-1px, -1px);
   box-shadow: 4px 5px 0px var(--border-dark);
 }
+.btn-bento:focus-visible {
+  outline: 3px solid var(--border-dark);
+  outline-offset: 3px;
+}
 
-.map-pin {
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-.map-pin:hover {
-  transform: scale(1.3);
-}
 .category-filter.active { background:#212529!important; color:#fff!important; }
 
 .location-strip {
@@ -79,23 +78,11 @@ body {
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  transform: none;
 }
 
 .map-hint {
   color: #343039;
   font-weight: 600;
-}
-
-.map-pin {
-  transform-box: fill-box;
-  transform-origin: center;
-}
-.map-pin:hover,
-.map-pin:focus-visible {
-  transform: scale(1.15);
-  outline: none;
-  filter: drop-shadow(0 2px 2px #1e1b1880);
 }
 
 .budget-value {
@@ -121,11 +108,11 @@ body {
 
 .destination-art {
   min-height: 92px;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   position: relative;
-  font-size: 4.25rem;
-  line-height: 1;
+  padding: .75rem 4.25rem .75rem 1rem;
   border-bottom: 2px solid var(--border-dark);
 }
 .save-art-btn {
@@ -158,7 +145,6 @@ body {
   justify-content: center;
   position: relative;
   border-bottom: 2px solid var(--border-dark);
-  font-size: 4.5rem;
 }
 .details-art button {
   position: absolute;
@@ -211,6 +197,8 @@ body {
   overflow: auto;
   text-align: center;
   cursor: grab;
+  touch-action: none;
+  user-select: none;
 }
 .map-canvas:active { cursor: grabbing; }
 .map-canvas img {
@@ -218,19 +206,13 @@ body {
   width: 100%;
   height: auto;
   margin: 0 auto;
-  transform-origin: top left;
+  pointer-events: none;
 }
-.map-canvas { touch-action: none; user-select: none; }
-.map-canvas img { pointer-events: none; }
 
-body {
-  margin: 0;
-  padding-block: 24px;
-}
 .dashboard-shell {
   width: 100%;
   max-width: 1264px;
-  padding-inline: 32px;
+  padding-inline: clamp(16px, 3vw, 32px);
   margin-inline: auto;
 }
 .neighborhood-label {
@@ -260,13 +242,6 @@ body {
   stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-.destination-art {
-  min-height: 92px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: .75rem 4.25rem .75rem 1rem;
 }
 .destination-art-icon { display: grid; place-items: center; }
 .place-category {
