@@ -36,15 +36,17 @@
     <!-- LOCATION SELECTOR STRIP -->
     <div class="row g-4 mb-4">
       <div class="col-12">
-        <div class="bento-card location-strip flex-wrap px-3 py-2 bg-white">
-          <span class="neighborhood-label">NEIGHBORHOOD</span>
-          <div class="d-flex justify-content-center gap-2 flex-wrap">
-            <button id="btn-makati" class="btn btn-bento bg-info text-dark px-4 py-2" aria-pressed="true"
-              onclick="switchLoc('makati')">Makati (Legazpi)</button>
-            <button id="btn-alabang" class="btn btn-bento bg-light px-4 py-2" aria-pressed="false"
-              onclick="switchLoc('alabang')">Alabang (Molito)</button>
-            <button id="btn-bf" class="btn btn-bento bg-light px-4 py-2" aria-pressed="false"
-              onclick="switchLoc('bf')">BF Homes (Aguirre)</button>
+        <div class="bento-card px-3 py-2 bg-white">
+          <div class="row g-2 align-items-center">
+            <div class="col-12 col-xl-auto"><span class="neighborhood-label">NEIGHBORHOOD</span></div>
+            <div class="col-12 col-xl">
+              <div class="d-flex justify-content-start justify-content-xl-center gap-2 flex-wrap">
+                <button id="btn-makati" class="btn btn-bento bg-info text-dark px-3 py-2" aria-pressed="true" onclick="switchLoc('makati')">Makati (Legazpi)</button>
+                <button id="btn-alabang" class="btn btn-bento bg-light px-3 py-2" aria-pressed="false" onclick="switchLoc('alabang')">Alabang (Molito)</button>
+                <button id="btn-bf" class="btn btn-bento bg-light px-3 py-2" aria-pressed="false" onclick="switchLoc('bf')">BF Homes (Aguirre)</button>
+              </div>
+            </div>
+            <div class="col-12 col-xl-3"><input id="searchInput" type="search" class="form-control rounded-pill border-2 border-dark" placeholder="Search destinations..." aria-label="Search destinations" /></div>
           </div>
         </div>
       </div>
@@ -52,17 +54,16 @@
 
   </div>
   <main class="container-fluid dashboard-shell">
-    <!-- FEATURE ROW: MAP ANCHOR WITH DISCOVERY RAIL -->
+    <!-- FEATURE ROW: DISCOVERY ON THE LEFT, MAP ON THE RIGHT -->
     <div class="row g-4 mb-4">
-      <aside class="col-12 col-lg-4 order-1 order-lg-2">
+      <aside class="col-12 col-lg-5">
         <div class="row g-4">
           <div class="col-12">
             <section class="bento-card p-4 h-100 tilt-left" style="background-color: var(--pink-pastel);" aria-labelledby="discoverHeading">
               <div class="tape-accent"></div>
               <span class="badge bg-dark text-white rounded-pill px-3 py-1 font-fredoka mb-3">01 / DISCOVER</span>
               <h2 id="discoverHeading" class="font-fredoka fw-bold fs-1 lh-sm text-dark mb-3">Same city. <br><span class="text-primary">New quests.</span></h2>
-              <p class="font-hand fs-5 mb-4 text-dark">Skip the routine mall trips! Discover outdoor parks, quiet coffee nooks, and hidden gems around Metro South.</p>
-              <input id="searchInput" type="search" class="form-control rounded-pill border-2 border-dark" placeholder="Search spots..." aria-label="Search destinations" />
+              <p class="font-hand fs-5 mb-3 text-dark">Skip the routine mall trips! Discover outdoor parks, quiet coffee nooks, and hidden gems around Metro South.</p>
             </section>
           </div>
           <div class="col-12">
@@ -76,7 +77,7 @@
         </div>
       </aside>
 
-      <div class="col-12 col-lg-8 order-2 order-lg-1">
+      <div class="col-12 col-lg-7">
         <section class="bento-card map-anchor p-4 h-100 tilt-right" style="background-color: var(--lavender-pastel);" aria-labelledby="locTitle">
           <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
             <span class="badge bg-dark text-white rounded-pill px-3 py-1 font-fredoka">02 / MAP EXPLORER</span>
@@ -94,53 +95,59 @@
 
     <section class="destination-section mb-4" aria-labelledby="destinationsHeading">
       <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-3">
-        <div><span class="badge bg-dark rounded-pill mb-2">03 / DESTINATION DECK</span><h2 id="destinationsHeading" class="font-fredoka fw-bold m-0">Find your next favorite</h2></div>
+        <div><span class="badge bg-dark rounded-pill mb-2">03 / SPOTS DECK</span><h2 id="destinationsHeading" class="font-fredoka fw-bold m-0">Find your next favorite</h2></div>
         <button id="clearFilters" class="btn btn-bento bg-light px-3 py-2" type="button">Clear filters</button>
       </div>
-      <div class="d-flex gap-2 flex-wrap mb-3" id="categoryFilters" role="group" aria-label="Filter destinations by category"></div>
+      <div id="categoryFilters" class="d-flex gap-2 flex-wrap mb-3" role="group" aria-label="Filter destinations by category"></div>
       <p id="resultSummary" class="text-muted small mb-3" aria-live="polite"></p>
-      <div id="destinationList" class="row g-4"></div>
+      <div id="destinationList" class="row g-2 g-md-3"></div>
       <div id="emptyState" class="text-center py-4 d-none"><div class="empty-icon"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg></div><h3 class="font-fredoka">No quests found!</h3><p>Try another budget or clear your filters.</p><button class="btn btn-bento bg-warning px-3 py-2" onclick="clearFilters()">Clear filters</button></div>
     </section>
 
-    <section class="row g-4 mb-4" aria-labelledby="toolsHeading">
-      <div class="col-12"><h2 id="toolsHeading" class="font-fredoka fw-bold mb-0">Make a plan <span class="font-hand fs-4 fw-normal">— pick a small adventure</span></h2></div>
-      <div class="col-12 col-md-5 col-lg-4">
-        <div class="bento-card p-4 h-100 tilt-left quest-card" style="background-color: var(--yellow-pastel);">
-          <span class="badge bg-dark text-white rounded-pill px-3 py-1 font-fredoka mb-2">04 / QUEST</span>
-          <h3 class="font-fredoka fw-bold mt-2">Quest corner</h3>
-          <h4 id="featuredQuest" class="font-fredoka fw-bold">Try a drink you have never ordered!</h4>
-          <p id="questDescription" class="font-hand fs-5 text-dark mb-2">Step out of your comfort zone and discover a new favorite.</p>
-          <div id="mysteryEnvelope" class="mystery-envelope mb-3" aria-hidden="true"><span>✉</span></div>
-          <p id="surpriseResult" class="font-hand fs-5 mt-2 mb-2" aria-live="polite"></p>
-          <p class="small fw-bold">Quest progress: <span id="questProgress">0</span> completed</p>
-          <div class="d-grid gap-2">
-            <button class="btn btn-bento bg-danger text-white py-2 font-fredoka" onclick="rollQuest()">Open Mystery Envelope <span aria-hidden="true">✉</span></button>
-            <button id="completeQuestBtn" class="btn btn-bento bg-dark text-white py-2 font-fredoka" onclick="completeQuest()">✓ Complete Quest</button>
-          </div>
-          <button class="btn btn-link text-dark w-100 mt-1" onclick="resetQuests()">Reset progress</button>
+    <section class="mb-4" aria-labelledby="toolsHeading">
+      <div class="mb-3"><span class="badge bg-dark rounded-pill mb-2">04 / ADVENTURE PLANNER</span><h2 id="toolsHeading" class="font-fredoka fw-bold mb-0">Make a plan <span class="font-hand fs-4 fw-normal">— pick a small adventure</span></h2></div>
+      <div class="row g-4">
+        <div class="col-12 col-md-6">
+          <section class="bento-card p-3 p-md-4 h-100 tilt-left quest-card planner-journal" style="background-color: var(--yellow-pastel);" aria-labelledby="questHeading">
+            <span class="badge bg-dark text-white rounded-pill px-3 py-1 font-fredoka mb-2">SIDEQUEST GENERATOR</span>
+            <h3 id="questHeading" class="font-fredoka fw-bold mt-2">Quest corner</h3>
+            <h4 id="featuredQuest" class="font-fredoka fw-bold">Try a drink you have never ordered!</h4>
+            <p id="questDescription" class="font-hand fs-5 text-dark mb-2">Step out of your comfort zone and discover a new favorite.</p>
+            <div id="mysteryEnvelope" class="mystery-envelope mb-3" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
+            <p id="surpriseResult" class="font-hand fs-5 mt-2 mb-2" aria-live="polite"></p>
+            <div class="d-flex justify-content-between align-items-center mb-2"><span class="small fw-bold">Quest progress</span><strong class="quest-count"><span id="questProgress">0</span></strong></div>
+            <div class="d-grid gap-2 mb-3">
+              <button class="btn btn-bento bg-danger text-white py-2 font-fredoka envelope-button" onclick="rollQuest()">Unseal Mystery Envelope</button>
+              <button id="completeQuestBtn" class="btn btn-bento bg-dark text-white py-2 font-fredoka" onclick="completeQuest()">Complete Quest</button>
+            </div>
+            <div class="checklist-divider"></div>
+            <h3 class="font-fredoka fw-bold fs-4 mt-3 mb-2">Explorer Checklist</h3>
+            <ul id="explorerChecklist" class="checklist-list list-unstyled font-hand fs-5 m-0">
+              <li class="checklist-item"><input id="check-park" data-checklist-key="park" type="checkbox" /><label for="check-park"><span>Visit a park for a 20-min breather</span></label></li>
+              <li class="checklist-item"><input id="check-matcha" data-checklist-key="matcha" type="checkbox" /><label for="check-matcha"><span>Try ceremonial matcha at Aguirre</span></label></li>
+              <li class="checklist-item"><input id="check-cafe" data-checklist-key="cafe" type="checkbox" /><label for="check-cafe"><span>Work-from-cafe session at Molito</span></label></li>
+            </ul>
+            <button class="btn btn-link text-dark px-0 mt-2" onclick="resetQuests()">Reset quest progress</button>
+          </section>
+        </div>
+        <div class="col-12 col-md-6">
+          <section id="itineraryCard" class="itinerary-card bento-card p-3 p-md-4 h-100" aria-labelledby="itineraryHeading">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+              <div><span class="badge bg-dark rounded-pill mb-2">MY DAY PLANNER</span><h3 id="itineraryHeading" class="font-fredoka fw-bold mb-1">Your sidequest itinerary</h3><p class="font-hand fs-5 mb-0">Pick a few stops and make a day of it.</p></div>
+              <span class="receipt-stamp" aria-hidden="true">DAY<br>OUT</span>
+            </div>
+            <ul id="itineraryList" class="itinerary-list list-unstyled my-3 mb-0"></ul>
+            <div class="itinerary-summary border-top border-dark pt-2 mt-auto">
+              <div class="budget-meter-copy d-flex justify-content-between align-items-center gap-2"><span class="font-fredoka fw-bold">Total estimated spend</span><strong id="itineraryTotal" class="font-fredoka fs-4">₱0</strong></div>
+              <div class="progress itinerary-progress mt-2" role="progressbar" aria-label="Itinerary spend compared with selected budget" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="itineraryBudgetFill" class="progress-bar bg-success" style="width: 0%"></div></div>
+              <p id="itineraryBudgetStatus" class="small fw-bold my-2" aria-live="polite">Spending within selected budget.</p>
+              <div class="itinerary-route-summary d-flex justify-content-between align-items-center border-top pt-2"><span>Total stops</span><strong id="itineraryStops">0 spots</strong><span class="route-provider-note">Walking route details via Google Maps</span></div>
+              <div class="d-grid mt-3"><a id="itineraryRouteButton" class="btn btn-bento bg-info text-dark disabled" href="#" target="_blank" rel="noopener" aria-disabled="true">Open Full Route in Maps <svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></svg></a></div>
+            </div>
+            <div class="d-flex gap-2 flex-wrap mt-3"><button class="btn btn-bento bg-warning" type="button" onclick="autoPlanDay()"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/></svg> Auto-Plan My Day</button><button class="btn btn-bento bg-light" type="button" onclick="clearItinerary()">Clear plan</button><button id="downloadReceiptButton" class="btn btn-bento bg-white" type="button" onclick="downloadReceipt()" disabled>Download Receipt</button></div>
+          </section>
         </div>
       </div>
-      <div class="col-12 col-md-7 col-lg-8">
-        <div class="bento-card p-4 tilt-slight" style="background-color: #FEE2E2;">
-          <h3 class="font-fredoka fw-bold mb-3"><svg class="ui-icon" aria-hidden="true" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5h6M8.5 10h7M8.5 14h7M8.5 18h4"/></svg> Explorer Checklist</h3>
-          <ul id="explorerChecklist" class="list-unstyled font-hand fs-5 m-0">
-            <li class="mb-2"><input id="check-park" data-checklist-key="park" type="checkbox" class="me-2" /><label for="check-park">Visit a park for a 20-min breather</label></li>
-            <li class="mb-2"><input id="check-matcha" data-checklist-key="matcha" type="checkbox" class="me-2" /><label for="check-matcha">Try ceremonial matcha at Aguirre</label></li>
-            <li class="mb-2"><input id="check-cafe" data-checklist-key="cafe" type="checkbox" class="me-2" /><label for="check-cafe">Work-from-cafe session at Molito</label></li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section id="itineraryCard" class="itinerary-card bento-card p-3 p-md-4 mb-4" aria-labelledby="itineraryHeading">
-      <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
-        <div><span class="badge bg-dark rounded-pill mb-2">YOUR LITTLE PLAN</span><h2 id="itineraryHeading" class="font-fredoka fw-bold mb-1">My Sidequest Itinerary</h2><p class="font-hand fs-5 mb-0">Pick a few stops and make a day of it.</p></div>
-        <span class="receipt-stamp" aria-hidden="true">DAY<br>OUT</span>
-      </div>
-      <ul id="itineraryList" class="itinerary-list list-unstyled my-3 mb-0"></ul>
-      <div class="d-flex justify-content-between align-items-center border-top border-dark pt-3 mt-3"><span class="font-fredoka fw-bold">Total budget</span><strong id="itineraryTotal" class="font-fredoka fs-4">₱0</strong></div>
-      <div class="d-flex gap-2 flex-wrap mt-3"><button class="btn btn-bento bg-warning" type="button" onclick="autoPlanDay()">✨ Auto-Plan My Day</button><button class="btn btn-bento bg-light" type="button" onclick="clearItinerary()">Clear plan</button></div>
     </section>
     <div id="savedDrawerBackdrop" class="saved-drawer-backdrop" onclick="toggleSaved(false)"></div>
     <aside id="savedDrawer" class="saved-drawer" aria-labelledby="savedHeading" aria-hidden="true">
@@ -207,15 +214,17 @@
       return places.filter(p => p.loc === activeLoc && p.price <= budget && (!activeCategory || p.tags.includes(activeCategory)) && (!searchTerm || `${p.name} ${p.area} ${p.address} ${p.tags.join(' ')}`.toLowerCase().includes(searchTerm)));
     }
     function amenityMarkup(p) {
-      const icons = { 'Wi-Fi': '📶', Power: '🔌', Parking: '🅿️', 'Open now': '🟢' };
-      return (p.amenities || []).map(amenity => `<span class="amenity-badge" title="${amenity}">${icons[amenity] || '•'} ${amenity}</span>`).join('');
+      return (p.amenities || []).map(amenity => `<span class="amenity-badge">${amenity}</span>`).join('');
     }
     function placeCard(p, index = 0, total = 1, editorial = false) {
       const isSaved = saved.includes(p.id);
       const featured = editorial && index === 0;
-      const columnClass = !editorial ? 'col-12 col-md-6 col-lg-4' : 'col-12 col-md-4';
+      const columnClass = !editorial ? 'col-12 col-md-6 col-lg-4' : 'col-6 col-md-4';
       const inItinerary = itinerary.includes(p.id);
-      return `<div class="${columnClass}"><article class="bento-card destination-card h-100 overflow-hidden ${featured ? 'destination-featured' : ''}"><div class="destination-art" style="background:${p.color}" aria-hidden="true"><span class="destination-art-icon">${iconSvg(p.icon, 'art-icon')}</span><span class="place-category">${p.tags[0]}</span><button class="save-art-btn btn btn-bento ${isSaved ? 'bg-warning' : 'bg-white'}" aria-label="${isSaved ? 'Remove saved spot' : 'Save spot'}" title="${isSaved ? 'Remove saved spot' : 'Save spot'}" onclick="toggleSave('${p.id}')">${iconSvg('bookmark')}</button></div><div class="p-3 d-flex flex-column flex-grow-1">${featured ? '<span class="badge bg-dark rounded-pill mb-2">FEATURED PICK</span>' : ''}<div class="d-flex justify-content-between gap-2"><h3 class="font-fredoka fw-bold fs-4">${p.name}</h3><span class="badge text-bg-light align-self-start">₱${p.price}</span></div><p class="small text-muted mb-2">${iconSvg('pin', 'ui-icon ui-icon-small')} ${p.area} · ${p.address}</p><div class="d-flex gap-1 flex-wrap mb-2">${p.tags.map(t => `<span class="badge rounded-pill text-bg-light border">${t}</span>`).join('')}</div><div class="amenity-list mb-3">${amenityMarkup(p)}</div><button class="btn btn-bento ${inItinerary ? 'bg-warning' : 'bg-light'} w-100 mb-2" onclick="toggleItinerary('${p.id}')">${inItinerary ? '✓ Added to itinerary' : '+ Add to itinerary'}</button><button class="btn btn-bento bg-info text-dark w-100 mt-auto" onclick="showDetails('${p.id}')">View details ${iconSvg('arrow')}</button></div></article></div>`;
+      const photo = p.photo
+        ? `<img class="destination-photo" src="${p.photo}" alt="${p.name} venue photo">`
+        : `<div class="destination-photo-placeholder" style="--photo-tone:${p.color}" aria-label="Venue photo slot"><span>${iconSvg(p.icon, 'art-icon')}</span><small>PHOTO SLOT</small></div>`;
+      return `<div class="${columnClass}"><article class="bento-card destination-card h-100 overflow-hidden ${featured ? 'destination-featured' : ''}"><div class="destination-art">${photo}<span class="place-category">${p.tags[0]}</span><button class="save-art-btn btn btn-bento ${isSaved ? 'bg-warning' : 'bg-white'}" aria-label="${isSaved ? 'Remove saved spot' : 'Save spot'}" title="${isSaved ? 'Remove saved spot' : 'Save spot'}" onclick="toggleSave('${p.id}')">${iconSvg('bookmark')}</button></div><div class="destination-card-body p-2 p-md-3 d-flex flex-column flex-grow-1">${featured ? '<span class="badge bg-dark rounded-pill mb-2">FEATURED PICK</span>' : ''}<div class="d-flex justify-content-between align-items-start gap-1"><h3 class="destination-title text-truncate font-fredoka fw-bold mb-1">${p.name}</h3><span class="badge text-bg-light align-self-start text-nowrap">₱${p.price}</span></div><p class="destination-location small text-muted text-truncate mb-2" title="${p.area} · ${p.address}">${iconSvg('pin', 'ui-icon ui-icon-small')} ${p.area} · ${p.address}</p><div class="d-flex gap-1 flex-wrap mb-2">${p.tags.map(t => `<span class="badge rounded-pill text-bg-light border destination-tag">${t}</span>`).join('')}</div><div class="amenity-list mb-2">${amenityMarkup(p)}</div><button class="destination-action btn btn-sm btn-bento bg-light w-100 mb-2" aria-label="${inItinerary ? 'Remove ' + p.name + ' from itinerary' : 'Add ' + p.name + ' to itinerary'}" aria-pressed="${inItinerary}" onclick="toggleItinerary('${p.id}')">${inItinerary ? 'Added to plan' : '+ Add to plan'}</button><button class="destination-action btn btn-sm btn-bento bg-info text-dark w-100 mt-auto" onclick="showDetails('${p.id}')">View details ${iconSvg('arrow')}</button></div></article></div>`;
     }
     function render() {
       const list = filteredPlaces();
@@ -240,7 +249,7 @@
     function renderItinerary() {
       const list = document.getElementById('itineraryList');
       const selected = itinerary.map(id => places.find(p => p.id === id)).filter(Boolean);
-      list.innerHTML = selected.length ? selected.map(p => `<li class="itinerary-item"><span><strong>${p.name}</strong><small>${p.area} · ₱${p.price}</small></span><button class="btn btn-sm" type="button" onclick="toggleItinerary('${p.id}')" aria-label="Remove ${p.name}">×</button></li>`).join('') : '<li class="itinerary-empty font-hand">Your day is still a blank page. Add a spot from the deck.</li>';
+      list.innerHTML = selected.length ? selected.map((p, index) => `<li class="itinerary-item"><span class="itinerary-index">${index + 1}</span><span class="itinerary-details"><strong>${p.name}</strong><small>${p.area} · ${p.address}</small></span><strong class="itinerary-price">₱${p.price}</strong><button class="btn btn-sm" type="button" onclick="toggleItinerary('${p.id}')" aria-label="Remove ${p.name}">${iconSvg('close')}</button></li>`).join('') : `<li class="itinerary-empty font-hand"><span class="itinerary-empty-icon" aria-hidden="true">${iconSvg('sparkles')}</span><span>Your adventure bag is empty. Add a spot from the deck to start your day.</span></li>`;
       document.getElementById('itineraryTotal').textContent = `₱${selected.reduce((total, p) => total + p.price, 0)}`;
     }
     function clearItinerary() { itinerary = []; localStorage.setItem('sidequestItinerary', JSON.stringify(itinerary)); render(); }
@@ -260,18 +269,18 @@
       drawer.setAttribute('aria-hidden', String(!open));
       document.querySelector('[aria-controls="savedDrawer"]').setAttribute('aria-expanded', String(open));
     }
-    function showDetails(id) { const p = places.find(x => x.id === id); const dialog = document.getElementById('detailsDialog'); dialog.innerHTML = `<div class="details-art" style="background:${p.color}"><span>${iconSvg(p.icon, 'art-icon')}</span><button class="btn btn-bento bg-white" aria-label="Close details" onclick="document.getElementById('detailsDialog').close()">${iconSvg('close')}</button></div><div class="p-4"><span class="badge bg-dark rounded-pill mb-2">${p.area} · ₱${p.price} est.</span><h2 id="detailsTitle" class="font-fredoka fw-bold">${p.name}</h2><p>${p.description}</p><p class="mb-1"><strong>Address:</strong> ${p.address}</p><div class="d-flex gap-1 flex-wrap mb-4">${p.tags.map(t => `<span class="badge rounded-pill text-bg-light border">${t}</span>`).join('')}</div><div class="d-flex gap-2 flex-wrap"><a class="btn btn-bento bg-info text-dark flex-grow-1" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name + ' ' + p.address)}" target="_blank" rel="noopener">Get directions ${iconSvg('arrow')}</a><button class="btn btn-bento ${saved.includes(p.id) ? 'bg-warning' : 'bg-light'}" onclick="toggleSave('${p.id}');showDetails('${p.id}')">${iconSvg('bookmark')} ${saved.includes(p.id) ? 'Saved' : 'Save spot'}</button></div></div>`; dialog.showModal(); }
+    function showDetails(id) { const p = places.find(x => x.id === id); const dialog = document.getElementById('detailsDialog'); const hero = p.photo ? `<img class="details-photo" src="${p.photo}" alt="${p.name} venue photo">` : `<div class="details-photo-placeholder" style="--photo-tone:${p.color}">${iconSvg(p.icon, 'art-icon')}<span>Venue photo</span></div>`; dialog.innerHTML = `<div class="details-art">${hero}<button class="btn btn-bento bg-white" aria-label="Close details" onclick="document.getElementById('detailsDialog').close()">${iconSvg('close')}</button></div><div class="p-4"><span class="badge bg-dark rounded-pill mb-2">${p.area} · ₱${p.price} est.</span><h2 id="detailsTitle" class="font-fredoka fw-bold">${p.name}</h2><p>${p.description}</p><p class="mb-1"><strong>Address:</strong> ${p.address}</p><div class="d-flex gap-1 flex-wrap mb-4">${p.tags.map(t => `<span class="badge rounded-pill text-bg-light border">${t}</span>`).join('')}</div><div class="d-flex gap-2 flex-wrap"><a class="btn btn-bento bg-info text-dark flex-grow-1" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name + ' ' + p.address)}" target="_blank" rel="noopener">Get directions ${iconSvg('arrow')}</a><button class="btn btn-bento ${saved.includes(p.id) ? 'bg-warning' : 'bg-light'}" onclick="toggleSave('${p.id}');showDetails('${p.id}')">${iconSvg('bookmark')} ${saved.includes(p.id) ? 'Saved' : 'Save spot'}</button><button class="btn btn-bento bg-light" aria-pressed="${itinerary.includes(p.id)}" onclick="toggleItinerary('${p.id}');showDetails('${p.id}')">${itinerary.includes(p.id) ? 'Added to plan' : '+ Add to plan'}</button></div></div>`; if (!dialog.open) dialog.showModal(); }
     function openMap() { document.getElementById('mapZoom').value = 100; document.getElementById('mapZoomValue').textContent = '100%'; document.getElementById('largeMap').style.width = '100%'; document.getElementById('mapDialog').showModal(); }
     function clearFilters() { searchTerm = ''; activeCategory = ''; budget = 1000; document.getElementById('searchInput').value = ''; document.getElementById('budgetRange').value = '1000'; document.getElementById('budgetValue').textContent = '1000'; document.querySelectorAll('.category-filter').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); }); const allCategoryButton = document.querySelector('.category-filter[data-category=""]'); allCategoryButton.classList.add('active'); allCategoryButton.setAttribute('aria-pressed', 'true'); render(); }
-    function completeQuest() { if (document.getElementById('completeQuestBtn').disabled) return; questCount++; localStorage.setItem('sidequestQuestCount', questCount); document.getElementById('completeQuestBtn').textContent = '✓ Quest completed!'; document.getElementById('completeQuestBtn').disabled = true; render(); }
-    function resetQuests() { questCount = 0; localStorage.setItem('sidequestQuestCount', '0'); document.getElementById('completeQuestBtn').textContent = '✓ Complete Quest'; document.getElementById('completeQuestBtn').disabled = false; render(); }
+    function completeQuest() { if (document.getElementById('completeQuestBtn').disabled) return; questCount++; localStorage.setItem('sidequestQuestCount', questCount); document.getElementById('completeQuestBtn').textContent = 'Quest completed'; document.getElementById('completeQuestBtn').disabled = true; render(); }
+    function resetQuests() { questCount = 0; localStorage.setItem('sidequestQuestCount', '0'); document.getElementById('completeQuestBtn').textContent = 'Complete Quest'; document.getElementById('completeQuestBtn').disabled = false; render(); }
     function rollQuest() {
       const matches = filteredPlaces(); if (!matches.length) { document.getElementById('surpriseResult').textContent = 'No destinations match these filters yet. Clear filters to roll again.'; return; }
       const envelope = document.getElementById('mysteryEnvelope');
       envelope.classList.remove('reveal');
       void envelope.offsetWidth;
       envelope.classList.add('reveal');
-      const p = matches[Math.floor(Math.random() * matches.length)]; currentQuest = `Visit ${p.name} and try something new!`; document.getElementById('featuredQuest').textContent = currentQuest; document.getElementById('questDescription').textContent = `Your sidequest: explore ${p.area} and enjoy a stop at ${p.name}. Estimated spend: ₱${p.price}.`; document.getElementById('surpriseResult').textContent = currentQuest; document.getElementById('completeQuestBtn').textContent = '✓ Complete Quest'; document.getElementById('completeQuestBtn').disabled = false;
+      const p = matches[Math.floor(Math.random() * matches.length)]; currentQuest = `Visit ${p.name} and try something new!`; document.getElementById('featuredQuest').textContent = currentQuest; document.getElementById('questDescription').textContent = `Your sidequest: explore ${p.area} and enjoy a stop at ${p.name}. Estimated spend: ₱${p.price}.`; document.getElementById('surpriseResult').textContent = currentQuest; document.getElementById('completeQuestBtn').textContent = 'Complete Quest'; document.getElementById('completeQuestBtn').disabled = false;
     }
     let checklistState = {};
     try { checklistState = JSON.parse(localStorage.getItem('sidequestChecklist') || '{}') || {}; } catch (error) { checklistState = {}; }

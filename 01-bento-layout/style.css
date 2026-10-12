@@ -93,13 +93,6 @@ body {
   color: #fff !important;
 }
 
-.location-strip {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-}
-
 .map-hint {
   color: #343039;
   font-weight: 600;
@@ -129,13 +122,51 @@ body {
 }
 
 .destination-art {
-  min-height: 92px;
+  min-height: 120px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: relative;
   padding: .75rem 4.25rem .75rem 1rem;
   border-bottom: 2px solid var(--border-dark);
+  overflow: hidden;
+}
+
+.destination-photo,
+.destination-photo-placeholder {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.destination-photo {
+  object-fit: cover;
+}
+
+.destination-photo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem;
+  background-color: var(--photo-tone, var(--blue-pastel));
+  background-image: repeating-linear-gradient(135deg, rgb(255 255 255 / 18%) 0 10px, transparent 10px 20px);
+  color: var(--border-dark);
+}
+
+.destination-photo-placeholder .art-icon {
+  width: 3.25rem;
+  height: 3.25rem;
+}
+
+.destination-photo-placeholder small {
+  padding: .3rem .5rem;
+  border: 1.5px solid var(--border-dark);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 88%);
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .04em;
 }
 
 .destination-card {
@@ -144,14 +175,37 @@ body {
   min-height: 420px;
 }
 
-.destination-card > .p-3 {
+.destination-card-body {
   display: flex;
   flex: 1;
   flex-direction: column;
 }
 
-.destination-card > .p-3 > .btn {
-  margin-top: auto;
+.destination-title {
+  min-width: 0;
+  font-size: 1.1rem;
+  line-height: 1.15;
+}
+
+.destination-location {
+  font-size: .75rem;
+}
+
+.destination-tag {
+  padding: .2rem .4rem;
+  font-size: .68rem;
+}
+
+.destination-action {
+  padding: .3rem .45rem;
+  font-size: .78rem;
+  line-height: 1.2;
+}
+
+.amenity-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .25rem;
 }
 
 .save-art-btn {
@@ -162,9 +216,7 @@ body {
 }
 
 .destination-featured .destination-art {
-  min-height: 104px;
-  justify-content: flex-start;
-  gap: .9rem;
+  min-height: 120px;
 }
 
 @media (max-width: 767.98px) {
@@ -176,6 +228,15 @@ body {
 .destination-featured .art-icon {
   width: 3.25rem;
   height: 3.25rem;
+}
+
+.place-category,
+.save-art-btn {
+  z-index: 1;
+}
+
+.save-art-btn {
+  backdrop-filter: blur(4px);
 }
 
 .details-dialog {
@@ -197,12 +258,36 @@ body {
 }
 
 .details-art {
-  min-height: 130px;
+  height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  overflow: hidden;
   border-bottom: 2px solid var(--border-dark);
+}
+
+.details-photo,
+.details-photo-placeholder {
+  width: 100%;
+  height: 100%;
+}
+
+.details-photo {
+  object-fit: cover;
+}
+
+.details-photo-placeholder {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: .5rem;
+  background-color: var(--photo-tone, var(--blue-pastel));
+  background-image: repeating-linear-gradient(135deg, rgb(255 255 255 / 18%) 0 12px, transparent 12px 24px);
+  color: var(--border-dark);
+  font: 700 .7rem/1 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: .08em;
+  text-transform: uppercase;
 }
 
 .details-art button {
@@ -210,6 +295,7 @@ body {
   top: .75rem;
   right: .75rem;
   font-size: 1rem;
+  z-index: 1;
 }
 
 .map-preview {
@@ -299,6 +385,8 @@ body {
   border-radius: 10px 24px 18px 14px;
   border-style: dashed;
   transform: rotate(.35deg);
+  display: flex;
+  flex-direction: column;
 }
 
 .receipt-stamp {
@@ -317,6 +405,7 @@ body {
 .itinerary-list {
   display: grid;
   gap: .5rem;
+  flex: 1;
 }
 
 .itinerary-item {
@@ -333,19 +422,192 @@ body {
   gap: .1rem;
 }
 
+.itinerary-index {
+  display: grid !important;
+  flex: 0 0 1.65rem;
+  width: 1.65rem;
+  height: 1.65rem;
+  place-items: center;
+  border: 1.5px solid var(--border-dark);
+  border-radius: 50%;
+  background: var(--yellow-pastel);
+  font: 700 .8rem/1 'Fredoka', sans-serif;
+}
+
+.itinerary-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.itinerary-details small {
+  overflow-wrap: anywhere;
+}
+
+.itinerary-price {
+  white-space: nowrap;
+  font-family: 'Fredoka', sans-serif;
+}
+
 .itinerary-item small {
   color: #6b7280;
 }
 
 .itinerary-item button {
+  display: grid;
+  flex: 0 0 2rem;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
   border: 1.5px solid var(--border-dark);
   border-radius: 50%;
+  padding: 0;
   line-height: 1;
 }
 
+.itinerary-item button .ui-icon {
+  width: .9rem;
+  height: .9rem;
+}
+
 .itinerary-empty {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
   padding: 1rem 0;
   color: #6b7280;
+}
+
+.itinerary-empty-icon {
+  display: grid;
+  flex: 0 0 2rem;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 2px solid var(--border-dark);
+  border-radius: 50%;
+  background: var(--yellow-pastel);
+  color: var(--border-dark);
+  font: 700 1rem/1 'Fredoka', sans-serif;
+}
+
+.itinerary-empty-icon .ui-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.planner-journal {
+  background-image: linear-gradient(rgb(255 255 255 / 14%) 1px, transparent 1px);
+  background-size: 100% 2rem;
+}
+
+.checklist-divider {
+  border-top: 2px dashed rgb(30 27 24 / 45%);
+}
+
+.checklist-list {
+  display: grid;
+  gap: .5rem;
+}
+
+.checklist-item {
+  position: relative;
+  padding: .55rem .65rem;
+  border: 1.5px dashed rgb(30 27 24 / 58%);
+  border-radius: 10px;
+  background: #fffdf5;
+  box-shadow: 2px 2px 0 rgb(30 27 24 / 22%);
+}
+
+.checklist-item input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.checklist-item label {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  cursor: pointer;
+  line-height: 1.25;
+}
+
+.checklist-item label::before {
+  content: "";
+  flex: 0 0 1.1rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 2px solid var(--border-dark);
+  border-radius: 4px;
+  background: #fff;
+  transition: background-color .18s ease, transform .18s ease;
+}
+
+.checklist-item label span {
+  position: relative;
+  color: var(--border-dark);
+  transition: color .18s ease;
+}
+
+.checklist-item label span::after {
+  content: "";
+  position: absolute;
+  top: 52%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s ease;
+}
+
+.checklist-item input:checked + label::before {
+  background: var(--sage-pastel);
+  transform: rotate(-5deg) scale(1.08);
+}
+
+.checklist-item input:checked + label span {
+  color: #59645c;
+}
+
+.checklist-item input:checked + label span::after {
+  transform: scaleX(1);
+}
+
+.checklist-item input:focus-visible + label::before {
+  outline: 3px solid #1d4ed8;
+  outline-offset: 3px;
+}
+
+.quest-count {
+  min-width: 2.25rem;
+  padding: .2rem .5rem;
+  border: 1.5px solid var(--border-dark);
+  border-radius: 999px;
+  background: #fffdf5;
+  text-align: center;
+}
+
+.envelope-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.envelope-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / 25%) 50%, transparent 65%);
+  transform: translateX(-120%);
+  transition: transform .45s ease;
+}
+
+.envelope-button:hover::after,
+.envelope-button:focus-visible::after {
+  transform: translateX(120%);
 }
 
 .mystery-envelope {
@@ -361,8 +623,9 @@ body {
   transform: rotate(-3deg);
 }
 
-.mystery-envelope span {
-  font-size: 2rem;
+.mystery-envelope .ui-icon {
+  width: 2rem;
+  height: 2rem;
 }
 
 .mystery-envelope.reveal {
