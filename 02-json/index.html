@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f4f0df" />
+  <link rel="icon" type="image/svg+xml" href="favicon.png" />
+  <title>PLAYFORM — Spaces with a point of view</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="top">
+    <section class="hero-section" id="about">
+      <div class="hero-left">
+        <header class="hero-header">
+          <a class="wordmark" href="#top" aria-label="Playform home">PLAYFORM</a>
+          <nav class="hero-nav" aria-label="Main navigation">
+            <a class="active" href="#top">Home</a>
+            <a href="#work">Archive</a>
+            <a href="mailto:hello@playform.studio">Contact</a>
+          </nav>
+          <button class="menu-toggle" aria-label="Open menu" aria-expanded="false"><i class="bi bi-list"></i></button>
+        </header>
+        <div class="hero-heading-row">
+          <p class="eyebrow">Furniture for the feeling of home</p>
+          <h1>Make room<br />for <span>play.</span></h1>
+          <p class="hero-intro">Characterful furniture, unexpected color, and pieces that make your space feel like you.</p>
+          <a class="collection-bubble" href="#work"><i class="bi bi-arrow-down-right"></i><span>Explore<br />the collection</span></a>
+        </div>
+        <div class="hero-feature-grid" id="heroFeatureGrid"></div>
+        <div class="hero-support-row">
+          <p>Designed to be lived with, loved, and mixed your own way.</p>
+          <a class="scan-card" href="#work"><span class="scan-icon"><i class="bi bi-stars"></i></span><span><strong>Find your new favorite</strong><small>Meet the pieces with personality.</small></span><i class="bi bi-arrow-up-right scan-arrow"></i></a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <img src="Assets/Ecletic Interior Design.png" alt="Colorful interior filled with playful furniture" />
+        <div class="hero-image-shade"></div>
+        <div class="hero-image-label"><span>PLAYFORM OBJECTS — 2026</span><span>01 / 04</span></div>
+        <div class="hero-editorial"><p class="eyebrow">A home with a point of view</p><h2>Furniture made<br />with a little love.</h2><a class="follow-pill" href="https://instagram.com" target="_blank" rel="noreferrer">Follow along <i class="bi bi-instagram"></i></a></div>
+      </div>
+    </section>
+
+    <div class="lower-content" id="work">
+      <section class="collection-intro" aria-labelledby="collectionIntroTitle">
+        <div class="intro-photo"><img src="Assets/Playful Interior Design.webp" alt="Colorful home office with sculptural furniture and playful decor" loading="lazy" /><span>Collection 01 · Playful living</span></div>
+        <div class="intro-copy"><p class="eyebrow">Designed for your kind of home</p><h2 id="collectionIntroTitle">Good pieces.<br />Good moods.</h2><p>Soft forms, joyful colors, and a little unexpected charm. Find the pieces that make everyday feel more like you.</p><a class="round-link" href="#shopTitle">Meet the collection <i class="bi bi-arrow-up-right"></i></a><span class="intro-index">01 — 04</span></div>
+      </section>
+
+      <section class="shop-section" aria-labelledby="shopTitle">
+        <div class="shop-shell">
+        <div class="shop-heading">
+          <div><p class="eyebrow">The Playform collection</p><h2 id="shopTitle">Pieces with<br />personality.</h2></div>
+          <div class="category-filters" role="group" aria-label="Filter furniture">
+            <button class="filter-chip active" type="button" data-filter="all">All pieces</button>
+            <button class="filter-chip" type="button" data-filter="seating">Seating</button>
+            <button class="filter-chip" type="button" data-filter="tables">Tables</button>
+            <button class="filter-chip" type="button" data-filter="lighting">Lighting</button>
+          </div>
+        </div>
+        <div class="shop-grid">
+          <article class="shop-card" data-category="seating">
+            <button class="shop-photo photo-placeholder" type="button" onclick="openDetails(1)" aria-label="View Baby Low Chair"><img class="placeholder-photo product-cutout" src="Assets/Baby Low Chair Gropius.jpg" alt="Blush pink sculptural Baby Low chair" loading="lazy" /><i class="bi bi-arrow-up-right photo-open"></i></button>
+            <div class="shop-card-info"><button class="shop-name" type="button" onclick="openDetails(1)">Baby Low Chair<small>Seating · Soft Shapes</small></button><span class="shop-price">$760</span></div>
+          </article>
+          <article class="shop-card" data-category="tables">
+            <button class="shop-photo photo-placeholder tone-sand" type="button" onclick="openDetails(2)" aria-label="View Gloss Side Table"><img class="placeholder-photo product-cutout" src="Assets/Gloss Side Table Christine Kroncke.jpg" alt="Set of glossy sculptural side tables in rust and olive" loading="lazy" /><i class="bi bi-arrow-up-right photo-open"></i></button>
+            <div class="shop-card-info"><button class="shop-name" type="button" onclick="openDetails(2)">Gloss Side Table<small>Tables · Bold & Bright</small></button><span class="shop-price">$458</span></div>
+          </article>
+          <article class="shop-card" data-category="lighting">
+            <button class="shop-photo photo-placeholder tone-blue" type="button" onclick="openDetails(3)" aria-label="View Mushroom Glow Lamp"><img class="placeholder-photo product-cutout" src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=900&q=85" alt="Warm glowing sculptural table lamp" loading="lazy" /><i class="bi bi-arrow-up-right photo-open"></i></button>
+            <div class="shop-card-info"><button class="shop-name" type="button" onclick="openDetails(3)">Mushroom Glow Lamp<small>Lighting · Everyday Icons</small></button><span class="shop-price">$597</span></div>
+          </article>
+          <article class="shop-card" data-category="seating">
+            <button class="shop-photo photo-placeholder tone-lilac" type="button" onclick="openDetails(4)" aria-label="View Baby Low Chair collection"><img class="placeholder-photo product-cutout" src="Assets/Multiple Baby Low Chair Gropius.jpeg" alt="Pastel sculptural chair collection" loading="lazy" /><i class="bi bi-arrow-up-right photo-open"></i></button>
+            <div class="shop-card-info"><button class="shop-name" type="button" onclick="openDetails(4)">Baby Low Family<small>Seating · Everyday icons</small></button><span class="shop-price">$890</span></div>
+          </article>
+        </div>
+        </div>
+      </section>
+
+      <section class="editorial-grid" aria-label="Playform design story">
+        <div class="editorial-statement"><p class="eyebrow">A little more considered</p><h2>Create a home<br />that feels like you.</h2><p>Mix the color. Keep the comfort. Make space for pieces that bring a little joy to the everyday.</p><a class="round-link" href="mailto:hello@playform.studio">Meet Playform <i class="bi bi-arrow-up-right"></i></a><span class="editorial-stamp">PLAYFORM<br />OBJECTS · 2026</span></div>
+        <div class="editorial-photo editorial-photo-one"><img src="Assets/Interior Design-1.jpg" alt="Colorful maximalist living room with collected furniture" loading="lazy" /><span>A home with its own rhythm</span></div>
+        <div class="editorial-photo editorial-photo-two"><img src="Assets/Paolo Castelli Ama.jpg" alt="Sculptural blush lounge chair" loading="lazy" /><span>Soft shapes, strong character</span></div>
+        <div class="editorial-photo editorial-photo-three"><img src="Assets/Gloss Side Table Christine Kroncke.jpg" alt="Glossy sculptural side tables" loading="lazy" /><span>Objects to live with</span></div>
+      </section>
+    </div>
+
+    <section class="closing-note">
+      <p>Good spaces stay with you.</p>
+      <a href="mailto:hello@playform.studio">Have a project in mind? <i class="bi bi-arrow-up-right"></i></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="wordmark" href="#top">playform<span>®</span></a>
+    <span>Furniture for the feeling of home.</span>
+    <span>© 2026 Playform Studio</span>
+  </footer>
+
+  <div class="modal" id="itemModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-backdrop" aria-label="Close project details" data-close></button>
+    <div class="modal-card">
+      <button class="modal-close" aria-label="Close" data-close><i class="bi bi-x-lg"></i></button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    let allFurniture = [];
+    const savedItems = new Set(JSON.parse(localStorage.getItem('playform-saved') || '[]'));
+    const modal = document.getElementById('itemModal');
+
+    fetch('furniture.json')
+      .then(response => {
+        if (!response.ok) throw new Error('Could not load project list');
+        return response.json();
+      })
+      .then(items => {
+        allFurniture = items;
+        renderHeroFeatures(items.slice(0, 2));
+      })
+      .catch(() => {
+        document.getElementById('heroFeatureGrid').innerHTML = '<p class="load-error">Featured pieces could not be loaded.</p>';
+      });
+
+    function renderHeroFeatures(items) {
+      document.getElementById('heroFeatureGrid').innerHTML = items.map((item, index) => `
+        <button class="hero-feature" type="button" onclick="openDetails(${item.id})" aria-label="View ${item.name}">
+          <span class="hero-feature-image"><img src="${item.heroImage || item.image}" alt="" />${index === 1 ? '<span class="feature-rating">★ 4.9</span><span class="feature-caption">Style meets comfort here!</span>' : '<span class="feature-play"><i class="bi bi-play-fill"></i></span>'}</span>
+          <span class="hero-feature-meta"><span>0${index + 1} / ${item.type}</span><i class="bi bi-arrow-up-right"></i></span>
+          <strong>${item.name}</strong>
+        </button>
+      `).join('');
+    }
+
+
+    function toggleSave(id, button) {
+      if (savedItems.has(id)) savedItems.delete(id); else savedItems.add(id);
+      localStorage.setItem('playform-saved', JSON.stringify([...savedItems]));
+      const saved = savedItems.has(id);
+      button.classList.toggle('saved', saved);
+      button.setAttribute('aria-pressed', String(saved));
+      button.setAttribute('aria-label', saved ? 'Remove saved project' : 'Save project');
+      button.innerHTML = `<i class="bi ${saved ? 'bi-bookmark-heart-fill' : 'bi-bookmark-heart'}"></i>`;
+    }
+
+    function openDetails(id) {
+      const item = allFurniture.find(project => project.id === id);
+      if (!item) return;
+      document.getElementById('modalBody').innerHTML = `
+        <div class="detail-layout">
+          <div class="detail-image" style="background:${item.bgAccent}"><img src="${item.image}" alt="${item.name}" /></div>
+          <div class="detail-copy">
+            <p class="eyebrow">${item.collection} <span>·</span> ${item.type}</p>
+            <h2 id="modalTitle">${item.name}</h2>
+            <p class="detail-description">${item.description}</p>
+            <dl class="spec-list">
+              <div><dt>Designed by</dt><dd>${item.designer}</dd></div>
+              <div><dt>Materials</dt><dd>${item.materials.join(', ')}</dd></div>
+              <div><dt>Dimensions</dt><dd>${item.dimensions}</dd></div>
+              <div><dt>Colors</dt><dd>${item.colors.join(', ')}</dd></div>
+            </dl>
+            <button class="detail-save" onclick="toggleSave(${item.id}, this)"><i class="bi ${savedItems.has(item.id) ? 'bi-bookmark-heart-fill' : 'bi-bookmark-heart'}"></i> ${savedItems.has(item.id) ? 'Saved to your collection' : 'Save this project'}</button>
+          </div>
+        </div>`;
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+      modal.querySelector('.modal-close').focus();
+    }
+
+    function closeModal() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+    }
+    modal.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', closeModal));
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') closeModal(); });
+
+    document.querySelectorAll('.filter-chip').forEach(button => {
+      button.addEventListener('click', () => {
+        const filter = button.dataset.filter;
+        document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.toggle('active', chip === button));
+        document.querySelectorAll('.shop-card').forEach(card => {
+          card.hidden = filter !== 'all' && card.dataset.category !== filter;
+        });
+      });
+    });
+
+    const menuButton = document.querySelector('.menu-toggle');
+    menuButton.addEventListener('click', () => {
+      const open = menuButton.getAttribute('aria-expanded') === 'true';
+      menuButton.setAttribute('aria-expanded', String(!open));
+      document.querySelector('.hero-nav').classList.toggle('nav-open', !open);
+      menuButton.innerHTML = `<i class="bi ${open ? 'bi-list' : 'bi-x-lg'}"></i>`;
+    });
+  </script>
+</body>
+</html>
