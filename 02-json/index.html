@@ -17,10 +17,11 @@
     <section class="hero-section" id="about">
       <div class="hero-left">
         <header class="hero-header">
-          <a class="wordmark" href="#top" aria-label="Playform home">PLAYFORM</a>
+          <a class="wordmark" href="#top" aria-label="Playform home">playform<span>✳</span></a>
           <nav class="hero-nav" aria-label="Main navigation">
             <a class="active" href="#top">Home</a>
-            <a href="#work">Archive</a>
+            <a href="#shopTitle">Collection</a>
+            <a href="#story">Our story</a>
             <a href="mailto:hello@playform.studio">Contact</a>
           </nav>
           <button class="menu-toggle" aria-label="Open menu" aria-expanded="false"><i class="bi bi-list"></i></button>
@@ -31,14 +32,18 @@
           <p class="hero-intro">Characterful furniture, unexpected color, and pieces that make your space feel like you.</p>
           <a class="collection-bubble" href="#work"><i class="bi bi-arrow-down-right"></i><span>Explore<br />the collection</span></a>
         </div>
+        <span class="hero-sticker">GOOD<br />MOODS<br />LIVE HERE <i>✳</i></span>
+        <span class="hero-doodle hero-doodle-one" aria-hidden="true">✳</span>
+        <span class="hero-doodle hero-doodle-two" aria-hidden="true">〰</span>
         <div class="hero-feature-grid" id="heroFeatureGrid"></div>
         <div class="hero-support-row">
           <p>Designed to be lived with, loved, and mixed your own way.</p>
-          <a class="scan-card" href="#work"><span class="scan-icon"><i class="bi bi-stars"></i></span><span><strong>Find your new favorite</strong><small>Meet the pieces with personality.</small></span><i class="bi bi-arrow-up-right scan-arrow"></i></a>
+          <a class="scan-card" href="#work"><span class="scan-icon"></span><span><strong>Find your new favorite</strong><small>Meet the pieces with personality.</small></span><i class="bi bi-arrow-up-right scan-arrow"></i></a>
         </div>
       </div>
       <div class="hero-right">
-        <img src="Assets/Ecletic Interior Design.png" alt="Colorful interior filled with playful furniture" />
+        <img src="Assets/Interior/Ecletic Interior Design.png" alt="Colorful interior filled with playful furniture" />
+        <button class="drag-star" type="button" aria-label="Discover a surprise furniture piece" title="Click for a surprise piece · drag me"><i class="bi bi-stars"></i></button>
         <div class="hero-image-shade"></div>
         <div class="hero-image-label"><span>PLAYFORM OBJECTS — 2026</span><span>01 / 04</span></div>
         <div class="hero-editorial"><p class="eyebrow">A home with a point of view</p><h2>Furniture made<br />with a little love.</h2><a class="follow-pill" href="https://instagram.com" target="_blank" rel="noreferrer">Follow along <i class="bi bi-instagram"></i></a></div>
@@ -47,7 +52,7 @@
 
     <div class="lower-content" id="work">
       <section class="collection-intro" aria-labelledby="collectionIntroTitle">
-        <div class="intro-photo"><img src="Assets/Playful Interior Design.webp" alt="Colorful home office with sculptural furniture and playful decor" loading="lazy" /><span>Collection 01 · Playful living</span></div>
+        <div class="intro-photo"><img src="Assets/Interior/Playful Interior Design.webp" alt="Colorful home office with sculptural furniture and playful decor" loading="lazy" /><span>Collection 01 · Playful living</span></div>
         <div class="intro-copy"><p class="eyebrow">Designed for your kind of home</p><h2 id="collectionIntroTitle">Good pieces.<br />Good moods.</h2><p>Soft forms, joyful colors, and a little unexpected charm. Find the pieces that make everyday feel more like you.</p><a class="round-link" href="#shopTitle">Meet the collection <i class="bi bi-arrow-up-right"></i></a><span class="intro-index">01 — 04</span></div>
       </section>
 
@@ -56,40 +61,40 @@
         <div class="shop-heading">
           <div><p class="eyebrow">The Playform collection</p><h2 id="shopTitle">Pieces with<br />personality.</h2></div>
           <div class="category-filters" role="group" aria-label="Filter furniture">
-            <button class="filter-chip active" type="button" data-filter="all">All pieces</button>
-            <button class="filter-chip" type="button" data-filter="seating">Seating</button>
-            <button class="filter-chip" type="button" data-filter="tables">Tables</button>
-            <button class="filter-chip" type="button" data-filter="lighting">Lighting</button>
+            <button class="filter-chip active" type="button" data-filter="all" aria-pressed="true">All pieces</button>
+            <button class="filter-chip" type="button" data-filter="seating" aria-pressed="false">Seating</button>
+            <button class="filter-chip" type="button" data-filter="tables" aria-pressed="false">Tables</button>
+            <button class="filter-chip" type="button" data-filter="lighting" aria-pressed="false">Lighting</button>
+            <button class="filter-chip" type="button" data-filter="storage" aria-pressed="false">Storage</button>
           </div>
         </div>
-        <div class="shop-grid">
-          <article class="shop-card" data-category="seating">
-            <button class="shop-photo photo-placeholder" type="button" onclick="openDetails(1)" aria-label="View Baby Low Chair"><img class="placeholder-photo product-cutout" src="Assets/Baby Low Chair Gropius.jpg" alt="Blush pink sculptural Baby Low chair" loading="lazy" /><i class="bi bi-arrow-up-right photo-open"></i></button>
-            <div class="shop-card-info"><button class="shop-name" type="button" onclick="openDetails(1)">Baby Low Chair<small>Seating · Soft Shapes</small></button><span class="shop-price">$760</span></div>
-          </article>
-          <article class="shop-card" data-category="tables">
-            <button class="shop-photo photo-placeholder tone-sand" type="button" onclick="openDetails(2)" aria-label="View Gloss Side Table"><img class="placeholder-photo product-cutout" src="Assets/Gloss Side Table Christine Kroncke.jpg" alt="Set of glossy sculptural side tables in rust and olive" loading="lazy" /><i class="bi bi-arrow-up-right photo-open"></i></button>
-            <div class="shop-card-info"><button class="shop-name" type="button" onclick="openDetails(2)">Gloss Side Table<small>Tables · Bold & Bright</small></button><span class="shop-price">$458</span></div>
-          </article>
-          <article class="shop-card" data-category="lighting">
-            <button class="shop-photo photo-placeholder tone-blue" type="button" onclick="openDetails(3)" aria-label="View Mushroom Glow Lamp"><img class="placeholder-photo product-cutout" src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=900&q=85" alt="Warm glowing sculptural table lamp" loading="lazy" /><i class="bi bi-arrow-up-right photo-open"></i></button>
-            <div class="shop-card-info"><button class="shop-name" type="button" onclick="openDetails(3)">Mushroom Glow Lamp<small>Lighting · Everyday Icons</small></button><span class="shop-price">$597</span></div>
-          </article>
-          <article class="shop-card" data-category="seating">
-            <button class="shop-photo photo-placeholder tone-lilac" type="button" onclick="openDetails(4)" aria-label="View Baby Low Chair collection"><img class="placeholder-photo product-cutout" src="Assets/Multiple Baby Low Chair Gropius.jpeg" alt="Pastel sculptural chair collection" loading="lazy" /><i class="bi bi-arrow-up-right photo-open"></i></button>
-            <div class="shop-card-info"><button class="shop-name" type="button" onclick="openDetails(4)">Baby Low Family<small>Seating · Everyday icons</small></button><span class="shop-price">$890</span></div>
-          </article>
-        </div>
+        <div class="shop-grid" aria-live="polite" aria-busy="true"></div>
         </div>
       </section>
 
-      <section class="editorial-grid" aria-label="Playform design story">
+      <section class="build-section" aria-labelledby="buildTitle">
+        <div class="build-copy"><p class="eyebrow">A little space to play · 04</p><h2 id="buildTitle">Playful.<br />Functional.<br /><span>Yours.</span></h2><p>Save your favorites, build your moodboard, and bring your dream space to life.</p><button class="build-cta" type="button" onclick="document.querySelector('.moodboard-toggle').click()">Try the moodboard <i class="bi bi-arrow-right"></i></button></div>
+        <div class="build-stage" role="group" aria-label="Playform furniture collage">
+          <div class="build-object-layer"></div>
+          <span class="build-note build-note-top" aria-hidden="true">Build your<br />space</span>
+          <span class="build-note build-note-side" aria-hidden="true">Drag pieces<br />to play</span>
+          <svg class="build-doodle build-arrow" viewBox="0 0 120 70" aria-hidden="true"><path d="M5 53C35 62 53 50 63 35S87 13 108 18M94 7l16 11-14 12" /></svg>
+          <svg class="build-doodle build-sparkle" viewBox="0 0 50 50" aria-hidden="true"><path d="M25 2C26 17 33 24 48 25 33 26 26 33 25 48 24 33 17 26 2 25 17 24 24 17 25 2Z" /></svg>
+          <span class="build-heart-doodle" aria-hidden="true">♡</span>
+        </div>
+      </section>
+
+      <section class="editorial-grid" id="story" aria-label="Playform design story">
         <div class="editorial-statement"><p class="eyebrow">A little more considered</p><h2>Create a home<br />that feels like you.</h2><p>Mix the color. Keep the comfort. Make space for pieces that bring a little joy to the everyday.</p><a class="round-link" href="mailto:hello@playform.studio">Meet Playform <i class="bi bi-arrow-up-right"></i></a><span class="editorial-stamp">PLAYFORM<br />OBJECTS · 2026</span></div>
-        <div class="editorial-photo editorial-photo-one"><img src="Assets/Interior Design-1.jpg" alt="Colorful maximalist living room with collected furniture" loading="lazy" /><span>A home with its own rhythm</span></div>
-        <div class="editorial-photo editorial-photo-two"><img src="Assets/Paolo Castelli Ama.jpg" alt="Sculptural blush lounge chair" loading="lazy" /><span>Soft shapes, strong character</span></div>
-        <div class="editorial-photo editorial-photo-three"><img src="Assets/Gloss Side Table Christine Kroncke.jpg" alt="Glossy sculptural side tables" loading="lazy" /><span>Objects to live with</span></div>
+        <div class="editorial-gallery">
+          <div class="editorial-photo editorial-photo-one"><img src="Assets/Interior/Interior Design-1.jpg" alt="Colorful maximalist living room with collected furniture" loading="lazy" /><span>A home with its own rhythm</span></div>
+          <div class="editorial-photo editorial-photo-two"><img src="Assets/Seating/Paolo Castelli Ama.jpg" alt="Sculptural blush lounge chair" loading="lazy" /><span>Soft shapes, strong character</span></div>
+          <div class="editorial-photo editorial-photo-three"><img src="Assets/Tables/Gloss Side Table Christine Kroncke.jpg" alt="Glossy sculptural side tables" loading="lazy" /><span>Objects to live with</span></div>
+        </div>
       </section>
     </div>
+
+    <div class="mood-marquee" aria-label="Good moods, good pieces, made for play"><div class="marquee-track" aria-hidden="true"><span>GOOD MOODS <i>✳</i> GOOD PIECES <i>✳</i> MADE FOR PLAY <i>✳</i> GOOD MOODS <i>✳</i> GOOD PIECES <i>✳</i> MADE FOR PLAY <i>✳</i></span><span>GOOD MOODS <i>✳</i> GOOD PIECES <i>✳</i> MADE FOR PLAY <i>✳</i> GOOD MOODS <i>✳</i> GOOD PIECES <i>✳</i> MADE FOR PLAY <i>✳</i></span></div></div>
 
     <section class="closing-note">
       <p>Good spaces stay with you.</p>
@@ -110,11 +115,28 @@
       <div id="modalBody"></div>
     </div>
   </div>
+  <button class="moodboard-toggle" type="button" aria-expanded="false"><i class="bi bi-grid-3x3-gap"></i><span>Moodboard</span><b>0</b></button>
+  <aside class="moodboard-panel" aria-label="Your moodboard" aria-hidden="true" inert>
+    <div class="moodboard-head"><div><p class="eyebrow">Collect what feels like you</p><h2>Your moodboard</h2></div><button class="moodboard-close" type="button" aria-label="Close moodboard"><i class="bi bi-x-lg"></i></button></div>
+    <p class="moodboard-empty">Your board is waiting for a little personality. Add pieces you love.</p>
+    <div class="moodboard-items"></div>
+  </aside>
 
   <script>
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const syncMotionPreference = () => document.documentElement.classList.toggle('reduced-motion', motionPreference.matches);
+    syncMotionPreference();
+    motionPreference.addEventListener?.('change', syncMotionPreference);
+
     let allFurniture = [];
-    const savedItems = new Set(JSON.parse(localStorage.getItem('playform-saved') || '[]'));
+    const boardItems = new Set(JSON.parse(localStorage.getItem('playform-board') || '[]'));
     const modal = document.getElementById('itemModal');
+    const shopGrid = document.querySelector('.shop-grid');
+    let revealObserver = null;
+    let lastProductTrigger = null;
+    const formatPrice = value => new Intl.NumberFormat('en-PH', {
+      style: 'currency', currency: 'PHP', maximumFractionDigits: 0
+    }).format(value);
 
     fetch('furniture.json')
       .then(response => {
@@ -123,52 +145,150 @@
       })
       .then(items => {
         allFurniture = items;
-        renderHeroFeatures(items.slice(0, 2));
+        shopGrid.innerHTML = renderProductCards(items);
+        shopGrid.setAttribute('aria-busy', 'false');
+        renderHeroFeatures(items.filter(item => item.featured));
+        renderBuildCollage(items);
+        syncMoodButtons();
+        renderMoodboard();
+        if (revealObserver) {
+          shopGrid.querySelectorAll('.shop-card').forEach((card, index) => {
+            card.classList.add('reveal-ready');
+            card.style.setProperty('--reveal-delay', `${(index % 4) * 75}ms`);
+            revealObserver.observe(card);
+          });
+        }
+        document.querySelector('.filter-chip.active').click();
       })
       .catch(() => {
         document.getElementById('heroFeatureGrid').innerHTML = '<p class="load-error">Featured pieces could not be loaded.</p>';
+        shopGrid.setAttribute('aria-busy', 'false');
+        shopGrid.innerHTML = '<p class="load-error">We couldn’t load the collection. Please open PLAYFORM through a local server and try again.</p>';
       });
 
     function renderHeroFeatures(items) {
       document.getElementById('heroFeatureGrid').innerHTML = items.map((item, index) => `
         <button class="hero-feature" type="button" onclick="openDetails(${item.id})" aria-label="View ${item.name}">
-          <span class="hero-feature-image"><img src="${item.heroImage || item.image}" alt="" />${index === 1 ? '<span class="feature-rating">★ 4.9</span><span class="feature-caption">Style meets comfort here!</span>' : '<span class="feature-play"><i class="bi bi-play-fill"></i></span>'}</span>
-          <span class="hero-feature-meta"><span>0${index + 1} / ${item.type}</span><i class="bi bi-arrow-up-right"></i></span>
+          <span class="hero-feature-image"><img src="${item.heroImage || item.image}" alt="" /><span class="feature-caption">${item.tags?.[0] || 'Playform favorite'}</span></span>
+          <span class="hero-feature-meta"><span>0${index + 1} / ${item.category}</span><i class="bi bi-arrow-up-right"></i></span>
           <strong>${item.name}</strong>
         </button>
       `).join('');
     }
 
-
-    function toggleSave(id, button) {
-      if (savedItems.has(id)) savedItems.delete(id); else savedItems.add(id);
-      localStorage.setItem('playform-saved', JSON.stringify([...savedItems]));
-      const saved = savedItems.has(id);
-      button.classList.toggle('saved', saved);
-      button.setAttribute('aria-pressed', String(saved));
-      button.setAttribute('aria-label', saved ? 'Remove saved project' : 'Save project');
-      button.innerHTML = `<i class="bi ${saved ? 'bi-bookmark-heart-fill' : 'bi-bookmark-heart'}"></i>`;
+    function renderProductCards(items) {
+      return items.map((item, index) => {
+        const category = item.category[0].toUpperCase() + item.category.slice(1);
+        const isSaved = boardItems.has(item.id);
+        const image = item.transparentImage || item.image;
+        return `
+          <article class="shop-card" data-product-id="${item.id}" data-category="${item.category}" style="--card-accent:${item.cardAccent || item.bgAccent}">
+            <button class="shop-photo photo-placeholder" type="button" onclick="openDetails(${item.id})" aria-label="View ${item.name}">
+              <img class="placeholder-photo product-cutout ${item.transparentImage ? 'transparent-product' : ''}" src="${image}" alt="${item.name}" loading="lazy" />
+              <i class="bi bi-arrow-up-right photo-open" aria-hidden="true"></i>
+            </button>
+            <button class="mood-add ${isSaved ? 'selected' : ''}" type="button" data-item="${item.id}" aria-label="${isSaved ? 'Remove' : 'Add'} ${item.name} ${isSaved ? 'from' : 'to'} moodboard" aria-pressed="${isSaved}">
+              <i class="bi ${isSaved ? 'bi-check-lg' : 'bi-plus-lg'}" aria-hidden="true"></i><span>${isSaved ? 'On your moodboard' : 'Add to moodboard'}</span>
+            </button>
+            <div class="shop-card-info">
+              <button class="shop-name" type="button" onclick="openDetails(${item.id})">${item.name}<small>${category} · ${item.tags?.[0] || ''}</small></button>
+              <span class="shop-price">${formatPrice(item.price)}</span>
+            </div>
+          </article>`;
+      }).join('');
     }
 
-    function openDetails(id) {
+    function renderBuildCollage(items) {
+      const layer = document.querySelector('.build-object-layer');
+      layer.innerHTML = items.slice(0, 4).map((item, index) => `
+        <article class="build-object build-object-${index + 1}" tabindex="0" role="group" aria-label="${item.name}. Use arrow keys to move this card." style="--object-accent:${item.bgAccent}">
+          <button class="build-object-image" type="button" onclick="openDetails(${item.id})" aria-label="View ${item.name}"><img src="${item.transparentImage || item.image}" alt="${item.name}" loading="lazy" /></button>
+          <div class="build-object-caption"><span>${item.name}</span><button class="build-save ${boardItems.has(item.id) ? 'is-saved' : ''}" type="button" data-build-save="${item.id}" aria-label="${boardItems.has(item.id) ? 'Remove' : 'Save'} ${item.name} ${boardItems.has(item.id) ? 'from' : 'to'} your moodboard" aria-pressed="${boardItems.has(item.id)}"><i class="bi ${boardItems.has(item.id) ? 'bi-heart-fill' : 'bi-heart'}"></i><span>${boardItems.has(item.id) ? 'Saved' : 'Save'}</span></button></div>
+        </article>`).join('');
+      layer.querySelectorAll('[data-build-save]').forEach(button => button.addEventListener('click', () => {
+        toggleBoardItem(Number(button.dataset.buildSave));
+      }));
+      layer.querySelectorAll('.build-object').forEach(object => {
+        let dragStart = null;
+        let dragged = false;
+        const finishDrag = () => object.classList.remove('is-dragging');
+        object.addEventListener('pointerdown', event => {
+          if (event.button !== 0 || event.target.closest('[data-build-save]')) return;
+          const stage = object.closest('.build-stage');
+          dragStart = { x: event.clientX, y: event.clientY };
+          dragged = false;
+          object.setPointerCapture(event.pointerId);
+          object.classList.add('is-dragging');
+          object.dataset.dragStageWidth = stage.clientWidth;
+          object.dataset.dragStageHeight = stage.clientHeight;
+          object.dataset.dragStartLeft = object.offsetLeft;
+          object.dataset.dragStartTop = object.offsetTop;
+        });
+        object.addEventListener('pointermove', event => {
+          if (!dragStart) return;
+          const dx = event.clientX - dragStart.x;
+          const dy = event.clientY - dragStart.y;
+          if (Math.hypot(dx, dy) > 5) dragged = true;
+          const maxX = Number(object.dataset.dragStageWidth) - object.offsetLeft - object.offsetWidth;
+          const maxY = Number(object.dataset.dragStageHeight) - object.offsetTop - object.offsetHeight;
+          const x = Math.max(-object.offsetLeft, Math.min(maxX, dx));
+          const y = Math.max(-object.offsetTop, Math.min(maxY, dy));
+          object.style.translate = `${x}px ${y}px`;
+        });
+        object.addEventListener('pointerup', () => { dragStart = null; finishDrag(); });
+        object.addEventListener('pointercancel', () => { dragStart = null; dragged = false; finishDrag(); });
+        object.addEventListener('keydown', event => {
+          if (event.target !== object || !event.key.startsWith('Arrow')) return;
+          event.preventDefault();
+          const stage = object.closest('.build-stage');
+          const [currentX, currentY] = object.style.translate.split(/\s+/);
+          const stepX = event.key === 'ArrowLeft' ? -12 : event.key === 'ArrowRight' ? 12 : 0;
+          const stepY = event.key === 'ArrowUp' ? -12 : event.key === 'ArrowDown' ? 12 : 0;
+          const x = Math.max(-object.offsetLeft, Math.min(stage.clientWidth - object.offsetLeft - object.offsetWidth, (parseFloat(currentX) || 0) + stepX));
+          const y = Math.max(-object.offsetTop, Math.min(stage.clientHeight - object.offsetTop - object.offsetHeight, (parseFloat(currentY) || 0) + stepY));
+          object.style.translate = `${x}px ${y}px`;
+        });
+        object.addEventListener('click', event => {
+          if (!dragged) return;
+          dragged = false;
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }, true);
+      });
+    }
+
+
+    function toggleBoardItem(id) {
+      if (boardItems.has(id)) boardItems.delete(id); else boardItems.add(id);
+      localStorage.setItem('playform-board', JSON.stringify([...boardItems]));
+      syncMoodButtons();
+      renderMoodboard();
+    }
+
+    function openDetails(id, trigger = document.activeElement) {
       const item = allFurniture.find(project => project.id === id);
       if (!item) return;
+      lastProductTrigger = trigger;
+      const saved = boardItems.has(item.id);
+      const availableDetails = [
+        ['Materials', item.materials?.join(', ')],
+        ['Dimensions', item.dimensions],
+        ['Colors', item.colors?.join(', ')]
+      ].filter(([, value]) => value);
       document.getElementById('modalBody').innerHTML = `
         <div class="detail-layout">
-          <div class="detail-image" style="background:${item.bgAccent}"><img src="${item.image}" alt="${item.name}" /></div>
+          <div class="detail-image" style="background:${item.bgAccent || item.cardAccent || '#f5eee2'}"><img src="${item.transparentImage || item.image}" alt="${item.name}" /></div>
           <div class="detail-copy">
-            <p class="eyebrow">${item.collection} <span>·</span> ${item.type}</p>
+            <p class="eyebrow">${item.category} <span>·</span> PLAYFORM OBJECTS</p>
             <h2 id="modalTitle">${item.name}</h2>
+            <p class="detail-price">${formatPrice(item.price)}</p>
             <p class="detail-description">${item.description}</p>
-            <dl class="spec-list">
-              <div><dt>Designed by</dt><dd>${item.designer}</dd></div>
-              <div><dt>Materials</dt><dd>${item.materials.join(', ')}</dd></div>
-              <div><dt>Dimensions</dt><dd>${item.dimensions}</dd></div>
-              <div><dt>Colors</dt><dd>${item.colors.join(', ')}</dd></div>
-            </dl>
-            <button class="detail-save" onclick="toggleSave(${item.id}, this)"><i class="bi ${savedItems.has(item.id) ? 'bi-bookmark-heart-fill' : 'bi-bookmark-heart'}"></i> ${savedItems.has(item.id) ? 'Saved to your collection' : 'Save this project'}</button>
+            ${availableDetails.length ? `<dl class="spec-list">${availableDetails.map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>` : ''}
+            <div class="detail-tags">${(item.tags || []).map(tag => `<span>${tag}</span>`).join('')}</div>
+            <button class="detail-save ${saved ? 'saved' : ''}" type="button" data-detail-save="${item.id}" aria-pressed="${saved}"><i class="bi ${saved ? 'bi-heart-fill' : 'bi-heart'}"></i> ${saved ? 'Saved to your moodboard' : 'Add to my moodboard'}</button>
           </div>
         </div>`;
+      document.querySelector('[data-detail-save]').addEventListener('click', event => toggleBoardItem(Number(event.currentTarget.dataset.detailSave)));
       modal.classList.add('open');
       modal.setAttribute('aria-hidden', 'false');
       document.body.classList.add('modal-open');
@@ -179,19 +299,182 @@
       modal.classList.remove('open');
       modal.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('modal-open');
+      lastProductTrigger?.focus();
     }
     modal.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', closeModal));
-    document.addEventListener('keydown', event => { if (event.key === 'Escape') closeModal(); });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
 
     document.querySelectorAll('.filter-chip').forEach(button => {
       button.addEventListener('click', () => {
         const filter = button.dataset.filter;
-        document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.toggle('active', chip === button));
-        document.querySelectorAll('.shop-card').forEach(card => {
-          card.hidden = filter !== 'all' && card.dataset.category !== filter;
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+          const active = chip === button;
+          chip.classList.toggle('active', active);
+          chip.setAttribute('aria-pressed', String(active));
+        });
+        const cards = [...document.querySelectorAll('.shop-card')];
+        cards.forEach((card, index) => {
+          const match = filter === 'all' || card.dataset.category === filter;
+          if (match) {
+            card.classList.remove('filter-exit');
+            if (card.hidden) {
+              card.hidden = false;
+              card.classList.remove('filter-enter');
+              requestAnimationFrame(() => {
+                card.style.setProperty('--filter-delay', `${index * 45}ms`);
+                card.classList.add('filter-enter');
+              });
+            }
+          } else if (!match && !card.hidden) {
+            card.classList.remove('filter-enter');
+            card.classList.add('filter-exit');
+            card.addEventListener('animationend', () => {
+              if (card.classList.contains('filter-exit')) {
+                card.hidden = true;
+                card.classList.remove('filter-exit');
+              }
+            }, { once: true });
+          }
         });
       });
     });
+
+    // Moodboard: save a visual shortlist that persists across visits.
+    const moodToggle = document.querySelector('.moodboard-toggle');
+    const moodPanel = document.querySelector('.moodboard-panel');
+    function renderMoodboard() {
+      const items = allFurniture.filter(item => boardItems.has(item.id));
+      moodToggle.querySelector('b').textContent = items.length;
+      moodPanel.querySelector('.moodboard-empty').hidden = items.length > 0;
+      moodPanel.querySelector('.moodboard-items').innerHTML = items.map(item => `<article class="moodboard-item"><img src="${item.transparentImage || item.image}" alt=""/><div><strong>${item.name}</strong><small>${formatPrice(item.price)}</small></div><button type="button" data-remove-item="${item.id}" aria-label="Remove ${item.name}" class="mood-remove"><i class="bi bi-x"></i></button></article>`).join('');
+      moodPanel.querySelectorAll('[data-remove-item]').forEach(button => button.addEventListener('click', () => {
+        boardItems.delete(Number(button.dataset.removeItem));
+        localStorage.setItem('playform-board', JSON.stringify([...boardItems]));
+        syncMoodButtons(); renderMoodboard();
+      }));
+    }
+    function syncMoodButtons() {
+      document.querySelectorAll('.mood-add').forEach(button => {
+        const selected = boardItems.has(Number(button.dataset.item));
+        button.classList.toggle('selected', selected);
+        button.querySelector('i').className = `bi ${selected ? 'bi-check-lg' : 'bi-plus-lg'}`;
+        button.querySelector('span').textContent = selected ? 'On your moodboard' : 'Add to moodboard';
+      });
+      document.querySelectorAll('.build-save').forEach(button => {
+        const selected = boardItems.has(Number(button.dataset.buildSave));
+        button.classList.toggle('is-saved', selected);
+        button.setAttribute('aria-pressed', String(selected));
+        button.setAttribute('aria-label', `${selected ? 'Remove' : 'Save'} ${allFurniture.find(item => item.id === Number(button.dataset.buildSave))?.name || 'item'} ${selected ? 'from' : 'to'} your moodboard`);
+        button.innerHTML = `<i class="bi ${selected ? 'bi-heart-fill' : 'bi-heart'}"></i><span>${selected ? 'Saved' : 'Save'}</span>`;
+      });
+      const detailSave = document.querySelector('[data-detail-save]');
+      if (detailSave) {
+        const selected = boardItems.has(Number(detailSave.dataset.detailSave));
+        detailSave.classList.toggle('saved', selected);
+        detailSave.setAttribute('aria-pressed', String(selected));
+        detailSave.innerHTML = `<i class="bi ${selected ? 'bi-heart-fill' : 'bi-heart'}"></i> ${selected ? 'Saved to your moodboard' : 'Add to my moodboard'}`;
+      }
+    }
+    shopGrid.addEventListener('click', event => {
+      const button = event.target.closest('.mood-add');
+      if (!button) return;
+      toggleBoardItem(Number(button.dataset.item));
+      moodToggle.classList.remove('board-bump');
+      requestAnimationFrame(() => moodToggle.classList.add('board-bump'));
+    });
+    function setMoodOpen(open) {
+      moodPanel.classList.toggle('open', open);
+      moodPanel.setAttribute('aria-hidden', String(!open));
+      moodPanel.inert = !open;
+      moodToggle.setAttribute('aria-expanded', String(open));
+      document.body.classList.toggle('moodboard-open', open);
+    }
+    moodToggle.addEventListener('click', () => setMoodOpen(moodToggle.getAttribute('aria-expanded') !== 'true'));
+    moodPanel.querySelector('.moodboard-close').addEventListener('click', () => setMoodOpen(false));
+    syncMoodButtons(); renderMoodboard();
+
+    // Pointer-driven tilt is intentionally limited to fine pointers and small angles.
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('.shop-photo').forEach(card => {
+        card.addEventListener('pointermove', event => {
+          const rect = card.getBoundingClientRect();
+          const x = (event.clientX - rect.left) / rect.width - .5;
+          const y = (event.clientY - rect.top) / rect.height - .5;
+          card.style.setProperty('--tilt-x', `${-y * 5}deg`);
+          card.style.setProperty('--tilt-y', `${x * 5}deg`);
+        });
+        card.addEventListener('pointerleave', () => {
+          card.style.setProperty('--tilt-x', '0deg'); card.style.setProperty('--tilt-y', '0deg');
+        });
+      });
+      const buildStage = document.querySelector('.build-stage');
+      buildStage.addEventListener('pointermove', event => {
+        const rect = buildStage.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - .5;
+        const y = (event.clientY - rect.top) / rect.height - .5;
+        buildStage.style.setProperty('--build-x-near', `${x * 13}px`);
+        buildStage.style.setProperty('--build-y-near', `${y * 13}px`);
+        buildStage.style.setProperty('--build-x-mid', `${x * 8}px`);
+        buildStage.style.setProperty('--build-y-mid', `${y * 8}px`);
+        buildStage.style.setProperty('--build-x-far', `${x * 4}px`);
+        buildStage.style.setProperty('--build-y-far', `${y * 4}px`);
+      });
+      buildStage.addEventListener('pointerleave', () => {
+        ['near', 'mid', 'far'].forEach(depth => {
+          buildStage.style.setProperty(`--build-x-${depth}`, '0px');
+          buildStage.style.setProperty(`--build-y-${depth}`, '0px');
+        });
+      });
+    }
+
+    // Drag the little star around the hero image; it springs home on release.
+    const dragStar = document.querySelector('.drag-star');
+    let dragOrigin = null;
+    let dragMoved = false;
+    dragStar.addEventListener('pointerdown', event => {
+      dragStar.setPointerCapture(event.pointerId);
+      dragOrigin = { x: event.clientX, y: event.clientY, left: dragStar.offsetLeft, top: dragStar.offsetTop };
+      dragMoved = false;
+      dragStar.classList.add('dragging');
+    });
+    dragStar.addEventListener('pointermove', event => {
+      if (!dragOrigin) return;
+      if (Math.hypot(event.clientX - dragOrigin.x, event.clientY - dragOrigin.y) > 5) dragMoved = true;
+      const parent = dragStar.parentElement.getBoundingClientRect();
+      const left = Math.max(8, Math.min(parent.width - dragStar.offsetWidth - 8, dragOrigin.left + event.clientX - dragOrigin.x));
+      const top = Math.max(8, Math.min(parent.height - dragStar.offsetHeight - 8, dragOrigin.top + event.clientY - dragOrigin.y));
+      dragStar.style.left = `${left}px`; dragStar.style.top = `${top}px`;
+      dragStar.style.setProperty('--drag-tilt', `${Math.max(-18, Math.min(18, (event.clientX - dragOrigin.x) * .18))}deg`);
+    });
+    const releaseStar = () => { dragOrigin = null; dragStar.classList.remove('dragging'); dragStar.style.setProperty('--drag-tilt', '0deg'); };
+    dragStar.addEventListener('pointerup', releaseStar);
+    dragStar.addEventListener('pointercancel', releaseStar);
+    dragStar.addEventListener('click', () => {
+      if (dragMoved) { dragMoved = false; return; }
+      if (!allFurniture.length) return;
+      const surprise = allFurniture[Math.floor(Math.random() * allFurniture.length)];
+      openDetails(surprise.id, dragStar);
+    });
+
+    // Reveal each story beat once as it enters view. The page remains fully visible without JS.
+    if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const revealTargets = document.querySelectorAll('.collection-intro, .shop-heading, .shop-card, .editorial-statement, .editorial-photo, .closing-note');
+      revealTargets.forEach((element, index) => {
+        element.classList.add('reveal-ready');
+        if (element.classList.contains('shop-card') || element.classList.contains('editorial-photo')) {
+          element.style.setProperty('--reveal-delay', `${(index % 4) * 75}ms`);
+        }
+      });
+      revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-revealed');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.14, rootMargin: '0px 0px -35px 0px' });
+      revealTargets.forEach(element => revealObserver.observe(element));
+    }
 
     const menuButton = document.querySelector('.menu-toggle');
     menuButton.addEventListener('click', () => {
