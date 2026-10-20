@@ -503,7 +503,7 @@
     modal.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', closeModal));
     document.addEventListener('keydown', event => { if (event.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
 
-    // Moodboard: save a visual shortlist that persists across visits.
+    // Moodboard
     const moodToggle = document.querySelector('.moodboard-toggle');
     const moodPanel = document.querySelector('.moodboard-panel');
     function renderMoodboard() {
@@ -548,7 +548,6 @@
       requestAnimationFrame(() => moodToggle.classList.add('board-bump'));
     });
 
-    // A failed image is reported on its own card; it does not make the whole catalog fail.
     document.addEventListener('error', event => {
       const image = event.target;
       if (!(image instanceof HTMLImageElement) || !image.closest('.shop-grid, .hero-feature-grid, .build-object-layer, .detail-layout, .moodboard-items')) return;
@@ -572,7 +571,6 @@
     moodPanel.querySelector('.moodboard-close').addEventListener('click', () => setMoodOpen(false));
     syncMoodButtons(); renderMoodboard();
 
-    // Pointer-driven tilt is intentionally limited to fine pointers and small angles.
     if (matchMedia('(hover: hover) and (pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
       shopGrid.addEventListener('pointermove', event => {
         const card = event.target.closest('.shop-photo');
@@ -610,7 +608,6 @@
       });
     }
 
-    // Drag the little star around the hero image; it springs home on release.
     const dragStar = document.querySelector('.drag-star');
     let dragOrigin = null;
     let dragMoved = false;
@@ -639,7 +636,7 @@
       openDetails(surprise.id, dragStar);
     });
 
-    // Reveal each story beat once as it enters view. The page remains fully visible without JS.
+    // Reveal each story beat once as it enters view
     if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       const revealTargets = document.querySelectorAll('.collection-intro, .shop-heading, .shop-card, .editorial-statement, .editorial-photo, .closing-note');
       revealTargets.forEach((element, index) => {

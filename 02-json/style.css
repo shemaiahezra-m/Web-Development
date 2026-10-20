@@ -613,15 +613,6 @@ main {
   line-height: 1.8;
 }
 
-.intro-index {
-  position: absolute;
-  right: 25px;
-  bottom: 22px;
-  color: #858477;
-  font-size: 9px;
-  letter-spacing: .12em;
-}
-
 .round-link {
   display: inline-flex;
   align-items: center;
@@ -739,18 +730,11 @@ main {
   padding: 0;
   border: 0;
   border-radius: 8px;
-  cursor: pointer;
-}
-
-.shop-photo {
   overflow: hidden;
-  transition: background-color .35s, border-radius .35s, transform .35s;
-}
-
-.shop-photo {
   transform: perspective(700px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
   transition: background-color .35s, border-radius .35s, transform .25s cubic-bezier(.2, .9, .25, 1);
   will-change: transform;
+  cursor: pointer;
 }
 
 .shop-photo .placeholder-photo {
@@ -819,9 +803,6 @@ main {
   border-radius: 8px;
   background: var(--ink);
   color: #fff;
-}
-
-.photo-open {
   opacity: .7;
   transform: translate(-3px, 3px) rotate(-12deg);
 }
@@ -875,23 +856,11 @@ main {
   cursor: pointer;
   text-align: left;
   font: 600 12px var(--sans);
-}
-
-.shop-name small {
-  color: var(--muted);
-  font-size: 9px;
-  font-weight: 400;
-}
-
-.shop-price {
-  color: var(--ink);
-  font-size: 10px;
-  font-weight: 700;
-}
-
-.shop-name {
   transition: transform .3s cubic-bezier(.2, .75, .25, 1);
 }
+
+.shop-name small { color: var(--muted); font-size: 9px; font-weight: 400; }
+.shop-price { color: var(--ink); font-size: 10px; font-weight: 700; }
 
 .shop-card:hover .shop-name {
   transform: translateY(-3px);
@@ -1722,47 +1691,6 @@ main {
   }
 }
 
-.build-section {
-  grid-template-columns: minmax(280px, .78fr) minmax(0, 1.22fr);
-  min-height: 370px;
-  gap: 28px;
-  overflow: hidden;
-  padding: clamp(30px, 4.5vw, 62px) clamp(28px, 4.2vw, 58px);
-  border: 1px solid rgba(255, 255, 255, .8);
-  border-radius: 28px;
-  background: radial-gradient(ellipse at 82% 45%, rgba(255, 255, 255, .75), transparent 45%), linear-gradient(115deg, #ffe8a4 0%, #fff3cf 56%, #fff8e9 100%);
-  box-shadow: 0 20px 60px rgba(70, 61, 42, .055), inset 0 1px rgba(255, 255, 255, .9);
-}
-
-.build-copy h2 {
-  font-size: clamp(39px, 4.3vw, 59px);
-  line-height: .96;
-  letter-spacing: -.075em;
-}
-
-.build-copy>p:not(.eyebrow) {
-  max-width: 320px;
-  margin: 17px 0 23px;
-  color: #59657b;
-  font-size: 13px;
-  line-height: 1.65;
-}
-
-.build-cta {
-  min-height: 44px;
-  gap: 15px;
-  padding: 0 18px;
-  border-radius: 30px;
-  box-shadow: 0 6px 14px rgba(24, 54, 104, .12);
-  transition: transform .42s cubic-bezier(.2, 1.5, .4, 1), box-shadow .3s;
-}
-
-.build-cta:hover,
-.build-cta:focus-visible {
-  transform: translateY(-3px) scale(1.035);
-  box-shadow: 0 11px 22px rgba(24, 54, 104, .2);
-}
-
 .detail-price {
   margin: -7px 0 17px;
   color: var(--ink);
@@ -1981,14 +1909,6 @@ body {
   transform: rotate(14deg);
 }
 
-.hero-doodle-two {
-  bottom: 0;
-  left: 4%;
-  color: var(--pink);
-  font-size: 80px;
-  transform: rotate(-8deg);
-}
-
 .hero-right {
   min-height: min(850px, 100svh);
   border-radius: 0 0 0 120px;
@@ -2073,11 +1993,6 @@ body {
 
 .intro-copy h2 {
   font-size: clamp(42px, 5.7vw, 78px);
-}
-
-.intro-index {
-  color: var(--pink);
-  font-weight: 700;
 }
 
 .round-link {
@@ -2305,76 +2220,6 @@ body {
 
 .build-cta:hover {
   transform: translateY(-3px) rotate(-2deg);
-}
-
-.build-collage {
-  position: relative;
-  min-height: 310px;
-}
-
-.build-piece {
-  position: absolute;
-  width: 36%;
-  height: 78%;
-  object-fit: contain;
-  mix-blend-mode: normal;
-  filter: drop-shadow(0 12px 10px rgba(40, 45, 70, .1));
-  transition: transform .5s cubic-bezier(.2, 1.4, .4, 1);
-}
-
-.build-chair {
-  top: 15%;
-  left: 2%;
-  transform: rotate(-8deg);
-}
-
-.build-table {
-  top: 1%;
-  left: 31%;
-  transform: rotate(7deg);
-}
-
-.build-family {
-  top: 12%;
-  right: 0;
-  transform: rotate(5deg);
-}
-
-.build-collage:hover .build-chair {
-  transform: translateY(-12px) rotate(-12deg);
-}
-
-.build-collage:hover .build-table {
-  transform: translateY(8px) rotate(12deg);
-}
-
-.build-collage:hover .build-family {
-  transform: translateY(-9px) rotate(0);
-}
-
-.build-sticker {
-  position: absolute;
-  top: 4%;
-  right: 5%;
-  display: grid;
-  width: 82px;
-  height: 82px;
-  align-content: center;
-  border-radius: 50%;
-  background: var(--pink);
-  color: #fff;
-  font: 800 12px/1.05 var(--display);
-  text-align: center;
-  transform: rotate(9deg);
-}
-
-.build-scribble {
-  position: absolute;
-  right: 12%;
-  bottom: 4%;
-  color: var(--pink);
-  font-size: 78px;
-  transform: rotate(-10deg);
 }
 
 .editorial-grid {
