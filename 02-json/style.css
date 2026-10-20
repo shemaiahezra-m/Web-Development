@@ -2123,7 +2123,7 @@ body {
 }
 
 .shop-photo .product-cutout {
-  mix-blend-mode: normal;
+  mix-blend-mode: multiply;
   filter: none;
 }
 
@@ -2556,51 +2556,6 @@ body {
 .build-object:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 4px;
-}
-
-/* Data-driven catalog controls share the existing filter-chip visual language. */
-.catalog-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 9px;
-  margin: 0 0 18px;
-}
-
-.catalog-controls label {
-  color: var(--ink);
-  font-size: 10px;
-  font-weight: 700;
-}
-
-.catalog-search {
-  flex: 1 1 230px;
-  min-width: min(100%, 180px);
-  padding: 10px 14px;
-  border: 1px solid rgba(24, 54, 104, .22);
-  border-radius: 24px;
-  outline: 0;
-  background: rgba(255, 255, 255, .5);
-  color: var(--ink);
-  font: inherit;
-  font-size: 11px;
-}
-
-.catalog-search:focus,
-.catalog-sort:focus {
-  border-color: var(--ink);
-  box-shadow: 0 0 0 3px rgba(24, 54, 104, .1);
-}
-
-.catalog-sort {
-  max-width: 100%;
-  padding: 9px 30px 9px 13px;
-  border: 1px solid rgba(24, 54, 104, .22);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, .5);
-  color: var(--ink);
-  font: inherit;
-  font-size: 10px;
 }
 
 .catalog-status {

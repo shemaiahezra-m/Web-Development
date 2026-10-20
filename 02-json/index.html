@@ -84,17 +84,6 @@
             </div>
             <div class="category-filters" role="group" aria-label="Filter furniture"></div>
           </div>
-          <div class="catalog-controls">
-            <label class="catalog-search-label" for="catalogSearch">Search the collection</label>
-            <input class="catalog-search" id="catalogSearch" type="search" placeholder="Try chair, lamp, or soft shapes"
-              autocomplete="off" />
-            <label class="catalog-sort-label" for="catalogSort">Sort by</label>
-            <select class="catalog-sort" id="catalogSort">
-              <option value="catalog">Catalog order</option>
-              <option value="price-ascending">Price: low to high</option>
-              <option value="price-descending">Price: high to low</option>
-            </select>
-          </div>
           <p class="catalog-status" role="status" aria-live="polite"></p>
           <div class="shop-grid" aria-live="polite" aria-busy="true"></div>
         </div>
@@ -199,8 +188,6 @@
     const modal = document.getElementById('itemModal');
     const shopGrid = document.querySelector('.shop-grid');
     const categoryFilters = document.querySelector('.category-filters');
-    const catalogSearch = document.getElementById('catalogSearch');
-    const catalogSort = document.getElementById('catalogSort');
     const catalogStatus = document.querySelector('.catalog-status');
     let revealObserver = null;
     let lastProductTrigger = null;
@@ -234,7 +221,7 @@
           renderCategoryFilters();
           renderHeroFeatures(allFurniture.filter(item => item.featured === true && item.heroVisible === true));
           renderBuildCollage(allFurniture.filter(item => item.collageVisible === true));
-          applyCatalogControls();
+          applyCategoryFilter();
           syncMoodButtons();
           renderMoodboard();
         } catch (error) {
@@ -328,21 +315,15 @@
             chip.classList.toggle('active', active);
             chip.setAttribute('aria-pressed', String(active));
           });
-          applyCatalogControls();
+          applyCategoryFilter();
         });
       });
     }
 
-    function applyCatalogControls() {
-      const query = catalogSearch.value.trim().toLocaleLowerCase();
-      const products = allFurniture.filter(item => {
-        const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
-        const searchableText = [item.name, item.category, item.description, item.collection, ...(item.tags || [])]
-          .filter(Boolean).join(' ').toLocaleLowerCase();
-        return matchesCategory && searchableText.includes(query);
-      });
-      if (catalogSort.value === 'price-ascending') products.sort((a, b) => a.price - b.price);
-      if (catalogSort.value === 'price-descending') products.sort((a, b) => b.price - a.price);
+    function applyCategoryFilter() {
+      const products = allFurniture.filter(item =>
+        activeCategory === 'all' || item.category === activeCategory
+      );
       shopGrid.innerHTML = renderProductCards(products);
       shopGrid.setAttribute('aria-busy', 'false');
       catalogStatus.classList.remove('has-error');
@@ -353,9 +334,6 @@
         revealObserver.observe(card);
       });
     }
-
-    catalogSearch.addEventListener('input', applyCatalogControls);
-    catalogSort.addEventListener('change', applyCatalogControls);
 
     function escapeHTML(value) {
       return String(value).replace(/[&<>"']/g, character => ({
@@ -379,7 +357,7 @@
         const isSaved = boardItems.has(item.id);
         const image = item.transparentImage || item.image;
         return `
-          <article class="shop-card" data-product-id="${item.id}" data-category="${escapeHTML(item.category)}" style="--card-accent:${escapeHTML(item.cardAccent || item.bgAccent || '#e8e3d8')}">
+          <article class="shop-card" data-product-id="${item.id}" data-category="${escapeHTML(item.category)}" style="--card-accent:${escapeHTML(item.bgAccent || item.cardAccent || '#e8e3d8')}">
             <button class="shop-photo photo-placeholder" type="button" onclick="openDetails(${item.id})" aria-label="View ${escapeHTML(item.name)}">
               <img class="placeholder-photo product-cutout ${item.transparentImage ? 'transparent-product' : ''}" src="${escapeHTML(image)}" alt="${escapeHTML(item.name)}" loading="lazy" />
               <i class="bi bi-arrow-up-right photo-open" aria-hidden="true"></i>
