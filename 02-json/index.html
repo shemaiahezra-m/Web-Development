@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,10 +9,13 @@
   <title>Playform — Spaces with a point of view</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <main id="top">
     <section class="hero-section" id="about">
@@ -29,76 +33,122 @@
         <div class="hero-heading-row">
           <p class="eyebrow">Furniture for the feeling of home</p>
           <h1>Make room<br />for <span>play.</span></h1>
-          <p class="hero-intro">Characterful furniture, unexpected color, and pieces that make your space feel like you.</p>
-          <a class="collection-bubble" href="#work"><i class="bi bi-arrow-down-right"></i><span>Explore<br />the collection</span></a>
+          <p class="hero-intro">Characterful furniture, unexpected color, and pieces that make your space feel like you.
+          </p>
+          <a class="collection-bubble" href="#work"><i class="bi bi-arrow-down-right"></i><span>Explore<br />the
+              collection</span></a>
         </div>
         <span class="hero-sticker">GOOD<br />MOODS<br />LIVE HERE <i>✳</i></span>
         <span class="hero-doodle hero-doodle-one" aria-hidden="true">✳</span>
         <div class="hero-feature-grid" id="heroFeatureGrid"></div>
         <div class="hero-support-row">
           <p>Designed to be lived with, loved, and mixed your own way.</p>
-          <a class="scan-card" href="#work"><span class="scan-icon"></span><span><strong>Find your new favorite</strong><small>Meet the pieces with personality.</small></span><i class="bi bi-arrow-up-right scan-arrow"></i></a>
+          <a class="scan-card" href="#work"><span class="scan-icon"></span><span><strong>Find your new
+                favorite</strong><small>Meet the pieces with personality.</small></span><i
+              class="bi bi-arrow-up-right scan-arrow"></i></a>
         </div>
       </div>
       <div class="hero-right">
         <img src="Assets/Interior/Ecletic Interior Design.png" alt="Colorful interior filled with playful furniture" />
-        <button class="drag-star" type="button" aria-label="Discover a surprise furniture piece" title="Click for a surprise piece · drag me"><i class="bi bi-stars"></i></button>
+        <button class="drag-star" type="button" aria-label="Discover a surprise furniture piece"
+          title="Click for a surprise piece · drag me"><i class="bi bi-stars"></i></button>
         <div class="hero-image-shade"></div>
         <div class="hero-image-label"><span>PLAYFORM OBJECTS — 2026</span></div>
-        <div class="hero-editorial"><p class="eyebrow">A home with a point of view</p><h2>Furniture made<br />with a little love.</h2><a class="follow-pill" href="https://instagram.com" target="_blank" rel="noreferrer">Follow along <i class="bi bi-instagram"></i></a></div>
+        <div class="hero-editorial">
+          <p class="eyebrow">A home with a point of view</p>
+          <h2>Furniture made<br />with a little love.</h2><a class="follow-pill" href="https://instagram.com"
+            target="_blank" rel="noreferrer">Follow along <i class="bi bi-instagram"></i></a>
+        </div>
       </div>
     </section>
 
     <div class="lower-content" id="work">
       <section class="collection-intro" aria-labelledby="collectionIntroTitle">
-        <div class="intro-photo"><img src="Assets/Interior/Playful Interior Design.webp" alt="Colorful home office with sculptural furniture and playful decor" loading="lazy" /><span>Collection 01 · Playful living</span></div>
-        <div class="intro-copy"><p class="eyebrow">Designed for your kind of home</p><h2 id="collectionIntroTitle">Good pieces.<br />Good moods.</h2><p>Soft forms, joyful colors, and a little unexpected charm. Find the pieces that make everyday feel more like you.</p><a class="round-link" href="#shopTitle">Meet the collection <i class="bi bi-arrow-up-right"></i></a></div>
+        <div class="intro-photo"><img src="Assets/Interior/Playful Interior Design.webp"
+            alt="Colorful home office with sculptural furniture and playful decor" loading="lazy" /><span>Collection 01
+            · Playful living</span></div>
+        <div class="intro-copy">
+          <p class="eyebrow">Designed for your kind of home</p>
+          <h2 id="collectionIntroTitle">Good pieces.<br />Good moods.</h2>
+          <p>Soft forms, joyful colors, and a little unexpected charm. Find the pieces that make everyday feel more like
+            you.</p><a class="round-link" href="#shopTitle">Meet the collection <i class="bi bi-arrow-up-right"></i></a>
+        </div>
       </section>
 
       <section class="shop-section" aria-labelledby="shopTitle">
         <div class="shop-shell">
-        <div class="shop-heading">
-          <div><p class="eyebrow">The Playform collection</p><h2 id="shopTitle">Pieces with<br />personality.</h2></div>
-          <div class="category-filters" role="group" aria-label="Filter furniture"></div>
-        </div>
-        <div class="catalog-controls">
-          <label class="catalog-search-label" for="catalogSearch">Search the collection</label>
-          <input class="catalog-search" id="catalogSearch" type="search" placeholder="Try chair, lamp, or soft shapes" autocomplete="off" />
-          <label class="catalog-sort-label" for="catalogSort">Sort by</label>
-          <select class="catalog-sort" id="catalogSort">
-            <option value="catalog">Catalog order</option>
-            <option value="price-ascending">Price: low to high</option>
-            <option value="price-descending">Price: high to low</option>
-          </select>
-        </div>
-        <p class="catalog-status" role="status" aria-live="polite"></p>
-        <div class="shop-grid" aria-live="polite" aria-busy="true"></div>
+          <div class="shop-heading">
+            <div>
+              <p class="eyebrow">The Playform collection</p>
+              <h2 id="shopTitle">Pieces with<br />personality.</h2>
+            </div>
+            <div class="category-filters" role="group" aria-label="Filter furniture"></div>
+          </div>
+          <div class="catalog-controls">
+            <label class="catalog-search-label" for="catalogSearch">Search the collection</label>
+            <input class="catalog-search" id="catalogSearch" type="search" placeholder="Try chair, lamp, or soft shapes"
+              autocomplete="off" />
+            <label class="catalog-sort-label" for="catalogSort">Sort by</label>
+            <select class="catalog-sort" id="catalogSort">
+              <option value="catalog">Catalog order</option>
+              <option value="price-ascending">Price: low to high</option>
+              <option value="price-descending">Price: high to low</option>
+            </select>
+          </div>
+          <p class="catalog-status" role="status" aria-live="polite"></p>
+          <div class="shop-grid" aria-live="polite" aria-busy="true"></div>
         </div>
       </section>
 
       <section class="build-section" aria-labelledby="buildTitle">
-        <div class="build-copy"><p class="eyebrow">A little space to play · 04</p><h2 id="buildTitle">Playful.<br />Functional.<br /><span>Yours.</span></h2><p>Save your favorites, build your moodboard, and bring your dream space to life.</p><button class="build-cta" type="button" onclick="document.querySelector('.moodboard-toggle').click()">Try the moodboard <i class="bi bi-arrow-right"></i></button></div>
+        <div class="build-copy">
+          <p class="eyebrow">A little space to play · 04</p>
+          <h2 id="buildTitle">Playful.<br />Functional.<br /><span>Yours.</span></h2>
+          <p>Save your favorites, build your moodboard, and bring your dream space to life.</p><button class="build-cta"
+            type="button" onclick="document.querySelector('.moodboard-toggle').click()">Try the moodboard <i
+              class="bi bi-arrow-right"></i></button>
+        </div>
         <div class="build-stage" role="group" aria-label="Playform furniture collage">
           <div class="build-object-layer"></div>
           <span class="build-note build-note-top" aria-hidden="true">Build your<br />space</span>
           <span class="build-note build-note-side" aria-hidden="true">Drag pieces<br />to play</span>
-          <svg class="build-doodle build-arrow" viewBox="0 0 120 70" aria-hidden="true"><path d="M5 53C35 62 53 50 63 35S87 13 108 18M94 7l16 11-14 12" /></svg>
-          <svg class="build-doodle build-sparkle" viewBox="0 0 50 50" aria-hidden="true"><path d="M25 2C26 17 33 24 48 25 33 26 26 33 25 48 24 33 17 26 2 25 17 24 24 17 25 2Z" /></svg>
+          <svg class="build-doodle build-arrow" viewBox="0 0 120 70" aria-hidden="true">
+            <path d="M5 53C35 62 53 50 63 35S87 13 108 18M94 7l16 11-14 12" />
+          </svg>
+          <svg class="build-doodle build-sparkle" viewBox="0 0 50 50" aria-hidden="true">
+            <path d="M25 2C26 17 33 24 48 25 33 26 26 33 25 48 24 33 17 26 2 25 17 24 24 17 25 2Z" />
+          </svg>
           <span class="build-heart-doodle" aria-hidden="true">♡</span>
         </div>
       </section>
 
       <section class="editorial-grid" id="story" aria-label="Playform design story">
-        <div class="editorial-statement"><p class="eyebrow">A little more considered</p><h2>Create a home<br />that feels like you.</h2><p>Mix the color. Keep the comfort. Make space for pieces that bring a little joy to the everyday.</p><a class="round-link" href="mailto:hello@playform.studio">Meet Playform <i class="bi bi-arrow-up-right"></i></a><span class="editorial-stamp">PLAYFORM<br />OBJECTS · 2026</span></div>
+        <div class="editorial-statement">
+          <p class="eyebrow">A little more considered</p>
+          <h2>Create a home<br />that feels like you.</h2>
+          <p>Mix the color. Keep the comfort. Make space for pieces that bring a little joy to the everyday.</p><a
+            class="round-link" href="mailto:hello@playform.studio">Meet Playform <i
+              class="bi bi-arrow-up-right"></i></a><span class="editorial-stamp">PLAYFORM<br />OBJECTS · 2026</span>
+        </div>
         <div class="editorial-gallery">
-          <div class="editorial-photo editorial-photo-one"><img src="Assets/Interior/Interior Design-1.jpg" alt="Colorful maximalist living room with collected furniture" loading="lazy" /><span>A home with its own rhythm</span></div>
-          <div class="editorial-photo editorial-photo-two"><img src="Assets/Seating/Paolo Castelli Ama.jpg" alt="Sculptural blush lounge chair" loading="lazy" /><span>Soft shapes, strong character</span></div>
-          <div class="editorial-photo editorial-photo-three"><img src="Assets/Tables/Gloss Side Table Christine Kroncke.jpg" alt="Glossy sculptural side tables" loading="lazy" /><span>Objects to live with</span></div>
+          <div class="editorial-photo editorial-photo-one"><img src="Assets/Interior/Interior Design-1.jpg"
+              alt="Colorful maximalist living room with collected furniture" loading="lazy" /><span>A home with its own
+              rhythm</span></div>
+          <div class="editorial-photo editorial-photo-two"><img src="Assets/Seating/Paolo Castelli Ama.jpg"
+              alt="Sculptural blush lounge chair" loading="lazy" /><span>Soft shapes, strong character</span></div>
+          <div class="editorial-photo editorial-photo-three"><img
+              src="Assets/Tables/Gloss Side Table Christine Kroncke.jpg" alt="Glossy sculptural side tables"
+              loading="lazy" /><span>Objects to live with</span></div>
         </div>
       </section>
     </div>
 
-    <div class="mood-marquee" aria-label="Good moods, good pieces, made for play"><div class="marquee-track" aria-hidden="true"><span>GOOD MOODS <i>✳</i> GOOD PIECES <i>✳</i> MADE FOR PLAY <i>✳</i> GOOD MOODS <i>✳</i> GOOD PIECES <i>✳</i> MADE FOR PLAY <i>✳</i></span><span>GOOD MOODS <i>✳</i> GOOD PIECES <i>✳</i> MADE FOR PLAY <i>✳</i> GOOD MOODS <i>✳</i> GOOD PIECES <i>✳</i> MADE FOR PLAY <i>✳</i></span></div></div>
+    <div class="mood-marquee" aria-label="Good moods, good pieces, made for play">
+      <div class="marquee-track" aria-hidden="true"><span>GOOD MOODS <i>✳</i> GOOD PIECES <i>✳</i> MADE FOR PLAY
+          <i>✳</i> GOOD MOODS <i>✳</i> GOOD PIECES <i>✳</i> MADE FOR PLAY <i>✳</i></span><span>GOOD MOODS <i>✳</i> GOOD
+          PIECES <i>✳</i> MADE FOR PLAY <i>✳</i> GOOD MOODS <i>✳</i> GOOD PIECES <i>✳</i> MADE FOR PLAY <i>✳</i></span>
+      </div>
+    </div>
 
     <section class="closing-note">
       <p>Good spaces stay with you.</p>
@@ -119,9 +169,16 @@
       <div id="modalBody"></div>
     </div>
   </div>
-  <button class="moodboard-toggle" type="button" aria-expanded="false"><i class="bi bi-grid-3x3-gap"></i><span>Moodboard</span><b>0</b></button>
+  <button class="moodboard-toggle" type="button" aria-expanded="false"><i
+      class="bi bi-grid-3x3-gap"></i><span>Moodboard</span><b>0</b></button>
   <aside class="moodboard-panel" aria-label="Your moodboard" aria-hidden="true" inert>
-    <div class="moodboard-head"><div><p class="eyebrow">Collect what feels like you</p><h2>Your moodboard</h2></div><button class="moodboard-close" type="button" aria-label="Close moodboard"><i class="bi bi-x-lg"></i></button></div>
+    <div class="moodboard-head">
+      <div>
+        <p class="eyebrow">Collect what feels like you</p>
+        <h2>Your moodboard</h2>
+      </div><button class="moodboard-close" type="button" aria-label="Close moodboard"><i
+          class="bi bi-x-lg"></i></button>
+    </div>
     <p class="moodboard-empty">Your board is waiting for a little personality. Add pieces you love.</p>
     <div class="moodboard-items"></div>
   </aside>
@@ -607,4 +664,5 @@
     });
   </script>
 </body>
+
 </html>
