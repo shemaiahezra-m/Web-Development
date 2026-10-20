@@ -143,10 +143,14 @@
       </section>
     </div>
 
+    <!-- Cleaned Marquee Structure -->
     <div class="mood-marquee" aria-label="Good moods, good pieces, made for play">
-      <div class="marquee-track" aria-hidden="true"><span>GOOD MOODS <i>✳</i> GOOD PIECES <i>✳</i> MADE FOR PLAY
-          <i>✳</i> GOOD MOODS <i>✳</i> GOOD PIECES <i>✳</i> MADE FOR PLAY <i>✳</i></span><span>GOOD MOODS <i>✳</i> GOOD
-          PIECES <i>✳</i> MADE FOR PLAY <i>✳</i> GOOD MOODS <i>✳</i> GOOD PIECES <i>✳</i> MADE FOR PLAY <i>✳</i></span>
+      <div class="marquee-track" aria-hidden="true">
+        <div class="marquee-content">
+          <span>GOOD MOODS <i>✳</i></span>
+          <span>GOOD PIECES <i>✳</i></span>
+          <span>MADE FOR PLAY <i>✳</i></span>
+        </div>
       </div>
     </div>
 
@@ -662,6 +666,16 @@
       document.querySelector('.hero-nav').classList.toggle('nav-open', !open);
       menuButton.innerHTML = `<i class="bi ${open ? 'bi-list' : 'bi-x-lg'}"></i>`;
     });
+
+    // Automatic Marquee Item Duplication
+    const marqueeTrack = document.querySelector('.mood-marquee .marquee-track');
+    const marqueeContent = document.querySelector('.mood-marquee .marquee-content');
+
+    if (marqueeTrack && marqueeContent) {
+      for (let i = 0; i < 4; i++) {
+        marqueeTrack.appendChild(marqueeContent.cloneNode(true));
+      }
+    }
   </script>
 </body>
 
