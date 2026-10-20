@@ -60,14 +60,19 @@
         <div class="shop-shell">
         <div class="shop-heading">
           <div><p class="eyebrow">The Playform collection</p><h2 id="shopTitle">Pieces with<br />personality.</h2></div>
-          <div class="category-filters" role="group" aria-label="Filter furniture">
-            <button class="filter-chip active" type="button" data-filter="all" aria-pressed="true">All pieces</button>
-            <button class="filter-chip" type="button" data-filter="seating" aria-pressed="false">Seating</button>
-            <button class="filter-chip" type="button" data-filter="tables" aria-pressed="false">Tables</button>
-            <button class="filter-chip" type="button" data-filter="lighting" aria-pressed="false">Lighting</button>
-            <button class="filter-chip" type="button" data-filter="storage" aria-pressed="false">Storage</button>
-          </div>
+          <div class="category-filters" role="group" aria-label="Filter furniture"></div>
         </div>
+        <div class="catalog-controls">
+          <label class="catalog-search-label" for="catalogSearch">Search the collection</label>
+          <input class="catalog-search" id="catalogSearch" type="search" placeholder="Try chair, lamp, or soft shapes" autocomplete="off" />
+          <label class="catalog-sort-label" for="catalogSort">Sort by</label>
+          <select class="catalog-sort" id="catalogSort">
+            <option value="catalog">Catalog order</option>
+            <option value="price-ascending">Price: low to high</option>
+            <option value="price-descending">Price: high to low</option>
+          </select>
+        </div>
+        <p class="catalog-status" role="status" aria-live="polite"></p>
         <div class="shop-grid" aria-live="polite" aria-busy="true"></div>
         </div>
       </section>
@@ -129,49 +134,181 @@
     motionPreference.addEventListener?.('change', syncMotionPreference);
 
     let allFurniture = [];
-    const boardItems = new Set(JSON.parse(localStorage.getItem('playform-board') || '[]'));
+    let activeCategory = 'all';
+    let boardItems = new Set();
     const modal = document.getElementById('itemModal');
     const shopGrid = document.querySelector('.shop-grid');
+    const categoryFilters = document.querySelector('.category-filters');
+    const catalogSearch = document.getElementById('catalogSearch');
+    const catalogSort = document.getElementById('catalogSort');
+    const catalogStatus = document.querySelector('.catalog-status');
     let revealObserver = null;
     let lastProductTrigger = null;
     const formatPrice = value => new Intl.NumberFormat('en-PH', {
       style: 'currency', currency: 'PHP', maximumFractionDigits: 0
     }).format(value);
 
-    fetch('furniture.json')
-      .then(response => {
-        if (!response.ok) throw new Error('Could not load project list');
-        return response.json();
-      })
-      .then(items => {
-        allFurniture = items;
-        shopGrid.innerHTML = renderProductCards(items);
-        shopGrid.setAttribute('aria-busy', 'false');
-        renderHeroFeatures(items.filter(item => item.featured));
-        renderBuildCollage(items);
-        syncMoodButtons();
-        renderMoodboard();
-        if (revealObserver) {
-          shopGrid.querySelectorAll('.shop-card').forEach((card, index) => {
-            card.classList.add('reveal-ready');
-            card.style.setProperty('--reveal-delay', `${(index % 4) * 75}ms`);
-            revealObserver.observe(card);
-          });
+    loadFurniture();
+
+    async function loadFurniture() {
+      try {
+        const response = await fetch('furniture.json');
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+
+        let data;
+        try {
+          data = await response.json();
+        } catch (error) {
+          throw new Error(`The JSON file could not be parsed: ${error.message}`);
         }
-        document.querySelector('.filter-chip.active').click();
-      })
-      .catch(() => {
-        document.getElementById('heroFeatureGrid').innerHTML = '<p class="load-error">Featured pieces could not be loaded.</p>';
-        shopGrid.setAttribute('aria-busy', 'false');
-        shopGrid.innerHTML = '<p class="load-error">We couldn’t load the collection. Please open PLAYFORM through a local server and try again.</p>';
+
+        const validation = validateFurniture(data);
+        if (!validation.valid) {
+          showCatalogError('The collection data is incomplete or invalid.', validation.errors.join(' '));
+          return;
+        }
+
+        allFurniture = data;
+        readSavedProductIds();
+        try {
+          renderCategoryFilters();
+          renderHeroFeatures(allFurniture.filter(item => item.featured === true && item.heroVisible === true));
+          renderBuildCollage(allFurniture.filter(item => item.collageVisible === true));
+          applyCatalogControls();
+          syncMoodButtons();
+          renderMoodboard();
+        } catch (error) {
+          showCatalogError('The product data loaded, but the page could not render the collection.', error.stack || error.message);
+        }
+      } catch (error) {
+        const localServerHint = location.protocol === 'file:'
+          ? ' Open this project through a local server (for example, VS Code Live Server), because browsers block JSON fetch from file://.'
+          : '';
+        const invalidJson = error.message.startsWith('The JSON file could not be parsed:');
+        const reason = invalidJson ? error.message : `Request failed: ${error.message}`;
+        const message = invalidJson
+          ? 'The collection file is not valid JSON. Check furniture.json syntax.'
+          : `Could not fetch furniture.json.${location.protocol === 'file:' ? localServerHint : ''}`;
+        showCatalogError(message, reason);
+      }
+    }
+
+    function validateFurniture(data) {
+      const errors = [];
+      if (!Array.isArray(data)) return { valid: false, errors: ['Expected furniture.json to contain an array of products.'] };
+      if (data.length === 0) errors.push('The product array is empty.');
+      const ids = new Set();
+      data.forEach((item, index) => {
+        const prefix = `Product ${index + 1}:`;
+        if (!item || typeof item !== 'object' || Array.isArray(item)) {
+          errors.push(`${prefix} expected an object.`);
+          return;
+        }
+        if (!Number.isInteger(item.id)) errors.push(`${prefix} id must be a unique integer.`);
+        else if (ids.has(item.id)) errors.push(`${prefix} id ${item.id} is duplicated.`);
+        else ids.add(item.id);
+        if (typeof item.name !== 'string' || !item.name.trim()) errors.push(`${prefix} name is required.`);
+        if (typeof item.category !== 'string' || !item.category.trim()) errors.push(`${prefix} category is required.`);
+        else item.category = item.category.trim().toLowerCase();
+        if (typeof item.price !== 'number' || !Number.isFinite(item.price) || item.price < 0) errors.push(`${prefix} price must be a non-negative number.`);
+        if (typeof item.image !== 'string' || !item.image.trim()) errors.push(`${prefix} image path is required.`);
+        if (typeof item.description !== 'string' || !item.description.trim()) errors.push(`${prefix} description is required.`);
+        if (!Array.isArray(item.tags) || item.tags.some(tag => typeof tag !== 'string')) errors.push(`${prefix} tags must be an array of strings.`);
+        if (item.collection !== undefined && typeof item.collection !== 'string') errors.push(`${prefix} collection must be text.`);
+        if (item.dimensions !== undefined && typeof item.dimensions !== 'string') errors.push(`${prefix} dimensions must be text.`);
+        ['materials', 'colors'].forEach(field => {
+          if (item[field] !== undefined && (!Array.isArray(item[field]) || item[field].some(value => typeof value !== 'string'))) errors.push(`${prefix} ${field} must be an array of strings.`);
+        });
+        ['featured', 'heroVisible', 'collageVisible'].forEach(field => {
+          if (typeof item[field] !== 'boolean') errors.push(`${prefix} ${field} must be true or false.`);
+        });
       });
+      return { valid: errors.length === 0, errors };
+    }
+
+    function readSavedProductIds() {
+      try {
+        const savedIds = JSON.parse(localStorage.getItem('playform-board') || '[]');
+        boardItems = new Set(Array.isArray(savedIds)
+          ? savedIds.filter(id => Number.isInteger(id) && allFurniture.some(item => item.id === id))
+          : []);
+        try { localStorage.setItem('playform-board', JSON.stringify([...boardItems])); }
+        catch (error) { console.warn('The updated moodboard could not be saved.', error); }
+      } catch (error) {
+        console.warn('The saved moodboard could not be read; starting with an empty board.', error);
+        boardItems = new Set();
+      }
+    }
+
+    function showCatalogError(message, errorDetails) {
+      console.error('PLAYFORM collection error:', errorDetails);
+      catalogStatus.textContent = message;
+      catalogStatus.classList.add('has-error');
+      shopGrid.setAttribute('aria-busy', 'false');
+      shopGrid.innerHTML = '';
+      document.getElementById('heroFeatureGrid').innerHTML = '<p class="load-error">Featured pieces are unavailable right now.</p>';
+      document.querySelector('.build-object-layer').innerHTML = '';
+    }
+
+    function renderCategoryFilters() {
+      const categories = [...new Set(allFurniture.map(item => item.category.trim()))]
+        .sort((a, b) => a.localeCompare(b));
+      const options = [{ value: 'all', label: 'All pieces' }, ...categories.map(category => ({
+        value: category,
+        label: category.charAt(0).toUpperCase() + category.slice(1)
+      }))];
+      categoryFilters.innerHTML = options.map((option, index) => `
+        <button class="filter-chip ${index === 0 ? 'active' : ''}" type="button" data-filter="${escapeHTML(option.value)}" aria-pressed="${index === 0}">${escapeHTML(option.label)}</button>
+      `).join('');
+      categoryFilters.querySelectorAll('.filter-chip').forEach(button => {
+        button.addEventListener('click', () => {
+          activeCategory = button.dataset.filter;
+          categoryFilters.querySelectorAll('.filter-chip').forEach(chip => {
+            const active = chip === button;
+            chip.classList.toggle('active', active);
+            chip.setAttribute('aria-pressed', String(active));
+          });
+          applyCatalogControls();
+        });
+      });
+    }
+
+    function applyCatalogControls() {
+      const query = catalogSearch.value.trim().toLocaleLowerCase();
+      const products = allFurniture.filter(item => {
+        const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
+        const searchableText = [item.name, item.category, item.description, item.collection, ...(item.tags || [])]
+          .filter(Boolean).join(' ').toLocaleLowerCase();
+        return matchesCategory && searchableText.includes(query);
+      });
+      if (catalogSort.value === 'price-ascending') products.sort((a, b) => a.price - b.price);
+      if (catalogSort.value === 'price-descending') products.sort((a, b) => b.price - a.price);
+      shopGrid.innerHTML = renderProductCards(products);
+      shopGrid.setAttribute('aria-busy', 'false');
+      catalogStatus.classList.remove('has-error');
+      catalogStatus.textContent = `${products.length} ${products.length === 1 ? 'piece' : 'pieces'} shown`;
+      if (revealObserver) shopGrid.querySelectorAll('.shop-card').forEach((card, index) => {
+        card.classList.add('reveal-ready');
+        card.style.setProperty('--reveal-delay', `${(index % 5) * 55}ms`);
+        revealObserver.observe(card);
+      });
+    }
+
+    catalogSearch.addEventListener('input', applyCatalogControls);
+    catalogSort.addEventListener('change', applyCatalogControls);
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, character => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[character]);
+    }
 
     function renderHeroFeatures(items) {
       document.getElementById('heroFeatureGrid').innerHTML = items.map((item, index) => `
-        <button class="hero-feature" type="button" onclick="openDetails(${item.id})" aria-label="View ${item.name}">
-          <span class="hero-feature-image"><img src="${item.heroImage || item.image}" alt="" /><span class="feature-caption">${item.tags?.[0] || 'Playform favorite'}</span></span>
-          <span class="hero-feature-meta"><span>0${index + 1} / ${item.category}</span><i class="bi bi-arrow-up-right"></i></span>
-          <strong>${item.name}</strong>
+        <button class="hero-feature" type="button" onclick="openDetails(${item.id})" aria-label="View ${escapeHTML(item.name)}">
+          <span class="hero-feature-image"><img src="${escapeHTML(item.heroImage || item.image)}" alt="" /><span class="feature-caption">${escapeHTML(item.tags?.[0] || 'Playform favorite')}</span></span>
+          <span class="hero-feature-meta"><span>0${index + 1} / ${escapeHTML(item.category)}</span><i class="bi bi-arrow-up-right"></i></span>
+          <strong>${escapeHTML(item.name)}</strong>
         </button>
       `).join('');
     }
@@ -182,16 +319,16 @@
         const isSaved = boardItems.has(item.id);
         const image = item.transparentImage || item.image;
         return `
-          <article class="shop-card" data-product-id="${item.id}" data-category="${item.category}" style="--card-accent:${item.cardAccent || item.bgAccent}">
-            <button class="shop-photo photo-placeholder" type="button" onclick="openDetails(${item.id})" aria-label="View ${item.name}">
-              <img class="placeholder-photo product-cutout ${item.transparentImage ? 'transparent-product' : ''}" src="${image}" alt="${item.name}" loading="lazy" />
+          <article class="shop-card" data-product-id="${item.id}" data-category="${escapeHTML(item.category)}" style="--card-accent:${escapeHTML(item.cardAccent || item.bgAccent || '#e8e3d8')}">
+            <button class="shop-photo photo-placeholder" type="button" onclick="openDetails(${item.id})" aria-label="View ${escapeHTML(item.name)}">
+              <img class="placeholder-photo product-cutout ${item.transparentImage ? 'transparent-product' : ''}" src="${escapeHTML(image)}" alt="${escapeHTML(item.name)}" loading="lazy" />
               <i class="bi bi-arrow-up-right photo-open" aria-hidden="true"></i>
             </button>
-            <button class="mood-add ${isSaved ? 'selected' : ''}" type="button" data-item="${item.id}" aria-label="${isSaved ? 'Remove' : 'Add'} ${item.name} ${isSaved ? 'from' : 'to'} moodboard" aria-pressed="${isSaved}">
+            <button class="mood-add ${isSaved ? 'selected' : ''}" type="button" data-item="${item.id}" aria-label="${isSaved ? 'Remove' : 'Add'} ${escapeHTML(item.name)} ${isSaved ? 'from' : 'to'} moodboard" aria-pressed="${isSaved}">
               <i class="bi ${isSaved ? 'bi-check-lg' : 'bi-plus-lg'}" aria-hidden="true"></i><span>${isSaved ? 'On your moodboard' : 'Add to moodboard'}</span>
             </button>
             <div class="shop-card-info">
-              <button class="shop-name" type="button" onclick="openDetails(${item.id})">${item.name}<small>${category} · ${item.tags?.[0] || ''}</small></button>
+              <button class="shop-name" type="button" onclick="openDetails(${item.id})">${escapeHTML(item.name)}<small>${escapeHTML(category)} · ${escapeHTML(item.tags?.[0] || '')}</small></button>
               <span class="shop-price">${formatPrice(item.price)}</span>
             </div>
           </article>`;
@@ -200,10 +337,10 @@
 
     function renderBuildCollage(items) {
       const layer = document.querySelector('.build-object-layer');
-      layer.innerHTML = items.slice(0, 4).map((item, index) => `
-        <article class="build-object build-object-${index + 1}" tabindex="0" role="group" aria-label="${item.name}. Use arrow keys to move this card." style="--object-accent:${item.bgAccent}">
-          <button class="build-object-image" type="button" onclick="openDetails(${item.id})" aria-label="View ${item.name}"><img src="${item.transparentImage || item.image}" alt="${item.name}" loading="lazy" /></button>
-          <div class="build-object-caption"><span>${item.name}</span><button class="build-save ${boardItems.has(item.id) ? 'is-saved' : ''}" type="button" data-build-save="${item.id}" aria-label="${boardItems.has(item.id) ? 'Remove' : 'Save'} ${item.name} ${boardItems.has(item.id) ? 'from' : 'to'} your moodboard" aria-pressed="${boardItems.has(item.id)}"><i class="bi ${boardItems.has(item.id) ? 'bi-heart-fill' : 'bi-heart'}"></i><span>${boardItems.has(item.id) ? 'Saved' : 'Save'}</span></button></div>
+      layer.innerHTML = items.map((item, index) => `
+        <article class="build-object build-object-${index + 1}" tabindex="0" role="group" aria-label="${escapeHTML(item.name)}. Use arrow keys to move this card." style="--object-accent:${escapeHTML(item.bgAccent || '#f5eee2')}">
+          <button class="build-object-image" type="button" onclick="openDetails(${item.id})" aria-label="View ${escapeHTML(item.name)}"><img src="${escapeHTML(item.transparentImage || item.image)}" alt="${escapeHTML(item.name)}" loading="lazy" /></button>
+          <div class="build-object-caption"><span>${escapeHTML(item.name)}</span><button class="build-save ${boardItems.has(item.id) ? 'is-saved' : ''}" type="button" data-build-save="${item.id}" aria-label="${boardItems.has(item.id) ? 'Remove' : 'Save'} ${escapeHTML(item.name)} ${boardItems.has(item.id) ? 'from' : 'to'} your moodboard" aria-pressed="${boardItems.has(item.id)}"><i class="bi ${boardItems.has(item.id) ? 'bi-heart-fill' : 'bi-heart'}"></i><span>${boardItems.has(item.id) ? 'Saved' : 'Save'}</span></button></div>
         </article>`).join('');
       layer.querySelectorAll('[data-build-save]').forEach(button => button.addEventListener('click', () => {
         toggleBoardItem(Number(button.dataset.buildSave));
@@ -260,7 +397,8 @@
 
     function toggleBoardItem(id) {
       if (boardItems.has(id)) boardItems.delete(id); else boardItems.add(id);
-      localStorage.setItem('playform-board', JSON.stringify([...boardItems]));
+      try { localStorage.setItem('playform-board', JSON.stringify([...boardItems])); }
+      catch (error) { console.warn('The moodboard could not be saved in this browser.', error); }
       syncMoodButtons();
       renderMoodboard();
     }
@@ -271,20 +409,21 @@
       lastProductTrigger = trigger;
       const saved = boardItems.has(item.id);
       const availableDetails = [
-        ['Materials', item.materials?.join(', ')],
+        ['Collection', item.collection],
+        ['Materials', Array.isArray(item.materials) ? item.materials.join(', ') : item.materials],
         ['Dimensions', item.dimensions],
-        ['Colors', item.colors?.join(', ')]
+        ['Colors', Array.isArray(item.colors) ? item.colors.join(', ') : item.colors]
       ].filter(([, value]) => value);
       document.getElementById('modalBody').innerHTML = `
         <div class="detail-layout">
-          <div class="detail-image" style="background:${item.bgAccent || item.cardAccent || '#f5eee2'}"><img src="${item.transparentImage || item.image}" alt="${item.name}" /></div>
+          <div class="detail-image" style="background:${escapeHTML(item.bgAccent || item.cardAccent || '#f5eee2')}"><img src="${escapeHTML(item.transparentImage || item.image)}" alt="${escapeHTML(item.name)}" /></div>
           <div class="detail-copy">
-            <p class="eyebrow">${item.category} <span>·</span> PLAYFORM OBJECTS</p>
-            <h2 id="modalTitle">${item.name}</h2>
+            <p class="eyebrow">${escapeHTML(item.category)} <span>·</span> ${escapeHTML(item.collection || 'PLAYFORM OBJECTS')}</p>
+            <h2 id="modalTitle">${escapeHTML(item.name)}</h2>
             <p class="detail-price">${formatPrice(item.price)}</p>
-            <p class="detail-description">${item.description}</p>
-            ${availableDetails.length ? `<dl class="spec-list">${availableDetails.map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>` : ''}
-            <div class="detail-tags">${(item.tags || []).map(tag => `<span>${tag}</span>`).join('')}</div>
+            <p class="detail-description">${escapeHTML(item.description)}</p>
+            ${availableDetails.length ? `<dl class="spec-list">${availableDetails.map(([label, value]) => `<div><dt>${escapeHTML(label)}</dt><dd>${escapeHTML(value)}</dd></div>`).join('')}</dl>` : ''}
+            ${(item.tags || []).length ? `<div class="detail-tags">${item.tags.map(tag => `<span>${escapeHTML(tag)}</span>`).join('')}</div>` : ''}
             <button class="detail-save ${saved ? 'saved' : ''}" type="button" data-detail-save="${item.id}" aria-pressed="${saved}"><i class="bi ${saved ? 'bi-heart-fill' : 'bi-heart'}"></i> ${saved ? 'Saved to your moodboard' : 'Add to my moodboard'}</button>
           </div>
         </div>`;
@@ -304,41 +443,6 @@
     modal.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', closeModal));
     document.addEventListener('keydown', event => { if (event.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
 
-    document.querySelectorAll('.filter-chip').forEach(button => {
-      button.addEventListener('click', () => {
-        const filter = button.dataset.filter;
-        document.querySelectorAll('.filter-chip').forEach(chip => {
-          const active = chip === button;
-          chip.classList.toggle('active', active);
-          chip.setAttribute('aria-pressed', String(active));
-        });
-        const cards = [...document.querySelectorAll('.shop-card')];
-        cards.forEach((card, index) => {
-          const match = filter === 'all' || card.dataset.category === filter;
-          if (match) {
-            card.classList.remove('filter-exit');
-            if (card.hidden) {
-              card.hidden = false;
-              card.classList.remove('filter-enter');
-              requestAnimationFrame(() => {
-                card.style.setProperty('--filter-delay', `${index * 45}ms`);
-                card.classList.add('filter-enter');
-              });
-            }
-          } else if (!match && !card.hidden) {
-            card.classList.remove('filter-enter');
-            card.classList.add('filter-exit');
-            card.addEventListener('animationend', () => {
-              if (card.classList.contains('filter-exit')) {
-                card.hidden = true;
-                card.classList.remove('filter-exit');
-              }
-            }, { once: true });
-          }
-        });
-      });
-    });
-
     // Moodboard: save a visual shortlist that persists across visits.
     const moodToggle = document.querySelector('.moodboard-toggle');
     const moodPanel = document.querySelector('.moodboard-panel');
@@ -346,10 +450,11 @@
       const items = allFurniture.filter(item => boardItems.has(item.id));
       moodToggle.querySelector('b').textContent = items.length;
       moodPanel.querySelector('.moodboard-empty').hidden = items.length > 0;
-      moodPanel.querySelector('.moodboard-items').innerHTML = items.map(item => `<article class="moodboard-item"><img src="${item.transparentImage || item.image}" alt=""/><div><strong>${item.name}</strong><small>${formatPrice(item.price)}</small></div><button type="button" data-remove-item="${item.id}" aria-label="Remove ${item.name}" class="mood-remove"><i class="bi bi-x"></i></button></article>`).join('');
+      moodPanel.querySelector('.moodboard-items').innerHTML = items.map(item => `<article class="moodboard-item" data-product-id="${item.id}"><img src="${escapeHTML(item.transparentImage || item.image)}" alt=""/><div><strong>${escapeHTML(item.name)}</strong><small>${formatPrice(item.price)}</small></div><button type="button" data-remove-item="${item.id}" aria-label="Remove ${escapeHTML(item.name)}" class="mood-remove"><i class="bi bi-x"></i></button></article>`).join('');
       moodPanel.querySelectorAll('[data-remove-item]').forEach(button => button.addEventListener('click', () => {
         boardItems.delete(Number(button.dataset.removeItem));
-        localStorage.setItem('playform-board', JSON.stringify([...boardItems]));
+        try { localStorage.setItem('playform-board', JSON.stringify([...boardItems])); }
+        catch (error) { console.warn('The updated moodboard could not be saved.', error); }
         syncMoodButtons(); renderMoodboard();
       }));
     }
@@ -382,6 +487,20 @@
       moodToggle.classList.remove('board-bump');
       requestAnimationFrame(() => moodToggle.classList.add('board-bump'));
     });
+
+    // A failed image is reported on its own card; it does not make the whole catalog fail.
+    document.addEventListener('error', event => {
+      const image = event.target;
+      if (!(image instanceof HTMLImageElement) || !image.closest('.shop-grid, .hero-feature-grid, .build-object-layer, .detail-layout, .moodboard-items')) return;
+      const host = image.closest('.shop-photo, .hero-feature-image, .build-object-image, .detail-image, .moodboard-item');
+      if (!host || host.querySelector('.image-load-error')) return;
+      host.classList.add('image-unavailable');
+      const notice = document.createElement('span');
+      notice.className = 'image-load-error';
+      notice.textContent = `Image unavailable for ${image.alt || 'this product'}`;
+      host.append(notice);
+      console.warn(`PLAYFORM image failed to load: ${image.getAttribute('src')}`);
+    }, true);
     function setMoodOpen(open) {
       moodPanel.classList.toggle('open', open);
       moodPanel.setAttribute('aria-hidden', String(!open));
@@ -395,17 +514,21 @@
 
     // Pointer-driven tilt is intentionally limited to fine pointers and small angles.
     if (matchMedia('(hover: hover) and (pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      document.querySelectorAll('.shop-photo').forEach(card => {
-        card.addEventListener('pointermove', event => {
-          const rect = card.getBoundingClientRect();
-          const x = (event.clientX - rect.left) / rect.width - .5;
-          const y = (event.clientY - rect.top) / rect.height - .5;
-          card.style.setProperty('--tilt-x', `${-y * 5}deg`);
-          card.style.setProperty('--tilt-y', `${x * 5}deg`);
-        });
-        card.addEventListener('pointerleave', () => {
-          card.style.setProperty('--tilt-x', '0deg'); card.style.setProperty('--tilt-y', '0deg');
-        });
+      shopGrid.addEventListener('pointermove', event => {
+        const card = event.target.closest('.shop-photo');
+        if (!card) return;
+        const rect = card.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - .5;
+        const y = (event.clientY - rect.top) / rect.height - .5;
+        card.style.setProperty('--tilt-x', `${-y * 5}deg`);
+        card.style.setProperty('--tilt-y', `${x * 5}deg`);
+      });
+      shopGrid.addEventListener('pointerout', event => {
+        const card = event.target.closest('.shop-photo');
+        if (card && !card.contains(event.relatedTarget)) {
+          card.style.setProperty('--tilt-x', '0deg');
+          card.style.setProperty('--tilt-y', '0deg');
+        }
       });
       const buildStage = document.querySelector('.build-stage');
       buildStage.addEventListener('pointermove', event => {
