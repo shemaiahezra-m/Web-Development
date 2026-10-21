@@ -165,15 +165,24 @@
   <button class="moodboard-toggle" type="button" aria-expanded="false"><i
       class="bi bi-grid-3x3-gap"></i><span>Moodboard</span><b>0</b></button>
   <aside class="moodboard-panel" aria-label="Your moodboard" aria-hidden="true" inert>
-    <div class="moodboard-head">
-      <div>
-        <p class="eyebrow">Collect what feels like you</p>
-        <h2>Your moodboard</h2>
-      </div><button class="moodboard-close" type="button" aria-label="Close moodboard"><i
-          class="bi bi-x-lg"></i></button>
-    </div>
-    <p class="moodboard-empty">Your board is waiting for a little personality. Add pieces you love.</p>
-    <div class="moodboard-items"></div>
+    <button class="moodboard-backdrop" type="button" aria-label="Close moodboard"></button>
+    <section class="moodboard-dialog" role="dialog" aria-modal="true" aria-labelledby="moodboardTitle">
+      <div class="moodboard-head">
+        <div>
+          <p class="eyebrow">Collect what feels like you</p>
+          <h2 id="moodboardTitle">Your moodboard</h2>
+        </div><button class="moodboard-close" type="button" aria-label="Close moodboard"><i
+            class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="moodboard-tools">
+        <p class="moodboard-hint"><i class="bi bi-arrows-move" aria-hidden="true"></i> Drag pieces around to see how they work together.</p>
+        <span class="moodboard-count"><b>0</b> pieces</span>
+      </div>
+      <div class="moodboard-canvas" aria-label="Arrange your saved furniture">
+        <p class="moodboard-empty">Your board is waiting for a little personality. Save a few pieces, then bring them together here.</p>
+        <div class="moodboard-items"></div>
+      </div>
+    </section>
   </aside>
 
   <script>
@@ -185,6 +194,7 @@
     let allFurniture = [];
     let activeCategory = 'all';
     let boardItems = new Set();
+    let boardLayout = {};
     const modal = document.getElementById('itemModal');
     const shopGrid = document.querySelector('.shop-grid');
     const categoryFilters = document.querySelector('.category-filters');
@@ -434,7 +444,11 @@
 
 
     function toggleBoardItem(id) {
-      if (boardItems.has(id)) boardItems.delete(id); else boardItems.add(id);
+      if (boardItems.has(id)) {
+        boardItems.delete(id);
+        delete boardLayout[id];
+        saveMoodLayout();
+      } else boardItems.add(id);
       try { localStorage.setItem('playform-board', JSON.stringify([...boardItems])); }
       catch (error) { console.warn('The moodboard could not be saved in this browser.', error); }
       syncMoodButtons();
@@ -484,18 +498,99 @@
     // Moodboard
     const moodToggle = document.querySelector('.moodboard-toggle');
     const moodPanel = document.querySelector('.moodboard-panel');
+    const moodCanvas = moodPanel.querySelector('.moodboard-canvas');
+    const moodItems = moodPanel.querySelector('.moodboard-items');
+    try {
+      const savedLayout = JSON.parse(localStorage.getItem('playform-board-layout') || '{}');
+      if (savedLayout && typeof savedLayout === 'object' && !Array.isArray(savedLayout)) boardLayout = savedLayout;
+    } catch (error) {
+      console.warn('The moodboard layout could not be read; using the default arrangement.', error);
+    }
+
+    function saveMoodLayout() {
+      try { localStorage.setItem('playform-board-layout', JSON.stringify(boardLayout)); }
+      catch (error) { console.warn('The moodboard layout could not be saved in this browser.', error); }
+    }
+
+    function placeMoodItems() {
+      const cards = [...moodItems.querySelectorAll('.moodboard-item')];
+      if (!cards.length) {
+        moodItems.style.height = '0px';
+        return;
+      }
+      const columns = moodCanvas.clientWidth < 650 ? 2 : 3;
+      const rows = Math.ceil(cards.length / columns);
+      const cardHeight = cards[0].offsetHeight;
+      const stepY = cardHeight + 18;
+      const layerHeight = Math.max(moodCanvas.clientHeight, rows * stepY + 8);
+      moodItems.style.height = `${layerHeight}px`;
+      cards.forEach((card, index) => {
+        const saved = boardLayout[card.dataset.productId];
+        if (saved && Number.isFinite(saved.x) && Number.isFinite(saved.y)) {
+          card.style.left = `${saved.x * Math.max(0, moodItems.clientWidth - card.offsetWidth)}px`;
+          card.style.top = `${saved.y * Math.max(0, layerHeight - card.offsetHeight)}px`;
+        } else {
+          const col = index % columns;
+          const row = Math.floor(index / columns);
+          const availableX = Math.max(0, moodItems.clientWidth - card.offsetWidth);
+          card.style.left = `${columns === 1 ? 0 : col * availableX / (columns - 1)}px`;
+          card.style.top = `${row * stepY + 4}px`;
+        }
+      });
+    }
+
     function renderMoodboard() {
       const items = allFurniture.filter(item => boardItems.has(item.id));
       moodToggle.querySelector('b').textContent = items.length;
+      moodPanel.querySelector('.moodboard-count b').textContent = items.length;
       moodPanel.querySelector('.moodboard-empty').hidden = items.length > 0;
-      moodPanel.querySelector('.moodboard-items').innerHTML = items.map(item => `<article class="moodboard-item" data-product-id="${item.id}"><img src="${escapeHTML(item.transparentImage || item.image)}" alt=""/><div><strong>${escapeHTML(item.name)}</strong><small>${formatPrice(item.price)}</small></div><button type="button" data-remove-item="${item.id}" aria-label="Remove ${escapeHTML(item.name)}" class="mood-remove"><i class="bi bi-x"></i></button></article>`).join('');
-      moodPanel.querySelectorAll('[data-remove-item]').forEach(button => button.addEventListener('click', () => {
+      moodItems.innerHTML = items.map(item => `<article class="moodboard-item" data-product-id="${item.id}" tabindex="0" aria-label="${escapeHTML(item.name)}. Drag to arrange on your moodboard."><img src="${escapeHTML(item.transparentImage || item.image)}" alt="" draggable="false"/><div class="moodboard-item-meta"><strong>${escapeHTML(item.name)}</strong><small>${formatPrice(item.price)}</small></div><button type="button" data-remove-item="${item.id}" aria-label="Remove ${escapeHTML(item.name)} from moodboard" class="mood-remove"><i class="bi bi-x"></i></button></article>`).join('');
+      requestAnimationFrame(placeMoodItems);
+      moodItems.querySelectorAll('[data-remove-item]').forEach(button => button.addEventListener('click', () => {
         boardItems.delete(Number(button.dataset.removeItem));
+        delete boardLayout[button.dataset.removeItem];
+        saveMoodLayout();
         try { localStorage.setItem('playform-board', JSON.stringify([...boardItems])); }
         catch (error) { console.warn('The updated moodboard could not be saved.', error); }
         syncMoodButtons(); renderMoodboard();
       }));
     }
+
+    let draggedMoodPiece = null;
+    moodItems.addEventListener('pointerdown', event => {
+      const piece = event.target.closest('.moodboard-item');
+      if (!piece || event.target.closest('.mood-remove') || event.button > 0) return;
+      draggedMoodPiece = { piece, pointerId: event.pointerId };
+      moodItems.append(piece);
+      piece.classList.add('is-dragging');
+      piece.setPointerCapture(event.pointerId);
+      event.preventDefault();
+    });
+    moodItems.addEventListener('pointermove', event => {
+      if (!draggedMoodPiece || draggedMoodPiece.pointerId !== event.pointerId) return;
+      const { piece } = draggedMoodPiece;
+      const bounds = moodItems.getBoundingClientRect();
+      const left = Math.max(0, Math.min(moodItems.clientWidth - piece.offsetWidth, event.clientX - bounds.left - piece.offsetWidth / 2));
+      const top = Math.max(0, Math.min(moodItems.clientHeight - piece.offsetHeight, event.clientY - bounds.top - piece.offsetHeight / 2));
+      piece.style.left = `${left}px`;
+      piece.style.top = `${top}px`;
+    });
+    function finishMoodDrag(event) {
+      if (!draggedMoodPiece || (event && draggedMoodPiece.pointerId !== event.pointerId)) return;
+      const { piece } = draggedMoodPiece;
+      piece.classList.remove('is-dragging');
+      const maxX = Math.max(1, moodItems.clientWidth - piece.offsetWidth);
+      const maxY = Math.max(1, moodItems.clientHeight - piece.offsetHeight);
+      boardLayout[piece.dataset.productId] = {
+        x: Math.min(1, Math.max(0, piece.offsetLeft / maxX)),
+        y: Math.min(1, Math.max(0, piece.offsetTop / maxY))
+      };
+      saveMoodLayout();
+      draggedMoodPiece = null;
+    }
+    moodItems.addEventListener('pointerup', finishMoodDrag);
+    moodItems.addEventListener('pointercancel', finishMoodDrag);
+    window.addEventListener('resize', () => requestAnimationFrame(placeMoodItems));
     function syncMoodButtons() {
       document.querySelectorAll('.mood-add').forEach(button => {
         const selected = boardItems.has(Number(button.dataset.item));
@@ -544,9 +639,19 @@
       moodPanel.inert = !open;
       moodToggle.setAttribute('aria-expanded', String(open));
       document.body.classList.toggle('moodboard-open', open);
+      if (open) {
+        requestAnimationFrame(placeMoodItems);
+        moodPanel.querySelector('.moodboard-close').focus();
+      } else {
+        moodToggle.focus();
+      }
     }
     moodToggle.addEventListener('click', () => setMoodOpen(moodToggle.getAttribute('aria-expanded') !== 'true'));
     moodPanel.querySelector('.moodboard-close').addEventListener('click', () => setMoodOpen(false));
+    moodPanel.querySelector('.moodboard-backdrop').addEventListener('click', () => setMoodOpen(false));
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && moodToggle.getAttribute('aria-expanded') === 'true') setMoodOpen(false);
+    });
     syncMoodButtons(); renderMoodboard();
 
     if (matchMedia('(hover: hover) and (pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {

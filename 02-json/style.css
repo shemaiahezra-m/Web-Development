@@ -3114,3 +3114,299 @@ body {
     font-size: 10px;
   }
 }
+
+/* The moodboard is an arranging canvas rather than a saved-items list. */
+body.moodboard-open {
+  overflow: hidden;
+}
+
+.moodboard-panel {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  width: 100%;
+  max-height: none;
+  place-items: center;
+  overflow: hidden;
+  padding: 24px;
+  background: transparent;
+  box-shadow: none;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px) scale(.985);
+  transition: opacity .25s ease, transform .3s cubic-bezier(.2, .75, .25, 1);
+}
+
+.moodboard-panel.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+.moodboard-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: rgba(20, 22, 29, .64);
+  backdrop-filter: blur(7px);
+  cursor: pointer;
+}
+
+.moodboard-dialog {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: min(1080px, 100%);
+  max-height: min(900px, 92svh);
+  flex-direction: column;
+  padding: clamp(20px, 3vw, 34px);
+  overflow: hidden;
+  border: 1px solid rgba(32, 44, 73, .1);
+  border-radius: 24px;
+  background: #fbfaf3;
+  box-shadow: 0 28px 90px rgba(10, 15, 29, .3);
+}
+
+.moodboard-head {
+  align-items: center;
+  padding-bottom: 19px;
+}
+
+.moodboard-head h2 {
+  font-size: clamp(30px, 4vw, 42px);
+}
+
+.moodboard-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 15px 0;
+}
+
+.moodboard-hint,
+.moodboard-count {
+  margin: 0;
+  color: #686b73;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.moodboard-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.moodboard-hint i {
+  color: var(--pink);
+  font-size: 15px;
+}
+
+.moodboard-count {
+  flex: none;
+}
+
+.moodboard-count b {
+  color: var(--ink);
+}
+
+.moodboard-canvas {
+  position: relative;
+  min-height: 340px;
+  height: min(62svh, 650px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid #e3dfd2;
+  border-radius: 16px;
+  background-color: #f2efe4;
+  background-image: radial-gradient(#d8d2c1 1px, transparent 1px);
+  background-position: 10px 10px;
+  background-size: 20px 20px;
+  scrollbar-color: #c6c1b2 transparent;
+  scrollbar-width: thin;
+}
+
+.moodboard-items {
+  position: relative;
+  min-height: 100%;
+  margin: 0;
+}
+
+.moodboard-item {
+  position: absolute;
+  display: grid;
+  width: 34%;
+  height: 260px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 5px;
+  padding: 4px 8px 7px;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  transition: none;
+  animation: none;
+}
+
+.moodboard-item:hover {
+  transform: none;
+}
+
+.moodboard-item.is-dragging {
+  cursor: grabbing;
+  transform: none;
+  transition: none;
+}
+
+.moodboard-item > img {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border-radius: 0;
+  background: transparent;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  transform: scale(1.32);
+}
+
+.moodboard-item-meta {
+  display: flex;
+  width: max-content;
+  max-width: 100%;
+  min-width: 0;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  justify-self: center;
+  padding: 6px 11px;
+  border: 1px solid rgba(32, 44, 73, .1);
+  border-radius: 999px;
+  background: #d9c9f4;
+  box-shadow: 0 4px 12px rgba(32, 44, 73, .08);
+  color: var(--ink);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.moodboard-item-meta strong {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 10px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.moodboard-item-meta small {
+  flex: none;
+  color: #5f6570;
+  font-size: 8px;
+  line-height: 1.2;
+}
+
+.moodboard-item .mood-remove {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  width: 29px;
+  height: 29px;
+  border: 0;
+  background: #d9c9f4;
+  box-shadow: 0 2px 8px rgba(32, 44, 73, .12);
+}
+
+.moodboard-empty {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: grid;
+  max-width: 390px;
+  place-content: center;
+  margin: auto;
+  padding: 28px;
+  color: #6b6e75;
+  font-size: 14px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.moodboard-empty[hidden] {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .moodboard-panel {
+    padding: 10px;
+  }
+
+  .moodboard-dialog {
+    width: 100%;
+    max-height: 94svh;
+    padding: 20px 15px 15px;
+    border-radius: 20px;
+  }
+
+  .moodboard-head {
+    padding-bottom: 15px;
+  }
+
+  .moodboard-head h2 {
+    font-size: 30px;
+  }
+
+  .moodboard-tools {
+    align-items: flex-start;
+    padding: 12px 0;
+  }
+
+  .moodboard-hint {
+    max-width: 255px;
+    font-size: 11px;
+  }
+
+  .moodboard-count {
+    font-size: 10px;
+  }
+
+  .moodboard-canvas {
+    min-height: 290px;
+    height: 62svh;
+    border-radius: 13px;
+  }
+
+  .moodboard-item {
+    width: 46%;
+    height: 215px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3px;
+    padding: 3px 5px 6px;
+    border-radius: 0;
+  }
+
+  .moodboard-item-meta strong {
+    font-size: 9px;
+  }
+
+  .moodboard-item-meta small {
+    font-size: 8px;
+  }
+
+  .moodboard-item .mood-remove {
+    top: 10px;
+    right: 10px;
+    width: 26px;
+    height: 26px;
+  }
+}
