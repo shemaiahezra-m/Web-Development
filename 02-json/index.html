@@ -84,6 +84,19 @@
             </div>
             <div class="category-filters" role="group" aria-label="Filter furniture"></div>
           </div>
+        <div class="collection-tools">
+          <label class="product-search">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input id="productSearch" type="search" placeholder="Search pieces, styles, colors…" aria-label="Search furniture collection" />
+          </label>
+          <label class="product-sort-label" for="productSort">Sort by</label>
+          <select id="productSort" class="product-sort" aria-label="Sort products">
+            <option value="featured">Featured</option>
+            <option value="price-asc">Price: low to high</option>
+            <option value="price-desc">Price: high to low</option>
+            <option value="name-asc">Name: A to Z</option>
+          </select>
+        </div>
           <p class="catalog-status" role="status" aria-live="polite"></p>
           <div class="shop-grid" aria-live="polite" aria-busy="true"></div>
         </div>
@@ -178,6 +191,10 @@
         <p class="moodboard-hint"><i class="bi bi-arrows-move" aria-hidden="true"></i> Drag pieces around to see how they work together.</p>
         <span class="moodboard-count"><b>0</b> pieces</span>
       </div>
+      <div class="moodboard-summary">
+        <p><span>Selected pieces total</span><strong data-board-total>₱0</strong></p>
+        <button class="moodboard-share" type="button"><i class="bi bi-share" aria-hidden="true"></i><span>Share moodboard</span></button>
+      </div>
       <div class="moodboard-canvas" aria-label="Arrange your saved furniture">
         <p class="moodboard-empty">Your board is waiting for a little personality. Save a few pieces, then bring them together here.</p>
         <div class="moodboard-items"></div>
@@ -199,6 +216,8 @@
     const shopGrid = document.querySelector('.shop-grid');
     const categoryFilters = document.querySelector('.category-filters');
     const catalogStatus = document.querySelector('.catalog-status');
+    const productSearch = document.getElementById('productSearch');
+    const productSort = document.getElementById('productSort');
     let revealObserver = null;
     let lastProductTrigger = null;
     const formatPrice = value => new Intl.NumberFormat('en-PH', {
@@ -331,19 +350,36 @@
     }
 
     function applyCategoryFilter() {
-      const products = allFurniture.filter(item =>
-        activeCategory === 'all' || item.category === activeCategory
-      );
+      const query = productSearch.value.trim().toLocaleLowerCase();
+      const products = allFurniture.filter(item => {
+        const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
+        const searchable = [item.name, item.category, item.collection, item.description, ...(item.tags || []), ...(item.colors || [])]
+          .filter(Boolean).join(' ').toLocaleLowerCase();
+        return matchesCategory && (!query || searchable.includes(query));
+      });
+      products.sort((a, b) => {
+        switch (productSort.value) {
+          case 'price-asc': return a.price - b.price;
+          case 'price-desc': return b.price - a.price;
+          case 'name-asc': return a.name.localeCompare(b.name);
+          default: return Number(b.featured) - Number(a.featured) || a.id - b.id;
+        }
+      });
       shopGrid.innerHTML = renderProductCards(products);
       shopGrid.setAttribute('aria-busy', 'false');
       catalogStatus.classList.remove('has-error');
-      catalogStatus.textContent = `${products.length} ${products.length === 1 ? 'piece' : 'pieces'} shown`;
+      catalogStatus.textContent = query
+        ? `${products.length} ${products.length === 1 ? 'piece' : 'pieces'} found for “${productSearch.value.trim()}”`
+        : `${products.length} ${products.length === 1 ? 'piece' : 'pieces'} shown`;
       if (revealObserver) shopGrid.querySelectorAll('.shop-card').forEach((card, index) => {
         card.classList.add('reveal-ready');
         card.style.setProperty('--reveal-delay', `${(index % 5) * 55}ms`);
         revealObserver.observe(card);
       });
     }
+
+    productSearch.addEventListener('input', applyCategoryFilter);
+    productSort.addEventListener('change', applyCategoryFilter);
 
     function escapeHTML(value) {
       return String(value).replace(/[&<>"']/g, character => ({
@@ -367,7 +403,7 @@
         const isSaved = boardItems.has(item.id);
         const image = item.transparentImage || item.image;
         return `
-          <article class="shop-card" data-product-id="${item.id}" data-category="${escapeHTML(item.category)}" style="--card-accent:${escapeHTML(item.bgAccent || item.cardAccent || '#e8e3d8')}">
+          <article class="shop-card" data-product-id="${item.id}" data-category="${escapeHTML(item.category)}" tabindex="0" role="group" aria-label="${escapeHTML(item.name)}. Press Enter to view details." style="--card-accent:${escapeHTML(item.bgAccent || item.cardAccent || '#e8e3d8')}">
             <button class="shop-photo photo-placeholder" type="button" onclick="openDetails(${item.id})" aria-label="View ${escapeHTML(item.name)}">
               <img class="placeholder-photo product-cutout ${item.transparentImage ? 'transparent-product' : ''}" src="${escapeHTML(image)}" alt="${escapeHTML(item.name)}" loading="lazy" />
               <i class="bi bi-arrow-up-right photo-open" aria-hidden="true"></i>
@@ -476,7 +512,10 @@
             <p class="detail-description">${escapeHTML(item.description)}</p>
             ${availableDetails.length ? `<dl class="spec-list">${availableDetails.map(([label, value]) => `<div><dt>${escapeHTML(label)}</dt><dd>${escapeHTML(value)}</dd></div>`).join('')}</dl>` : ''}
             ${(item.tags || []).length ? `<div class="detail-tags">${item.tags.map(tag => `<span>${escapeHTML(tag)}</span>`).join('')}</div>` : ''}
-            <button class="detail-save ${saved ? 'saved' : ''}" type="button" data-detail-save="${item.id}" aria-pressed="${saved}"><i class="bi ${saved ? 'bi-heart-fill' : 'bi-heart'}"></i> ${saved ? 'Saved to your moodboard' : 'Add to my moodboard'}</button>
+            <div class="detail-actions">
+              <a class="detail-inquire" href="mailto:hello@playform.studio?subject=${encodeURIComponent(`Enquiry about ${item.name}`)}"><i class="bi bi-envelope" aria-hidden="true"></i> Inquire about this piece</a>
+              <button class="detail-save ${saved ? 'saved' : ''}" type="button" data-detail-save="${item.id}" aria-pressed="${saved}"><i class="bi ${saved ? 'bi-heart-fill' : 'bi-heart'}"></i> ${saved ? 'Saved to your moodboard' : 'Add to my moodboard'}</button>
+            </div>
           </div>
         </div>`;
       document.querySelector('[data-detail-save]').addEventListener('click', event => toggleBoardItem(Number(event.currentTarget.dataset.detailSave)));
@@ -543,6 +582,8 @@
       const items = allFurniture.filter(item => boardItems.has(item.id));
       moodToggle.querySelector('b').textContent = items.length;
       moodPanel.querySelector('.moodboard-count b').textContent = items.length;
+      moodPanel.querySelector('[data-board-total]').textContent = formatPrice(items.reduce((total, item) => total + item.price, 0));
+      moodPanel.querySelector('.moodboard-share').disabled = items.length === 0;
       moodPanel.querySelector('.moodboard-empty').hidden = items.length > 0;
       moodItems.innerHTML = items.map(item => `<article class="moodboard-item" data-product-id="${item.id}" tabindex="0" aria-label="${escapeHTML(item.name)}. Drag to arrange on your moodboard."><img src="${escapeHTML(item.transparentImage || item.image)}" alt="" draggable="false"/><div class="moodboard-item-meta"><strong>${escapeHTML(item.name)}</strong><small>${formatPrice(item.price)}</small></div><button type="button" data-remove-item="${item.id}" aria-label="Remove ${escapeHTML(item.name)} from moodboard" class="mood-remove"><i class="bi bi-x"></i></button></article>`).join('');
       requestAnimationFrame(placeMoodItems);
@@ -555,6 +596,45 @@
         syncMoodButtons(); renderMoodboard();
       }));
     }
+
+    async function shareMoodboard() {
+      const items = allFurniture.filter(item => boardItems.has(item.id));
+      if (!items.length) return;
+      const total = items.reduce((sum, item) => sum + item.price, 0);
+      const text = [
+        'My PLAYFORM moodboard',
+        ...items.map(item => `• ${item.name} — ${formatPrice(item.price)}`),
+        `Selected pieces total: ${formatPrice(total)}`
+      ].join('\n');
+      const button = moodPanel.querySelector('.moodboard-share');
+      const original = button.innerHTML;
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: 'My PLAYFORM moodboard', text });
+        } else if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const field = document.createElement('textarea');
+          field.value = text;
+          field.setAttribute('readonly', '');
+          field.style.position = 'fixed';
+          field.style.opacity = '0';
+          document.body.append(field);
+          field.select();
+          const copied = document.execCommand('copy');
+          field.remove();
+          if (!copied) throw new Error('Copy command unavailable');
+        }
+        button.innerHTML = `<i class="bi bi-check2" aria-hidden="true"></i><span>${navigator.share ? 'Shared moodboard' : 'Copied to clipboard'}</span>`;
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.warn('The moodboard could not be shared.', error);
+          button.innerHTML = '<i class="bi bi-exclamation-circle" aria-hidden="true"></i><span>Could not share</span>';
+        }
+      }
+      window.setTimeout(() => { if (button.isConnected) button.innerHTML = original; }, 2200);
+    }
+    moodPanel.querySelector('.moodboard-share').addEventListener('click', shareMoodboard);
 
     let draggedMoodPiece = null;
     moodItems.addEventListener('pointerdown', event => {
@@ -619,6 +699,18 @@
       toggleBoardItem(Number(button.dataset.item));
       moodToggle.classList.remove('board-bump');
       requestAnimationFrame(() => moodToggle.classList.add('board-bump'));
+    });
+
+    shopGrid.addEventListener('click', event => {
+      const card = event.target.closest('.shop-card');
+      if (!card || event.target.closest('button, a, input, select')) return;
+      openDetails(Number(card.dataset.productId), card);
+    });
+    shopGrid.addEventListener('keydown', event => {
+      const card = event.target.closest('.shop-card');
+      if (!card || event.target !== card || !['Enter', ' '].includes(event.key)) return;
+      event.preventDefault();
+      openDetails(Number(card.dataset.productId), card);
     });
 
     document.addEventListener('error', event => {
