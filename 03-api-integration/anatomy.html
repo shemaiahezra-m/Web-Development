@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="description" content="Explore 2024 Formula 1 sessions and the parts of an F1 car with F1 INSIDER." />
+    <title>Analysis — F1 INSIDER</title>
+    <link id="siteFavicon" rel="icon" href="data:," />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anta&family=Urbanist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <style>
+      .analysis-page { --analysis-red: #e10600; --analysis-panel: #141416; --analysis-line: #303034; background: #080809; color: #f3f2ef; }
+      .analysis-hero { position: relative; isolation: isolate; min-height: 380px; display: grid; grid-template-columns: minmax(0,1fr) minmax(280px,.8fr); align-items: center; gap: 40px; overflow: hidden; padding: clamp(56px,8vw,110px) clamp(20px,7vw,100px); border-bottom: 1px solid #29292e; background: radial-gradient(ellipse at 76% 54%,rgba(225,6,0,.11),transparent 38%),linear-gradient(125deg,#131315,#080809 68%); }
+      .analysis-hero-copy { position: relative; z-index: 2; max-width: 760px; }
+      .analysis-page .eyebrow { color: var(--analysis-red); font-size: 9px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+      .analysis-hero h1 { margin: 18px 0 17px; color: #fff; font: 400 clamp(72px,10vw,142px)/.78 var(--display); letter-spacing: -.05em; }
+      .analysis-hero-copy > p:not(.eyebrow) { max-width: 420px; margin: 0; color: #aaaab0; font-size: 13px; line-height: 1.7; }
+      .analysis-jump { display: inline-flex; margin-top: 26px; padding-bottom: 7px; color: #fff; border-bottom: 1px solid var(--analysis-red); font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+      .analysis-telemetry-art { position: relative; min-height: 220px; display: grid; place-items: center; opacity: .78; }
+      .analysis-telemetry-art svg { width: 100%; max-width: 490px; overflow: visible; }
+      .analysis-telemetry-art path { fill: none; stroke: #e10600; stroke-width: 2; vector-effect: non-scaling-stroke; }
+      .analysis-telemetry-art line { stroke: rgba(255,255,255,.1); stroke-width: 1; vector-effect: non-scaling-stroke; }
+      .analysis-shell { width: min(1320px,100%); margin: 0 auto; padding: 34px clamp(18px,5vw,66px) 78px; }
+      .analysis-selectors { display: grid; grid-template-columns: 1.4fr .8fr 1fr; gap: 9px; padding: 0 0 20px; border-bottom: 1px solid var(--analysis-line); }
+      .analysis-select { min-width: 0; display: grid; gap: 6px; padding: 10px 13px; border: 1px solid #333338; background: #111113; }
+      .analysis-select span { color: #85858c; font-size: 7px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+      .analysis-select select { width: 100%; min-width: 0; border: 0; outline: 0; color: #fff; background: transparent; font: 600 11px var(--body); }
+      .analysis-select option,.strategy-compare option { color: #fff; background: #111113; }
+      .feature-tabs { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); margin-top: 21px; border-bottom: 1px solid var(--analysis-line); }
+      .feature-tabs button { min-width: 0; min-height: 61px; padding: 10px 12px; border: 0; border-right: 1px solid #29292e; border-bottom: 2px solid transparent; color: #89898f; background: transparent; text-align: left; font-size: 9px; font-weight: 800; text-transform: uppercase; transition: color .2s,border-color .2s,background .2s; }
+      .feature-tabs button span { display: block; margin-bottom: 5px; color: #5f5f65; font: 600 7px var(--mono); }
+      .feature-tabs button:hover,.feature-tabs button.active { color: #fff; }
+      .feature-tabs button.active { border-bottom-color: var(--analysis-red); background: #111113; }
+      .feature-tabs button.active span { color: var(--analysis-red); }
+      .feature-content { min-height: 290px; }
+      .analysis-output { padding-top: 22px; }
+      .analysis-output-head { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 16px; }
+      .analysis-output-head h2 { margin: 0; color: #fff; font: 400 clamp(25px,3vw,38px)/1 var(--display); text-transform: uppercase; }
+      .analysis-output-head p { margin: 5px 0 0; color: #88888f; font-size: 9px; }
+      .analysis-output-note { color: #77777e; font: 600 8px var(--mono); text-align: right; }
+      .analysis-visual { position: relative; overflow: hidden; min-height: 230px; border: 1px solid #2c2c31; background: radial-gradient(ellipse at 50% 100%,rgba(225,6,0,.08),transparent 48%),#101012; }
+      .analysis-chart { width: 100%; height: 260px; display: block; padding: 14px; }
+      .analysis-chart-grid { stroke: #29292e; stroke-width: 1; }
+      .analysis-chart-path { fill: none; stroke: var(--analysis-red); stroke-width: 3; vector-effect: non-scaling-stroke; }
+      .analysis-signal-controls { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 12px; }
+      .analysis-signal-controls button,.replay-button { min-height: 32px; padding: 0 12px; border: 1px solid #38383d; color: #aaa; background: #111113; font-size: 8px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+      .analysis-signal-controls button.active,.analysis-signal-controls button:hover,.replay-button:hover { color: #fff; border-color: var(--analysis-red); }
+      .analysis-stat { display: flex; align-items: baseline; gap: 8px; margin: 8px 0 13px; color: #8f8f95; font-size: 9px; }
+      .analysis-stat strong { color: #fff; font: 400 24px var(--display); }
+      .replay-stage { position: relative; min-height: 310px; padding: 16px; border: 1px solid #2c2c31; background: radial-gradient(ellipse at center,rgba(255,255,255,.035),transparent 68%),#101012; }
+      .replay-stage svg { width: 100%; height: 260px; display: block; }
+      .replay-path { fill: none; stroke: #55555c; stroke-width: 2; stroke-dasharray: 5 7; }
+      .replay-marker { fill: #fff; stroke: var(--analysis-red); stroke-width: 4; }
+      .replay-controls { display: grid; grid-template-columns: 90px 1fr 90px; align-items: center; gap: 14px; margin-top: 9px; }
+      .replay-controls input { width: 100%; accent-color: var(--analysis-red); }
+      .replay-controls time { color: #bbb; font: 600 8px var(--mono); text-align: right; }
+      .analysis-list { max-height: 390px; overflow: auto; border-top: 1px solid var(--analysis-line); }
+      .analysis-event { border-bottom: 1px solid #2b2b30; }
+      .analysis-event summary { display: grid; grid-template-columns: 78px minmax(100px,.7fr) minmax(0,2fr) 22px; gap: 13px; align-items: center; min-height: 51px; cursor: pointer; list-style: none; color: #ddd; font-size: 10px; }
+      .analysis-event summary::-webkit-details-marker { display: none; }
+      .analysis-event summary::after { content: "+"; color: var(--analysis-red); font: 400 18px var(--display); }
+      .analysis-event[open] summary::after { content: "−"; }
+      .analysis-event time,.analysis-event-kind { color: #85858c; font: 600 8px var(--mono); }
+      .analysis-event strong { color: #fff; }
+      .analysis-event p { margin: 0; padding: 0 48px 15px 91px; color: #99999f; font-size: 10px; line-height: 1.55; }
+      .strategy-header { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 14px; }
+      .strategy-header label { color: #85858c; font-size: 8px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+      .strategy-compare { margin-left: 8px; padding: 8px 10px; border: 1px solid #39393e; color: #fff; background: #111113; font-size: 10px; }
+      .strategy-rows { display: grid; gap: 19px; padding: 19px; border: 1px solid #2c2c31; background: #101012; }
+      .strategy-row-head { display: flex; justify-content: space-between; gap: 14px; margin-bottom: 8px; color: #eee; font-size: 9px; font-weight: 700; }
+      .strategy-row-head span:last-child { color: #888; font-weight: 500; }
+      .strategy-bar { height: 25px; display: flex; overflow: hidden; background: #252529; }
+      .strategy-stint { min-width: 2px; display: grid; place-items: center; overflow: hidden; color: #111; font: 800 7px var(--mono); white-space: nowrap; }
+      .position-list { border-top: 1px solid #333; }
+      .position-row { display: grid; grid-template-columns: minmax(115px,1.2fr) 55px minmax(80px,1fr) 55px 46px; gap: 10px; align-items: center; min-height: 43px; border-bottom: 1px solid #29292e; color: #bdbdc2; font-size: 9px; }
+      .position-row strong { color: #fff; }
+      .position-line { position: relative; height: 2px; background: #39393e; }
+      .position-line i,.position-line b { position: absolute; top: 50%; width: 7px; height: 7px; border-radius: 50%; background: #8a8a90; transform: translate(-50%,-50%); }
+      .position-line b { background: var(--analysis-red); }
+      .position-change { color: #aaa; font: 700 8px var(--mono); text-align: right; }
+      .position-change.gain { color: #7bd9ab; }
+      .analysis-state { padding: 28px 2px; color: #93939a; font-size: 10px; }
+      .analysis-state.error { color: #e89591; }
+      .anatomy-section { padding: 78px clamp(18px,5vw,66px) 96px; border-top: 1px solid #28282d; background: #0c0c0e; }
+      .anatomy-inner { width: min(1320px,100%); margin: 0 auto; }
+      .anatomy-heading { display: flex; align-items: end; justify-content: space-between; gap: 28px; margin-bottom: 22px; }
+      .anatomy-heading h2 { margin: 9px 0 0; color: #fff; font: 400 clamp(44px,6vw,76px)/.9 var(--display); }
+      .anatomy-heading > p { max-width: 330px; margin: 0; color: #929299; font-size: 11px; line-height: 1.6; }
+      .system-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px 0; border-block: 1px solid #29292e; }
+      .system-tabs button { min-height: 34px; padding: 0 12px; border: 1px solid transparent; color: #99999f; background: transparent; font-size: 8px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+      .system-tabs button:hover,.system-tabs button.active { color: #fff; border-color: #3c3c42; background: #171719; }
+      .system-tabs button.active { box-shadow: inset 0 -2px var(--analysis-red); }
+      .system-tabs button span { margin-right: 8px; color: var(--analysis-red); font: 600 7px var(--mono); }
+      .anatomy-layout { display: grid; grid-template-columns: minmax(0,1.3fr) minmax(270px,.7fr); align-items: stretch; gap: 18px; padding-top: 20px; }
+      .car-stage { position: relative; min-height: 560px; display: grid; place-items: center; overflow: hidden; border: 1px solid #29292e; background: radial-gradient(ellipse at center,rgba(255,255,255,.06),transparent 56%),#111113; }
+      .car-stage::after { position: absolute; inset: 0; pointer-events: none; content: ""; opacity: .35; background: linear-gradient(90deg,transparent 49.9%,rgba(255,255,255,.08) 50%,transparent 50.1%); }
+      .f1-car { position: relative; z-index: 1; width: min(440px,72%); height: 520px; }
+      .hotspots { position: absolute; z-index: 3; inset: 20px 0; width: 100%; height: calc(100% - 40px); pointer-events: none; }
+      .hotspot { position: absolute; width: 30px; height: 30px; display: grid; place-items: center; padding: 0; border: 1px solid #fff; border-radius: 50%; color: #fff; background: rgba(225,6,0,.88); box-shadow: 0 0 0 4px rgba(225,6,0,.18); font: 700 8px var(--mono); transform: translate(-50%,-50%); pointer-events: auto; transition: .2s; }
+      .hotspot span { position: absolute; left: 36px; width: max-content; max-width: 130px; padding: 5px 8px; opacity: 0; color: #fff; background: rgba(8,8,9,.9); font: 700 7px var(--body); letter-spacing: .05em; text-align: left; text-transform: uppercase; pointer-events: none; transition: opacity .2s; }
+      .hotspot:hover,.hotspot.active { background: #fff; color: var(--analysis-red); transform: translate(-50%,-50%) scale(1.12); }
+      .hotspot:hover span,.hotspot.active span { opacity: 1; }
+      .component-detail { min-height: 100%; display: flex; flex-direction: column; padding: clamp(20px,3vw,34px); border: 1px solid #29292e; background: #131315; }
+      .component-detail-top { display: flex; align-items: center; justify-content: space-between; color: #89898f; font-size: 8px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+      .component-detail-top strong { color: var(--analysis-red); font: 600 9px var(--mono); }
+      .component-detail h3 { margin: 38px 0 12px; color: #fff; font: 400 clamp(30px,4vw,46px)/.95 var(--display); text-transform: uppercase; }
+      .component-detail > p { color: #b1b1b7; font-size: 12px; line-height: 1.65; }
+      .component-function { margin-top: auto; padding-top: 24px; border-top: 1px solid #303034; }
+      .component-function small { color: var(--analysis-red); font-size: 7px; font-weight: 800; letter-spacing: .14em; }
+      .component-function p { margin: 7px 0 0; color: #929299; font-size: 10px; line-height: 1.6; }
+      .component-nav { display: flex; justify-content: space-between; gap: 9px; margin-top: 25px; }
+      .component-nav button { min-height: 36px; padding: 0 12px; border: 1px solid #39393e; color: #ddd; background: transparent; font-size: 8px; font-weight: 800; letter-spacing: .08em; }
+      .component-nav button:hover { border-color: var(--analysis-red); color: #fff; }
+      .analysis-footer { padding: 42px clamp(20px,5vw,66px) 24px; border-top: 1px solid #29292e; }
+      .analysis-footer-inner { width: min(1320px,100%); display: flex; align-items: end; justify-content: space-between; gap: 24px; margin: auto; }
+      .analysis-footer h2 { margin: 0; color: #fff; font: 400 clamp(35px,5vw,62px)/.9 var(--display); }
+      .analysis-footer h2 span { color: var(--analysis-red); }
+      .analysis-footer h2 .brand-f1-fallback { color: #fff; }
+      .analysis-footer h2 .brand-f1-image { height: .48em; max-width: 1.9em; margin-right: .1em; }
+      .analysis-footer p { max-width: 440px; margin: 0; color: #77777e; font-size: 9px; line-height: 1.6; text-align: right; }
+      .analysis-footer a { color: #ddd; text-decoration: underline; text-underline-offset: 3px; }
+      @media (max-width: 991.98px) { .analysis-hero { min-height: 330px; grid-template-columns: 1fr .65fr; } .analysis-telemetry-art { min-height: 180px; } .feature-tabs button { font-size: 8px; padding-inline: 8px; } }
+      @media (max-width: 767.98px) { .analysis-hero { min-height: 0; grid-template-columns: 1fr; gap: 10px; padding-block: 55px; } .analysis-telemetry-art { min-height: 110px; max-width: 440px; margin-left: auto; } .analysis-shell { padding-top: 22px; } .analysis-selectors { grid-template-columns: 1fr 1fr; } .analysis-select:first-child { grid-column: 1/-1; } .feature-tabs { grid-template-columns: repeat(3,minmax(0,1fr)); } .feature-tabs button { min-height: 53px; } .anatomy-heading { align-items: flex-start; flex-direction: column; } .anatomy-heading > p { max-width: 100%; } .anatomy-layout { grid-template-columns: 1fr; } .car-stage { min-height: 510px; } .component-detail { min-height: 300px; } .component-detail h3 { margin-top: 22px; } }
+      @media (max-width: 479.98px) { .analysis-hero h1 { font-size: clamp(64px,18vw,88px); } .analysis-selectors { grid-template-columns: 1fr; } .analysis-select:first-child { grid-column: auto; } .feature-tabs { grid-template-columns: repeat(2,minmax(0,1fr)); } .analysis-output-head { align-items: flex-start; flex-direction: column; } .analysis-output-note { text-align: left; } .analysis-event summary { grid-template-columns: 60px minmax(60px,.7fr) minmax(0,2fr) 16px; gap: 7px; font-size: 8px; } .analysis-event p { padding-left: 67px; } .replay-controls { grid-template-columns: 70px 1fr; } .replay-controls time { grid-column: 2; } .position-row { grid-template-columns: minmax(80px,1fr) 34px minmax(34px,.7fr) 34px 30px; gap: 5px; font-size: 8px; } .car-stage { min-height: 410px; } .f1-car { height: 390px; width: 82%; } .hotspot { width: 25px; height: 25px; } .hotspot span { display: none; } .analysis-footer-inner { align-items: flex-start; flex-direction: column; } .analysis-footer p { text-align: left; } }
+    </style>
+</head>
+<body data-page="analysis">
+    <div class="topline d-none d-sm-flex"><span>F1 INSIDER / RACE ANALYSIS</span><span>OpenF1 historical archive · 2024 season</span></div>
+    <header class="navbar navbar-expand-lg">
+        <a class="brand" href="index.html"><img class="brand-f1-image" alt="Formula One logo" hidden><span class="brand-f1-fallback">F1</span><span>INSIDER</span></a>
+        <button class="menu navbar-toggler d-lg-none" id="menuButton" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-label="Toggle menu" aria-expanded="false">MENU</button>
+        <nav id="nav" class="collapse navbar-collapse navbar-nav flex-row flex-wrap gap-3">
+            <a class="nav-link" href="index.html">Home</a><a class="nav-link" href="drivers.html">Drivers</a><a class="nav-link" href="teams.html">Teams</a><a class="nav-link" href="races.html">Races</a><a class="nav-link" href="standings.html">Standings</a><a class="nav-link" href="search.html">Search</a><a class="nav-link active" href="anatomy.html" aria-current="page">Analysis</a>
+        </nav>
+        <div class="season d-none d-md-flex">Season <b>2024</b></div>
+    </header>
+    <main class="analysis-page">
+        <section class="analysis-hero" id="analysis">
+            <div class="analysis-hero-copy">
+                <p class="eyebrow">Race Analysis / 2024 Season</p>
+                <h1>RACE<br />ANALYSIS.</h1>
+                <p>Explore the moments and data behind a Formula 1 race weekend.</p>
+                <a class="analysis-jump" href="#anatomy">Explore the car anatomy ↓</a>
+            </div>
+            <div class="analysis-telemetry-art" aria-hidden="true">
+                <svg viewBox="0 0 500 230"><line x1="0" y1="45" x2="500" y2="45"/><line x1="0" y1="115" x2="500" y2="115"/><line x1="0" y1="185" x2="500" y2="185"/><path d="M0 143h54l18-52 24 91 27-48 26 2 20-80 22 125 24-43h42l28-57 20 37h65l23-23 28 48 23-18h56"/></svg>
+            </div>
+        </section>
+        <section class="analysis-shell" aria-label="Interactive race analysis">
+            <div class="analysis-selectors">
+                <label class="analysis-select"><span>Grand Prix</span><select id="meetingSelect"><option>Loading 2024 calendar…</option></select></label>
+                <label class="analysis-select"><span>Session</span><select id="sessionSelect"><option>Loading sessions…</option></select></label>
+                <label class="analysis-select"><span>Driver</span><select id="driverSelect"><option>Loading drivers…</option></select></label>
+            </div>
+            <nav class="feature-tabs" id="featureTabs" aria-label="Race analysis features"></nav>
+            <p class="analysis-state" id="analysisDataStatus" role="status" hidden></p>
+            <div class="feature-content" id="featureContent" aria-live="polite"><p class="analysis-state">Loading the 2024 race archive…</p></div>
+        </section>
+        <section class="anatomy-section" id="anatomy">
+            <div class="anatomy-inner">
+                <div class="anatomy-heading"><div><p class="eyebrow">Under the Bodywork</p><h2>THE CAR, EXPLAINED.</h2></div><p>A clickable guide to the major systems on a general Formula 1 car.</p></div>
+                <div class="system-tabs" id="systemTabs" aria-label="Car system categories"></div>
+                <div class="anatomy-layout">
+                    <div class="car-stage">
+                        <svg class="f1-car" viewBox="0 0 700 1100" aria-label="Top-down 2024 Formula 1 car illustration">
+              <defs>
+                <linearGradient id="body" x1="0" x2="1">
+                  <stop offset="0" stop-color="#25262a" />
+                  <stop offset=".5" stop-color="#d5d5d7" />
+                  <stop offset="1" stop-color="#25262a" />
+                </linearGradient>
+                <pattern id="carbon" width="12" height="12" patternUnits="userSpaceOnUse">
+                  <path d="M0 0h6v6H0zm6 6h6v6H6z" fill="#1b1c1f" />
+                  <path d="M6 0h6v6H6zM0 6h6v6H0z" fill="#242529" />
+                </pattern>
+              </defs>
+              <line x1="350" y1="35" x2="350" y2="1065" stroke="#555" stroke-dasharray="10 12" opacity=".35" />
+              <g fill="#090a0c" stroke="#3a3b40" stroke-width="8">
+                <rect x="70" y="170" width="125" height="205" rx="48" />
+                <rect x="505" y="170" width="125" height="205" rx="48" />
+                <rect x="65" y="765" width="118" height="220" rx="46" />
+                <rect x="517" y="765" width="118" height="220" rx="46" />
+              </g>
+              <g fill="url(#carbon)" stroke="#999" stroke-width="3">
+                <ellipse cx="132" cy="272" rx="37" ry="70" />
+                <ellipse cx="568" cy="272" rx="37" ry="70" />
+                <ellipse cx="124" cy="875" rx="35" ry="74" />
+                <ellipse cx="576" cy="875" rx="35" ry="74" />
+              </g>
+              <path d="M112 66h476v42H112zM146 120h408v31H146z" fill="#292a2f" stroke="#999" />
+              <path
+                d="M350 132c67 0 120 31 134 100l15 128c10 78 82 119 111 189l-48 118-86-42-34 122-29 90-20 158-43 57-43-57-20-158-29-90-34-122-86 42-48-118c29-70 101-111 111-189l15-128c14-69 67-100 134-100Z"
+                fill="url(#body)"
+                stroke="#eee"
+                stroke-width="3"
+              />
+              <path d="M211 422 350 481l139-59 83 149-112 48-46 167H286l-46-167-112-48Z" fill="url(#carbon)" stroke="#555" />
+              <path d="M287 762h126l31 215-94 86-94-86Z" fill="url(#body)" stroke="#eee" stroke-width="3" />
+              <path d="M350 772v250" stroke="#e10600" stroke-width="7" />
+              <path d="M55 1008h590v38H55zM92 966h516l37 28H55Z" fill="#2a2b30" stroke="#999" />
+              <g fill="none" stroke="#bbb" stroke-width="5">
+                <path d="M257 759 132 805M273 796 132 945M443 759l125 46M427 796l141 149" />
+                <path d="M240 315 132 211M246 354 132 335M460 315l108-104M454 354l114-19" />
+              </g>
+              <path d="M286 570c0-77 20-132 64-132s64 55 64 132" fill="none" stroke="#ccc" stroke-width="18" />
+              <path d="M313 566c0-53 14-86 37-86s37 33 37 86Z" fill="#090a0c" />
+              <path d="M286 392h128l26 36H260Z" fill="#e10600" />
+              <text x="350" y="722" text-anchor="middle" fill="#bbb" font-family="monospace" font-size="12">F1 INSIDER / 2024 STUDY</text>
+            </svg>
+                        <div class="hotspots" id="hotspots"></div>
+                    </div>
+                    <aside class="component-detail" id="componentDetail" aria-live="polite"></aside>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="analysis-footer"><div class="analysis-footer-inner"><h2><img class="brand-f1-image" alt="Formula One logo" hidden><span class="brand-f1-fallback">F1</span><span>INSIDER.</span></h2><p>Historical timing and telemetry from the free <a href="https://openf1.org/" target="_blank" rel="noopener noreferrer">OpenF1 API</a>. The car diagram and component notes are general educational illustrations.</p></div></footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="assets/js/brand.js"></script>
+    <script src="assets/js/motion.js"></script>
+    <script src="assets/js/anatomy.js"></script>
+</body>
+</html>
