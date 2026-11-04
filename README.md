@@ -8,6 +8,7 @@ A collection of activities and projects for my Web Development course, showcasin
 |---|---|---|---|
 | <sub>01 — Bento Layout</sub> | <sub>**Sidequest!** — a colorful café and activity discovery guide for exploring places and planning side quests.</sub> | <sub>HTML · CSS · Bootstrap · JavaScript</sub> | <sub>Oct 2026</sub> |
 | <sub>02 — JSON</sub> | <sub>**Playform** — a playful furniture collection website featuring colorful, sculptural, and functional pieces that bring personality and joy to every home.</sub> | <sub>HTML · CSS · Bootstrap · JavaScript</sub> | <sub>Oct 2026</sub> |
+| <sub>03 — API Integration</sub> | <sub>**F1 Insider** — An API-powered Formula 1 archive featuring championship data, driver and constructor profiles, race information, and interactive analysis.</sub> | <sub>HTML · CSS · Bootstrap · JavaScript</sub> | <sub>Nov 2026</sub> |
 
 ## © Copyright
 
