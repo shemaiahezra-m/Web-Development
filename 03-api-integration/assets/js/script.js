@@ -49,6 +49,8 @@ let allRacesLoaded = false;
 let raceVisualError = "";
 let raceVisualsLoaded = false;
 let raceMeetings = [];
+let verifiedResultRounds = new Set();
+const homePhotoCredits = new Map();
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -59,6 +61,9 @@ const raceList = $("#raceList");
 const standingsTable = $("#standingsTable");
 const modal = $("#detailModal");
 const modalContent = $("#modalContent");
+const racingLoader = label => window.F1Motion?.loadingMarkup?.(label) || `<span role="status">${escapeHTML(label)}</span>`;
+const checkeredFlagIcon = () => `<svg class="status-checkered-flag" viewBox="0 0 30 22" aria-hidden="true"><path d="M4 2v18"/><path class="flag-outline" d="M5 3h20v13H5z"/><path class="flag-square" d="M5 3h5v4H5zm10 0h5v4h-5zm5 4h5v5h-5zM10 7h5v5h-5zm-5 5h5v4H5zm10 0h5v4h-5z"/></svg>`;
+const raceStatusMarkup = race => race.status === "COMPLETED" ? `${checkeredFlagIcon()}<span>${escapeHTML(race.status)}</span>` : `<span>${escapeHTML(race.status)}</span>`;
 
 function escapeHTML(value) {
     return String(value ?? "").replace(/[&<>"']/g, character => ({
@@ -199,7 +204,9 @@ async function getJolpicaPage(endpoint, path, limit = 100, offset = 0) {
     data.MRData.total = String(rows.length);
     data.MRData.offset = String(offset);
     data.MRData.limit = String(limit);
-    return { ...result, data, source: "stale-session", message: friendlyApiError(result.error, "Jolpica", true) };
+    return { ...result, data, source: "stale-session", message: saved
+        ? savedDataNotice(saved.savedAt)
+        : result.message };
 }
 
 async function getJolpicaCollection(endpoint, path) {
@@ -233,7 +240,7 @@ async function loadDirectoryPage(kind, page) {
     state.error = "";
     const mount = kind === "drivers" ? driverGrid : raceList;
     mount?.setAttribute("aria-busy", "true");
-    if (mount) mount.innerHTML = '<div class="empty" role="status">LOADING ARCHIVE PAGE…</div>';
+    if (mount) mount.innerHTML = `<div class="empty">${racingLoader(kind === "drivers" ? "Loading drivers…" : "Fetching race calendar…")}</div>`;
     const endpoint = kind === "drivers" ? "driverstandings.json" : "races.json";
     const path = kind === "drivers" ? driverStandingsPath : raceCalendarPath;
     const result = await getJolpicaPage(endpoint, path, pageSize, (page - 1) * pageSize);
@@ -403,12 +410,7 @@ async function chooseCommonsPhoto(payload, predicate, usedImages, allowPortrait 
     return null;
 }
 
-function commonsCreditMarkup(photo, className = "commons-photo-credit") {
-    const attribution = `${photo.artist} · ${photo.license}`;
-    return `<span class="${className}"><span>${escapeHTML(photo.title)} · ${escapeHTML(attribution)}</span><a href="${escapeHTML(photo.source)}" target="_blank" rel="noopener noreferrer" aria-label="View photo source on Wikimedia Commons">Source</a><a href="${escapeHTML(photo.licenseUrl)}" target="_blank" rel="noopener noreferrer">License</a></span>`;
-}
-
-function renderCommonsPhoto(mount, photo, section, alt) {
+function renderCommonsPhoto(mount, photo, section, alt, onError) {
     if (!mount) return false;
     if (!photo) {
         mount.innerHTML = "";
@@ -421,7 +423,6 @@ function renderCommonsPhoto(mount, photo, section, alt) {
     }
     mount.dataset.commonsPhoto = "loaded";
     mount.classList.add("has-commons-photo");
-    const attributionOutsideVisual = section === "hero";
     if (section === "hero") {
         mount.innerHTML = "";
         mount.style.backgroundImage = `url("${photo.image.replace(/["\\]/g, "\\$&")}")`;
@@ -430,26 +431,41 @@ function renderCommonsPhoto(mount, photo, section, alt) {
         mount.setAttribute("role", "img");
         mount.setAttribute("aria-label", alt);
     } else {
-        mount.innerHTML = `<img class="commons-photo-image commons-photo-${section}" src="${escapeHTML(photo.image)}" alt="${escapeHTML(alt)}" loading="lazy" decoding="async">${attributionOutsideVisual ? "" : commonsCreditMarkup(photo)}`;
+        mount.innerHTML = `<img class="commons-photo-image commons-photo-${section}" src="${escapeHTML(photo.image)}" alt="${escapeHTML(alt)}" loading="lazy" decoding="async">`;
     }
-    const credit = attributionOutsideVisual
-        ? document.createRange().createContextualFragment(commonsCreditMarkup(photo, `commons-photo-credit commons-photo-credit--${section}`)).firstElementChild
-        : $(".commons-photo-credit", mount);
-    if (attributionOutsideVisual) mount.parentElement.append(credit);
     const image = $("img", mount);
     image?.addEventListener("error", () => {
         mount.style.backgroundImage = "";
         image.remove();
-        credit?.remove();
         mount.dataset.commonsPhoto = "unavailable";
         mount.classList.remove("has-commons-photo");
         mount.classList.add("commons-photo-unavailable");
+        onError?.();
     }, { once: true });
-    $$(".commons-photo-credit a", attributionOutsideVisual ? mount.parentElement : mount).forEach(link => {
-        link.addEventListener("click", event => event.stopPropagation());
-    });
     return true;
 }
+
+function renderHomePhotoCredits() {
+    const list = $("#photoCreditsList");
+    if (!list) return;
+    const credits = [...homePhotoCredits.values()];
+    const brand = window.f1InsiderBrandCredit;
+    if (brand?.source) credits.push({
+        label: "Formula One mark",
+        artist: brand.artist || "Creator not listed",
+        license: brand.license || "License details on source page",
+        licenseUrl: brand.licenseUrl || brand.source,
+        source: brand.source
+    });
+    list.innerHTML = credits.map(credit => `<li><span><strong>${escapeHTML(credit.label)}</strong><small>${escapeHTML(credit.artist)}</small></span><span><a href="${escapeHTML(credit.source)}" target="_blank" rel="noopener noreferrer">Wikimedia Commons source</a><a href="${escapeHTML(credit.licenseUrl)}" target="_blank" rel="noopener noreferrer">${escapeHTML(credit.license)}</a></span></li>`).join("");
+    $("#photoCredits")?.toggleAttribute("hidden", !credits.length);
+}
+
+window.addEventListener("f1insider:brand-credit", renderHomePhotoCredits);
+$("#photoCreditsLink")?.addEventListener("click", () => {
+    const details = $("#photoCredits details");
+    if (details) details.open = true;
+});
 
 function commonsText(photo) {
     return normalizeMatchText(`${photo.title} ${photo.description}`);
@@ -468,6 +484,7 @@ async function loadHomeCommonsImages() {
             },
             mount: $("#homeHeroVisual"),
             section: "hero",
+            creditLabel: "Homepage hero",
             alt: "Formula One cars racing through a corner during a Grand Prix"
         },
         {
@@ -481,6 +498,7 @@ async function loadHomeCommonsImages() {
                 + Math.min(photo.width * photo.height / 1000000, 8),
             mount: $("#homeExploreDriversVisual"),
             section: "explore-driver",
+            creditLabel: "Drivers feature",
             allowPortrait: true,
             alt: "Max Verstappen in his Red Bull racing suit at the 2024 Dutch Grand Prix podium ceremony"
         },
@@ -498,6 +516,7 @@ async function loadHomeCommonsImages() {
                 + Math.min(photo.width * photo.height / 1000000, 8),
             mount: $("#homeExploreTeamsVisual"),
             section: "explore-team",
+            creditLabel: "Teams feature",
             alt: "Lando Norris driving McLaren during the 2024 Chinese Grand Prix"
         },
         {
@@ -512,6 +531,7 @@ async function loadHomeCommonsImages() {
                 + Math.min(photo.width * photo.height / 1000000, 8),
             mount: $("#homeExploreRacesVisual"),
             section: "explore-race",
+            creditLabel: "Grand Prix feature",
             alt: "Charles Leclerc's Ferrari racing through a corner at the 2024 Spanish Grand Prix"
         },
     ].filter(section => section.mount);
@@ -533,7 +553,13 @@ async function loadHomeCommonsImages() {
             photo = await chooseCommonsPhoto(result.data, section.select, usedImages, section.allowPortrait, section.score);
         }
 
-        renderCommonsPhoto(section.mount, photo, section.section, section.alt);
+        renderCommonsPhoto(section.mount, photo, section.section, section.alt, () => {
+            homePhotoCredits.delete(section.key);
+            renderHomePhotoCredits();
+        });
+        if (photo) homePhotoCredits.set(section.key, { ...photo, label: section.creditLabel });
+        else homePhotoCredits.delete(section.key);
+        renderHomePhotoCredits();
         usedImages.add(photo?.image);
         if (!['session', 'stale-session'].includes(resultSource) && section !== sections[sections.length - 1]) {
             await new Promise(resolve => setTimeout(resolve, 1000));
@@ -607,8 +633,15 @@ function updatePageUrl(page) {
 function friendlyApiError(error, sourceName, usingSavedData = false) {
     const message = getErrorMessage(error);
     return usingSavedData
-        ? `Could not refresh ${sourceName} data. Showing the last saved data. (${message})`
+        ? savedDataNotice()
         : `Could not load ${sourceName} data. ${message}`;
+}
+
+function savedDataNotice(savedAt) {
+    const timestamp = Number.isFinite(savedAt)
+        ? ` Last updated ${new Date(savedAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}.`
+        : "";
+    return `Showing previously saved data. Live updates are temporarily unavailable.${timestamp}`;
 }
 
 async function getCachedResource(key, ttl, loader, isValid, sourceName = "Jolpica") {
@@ -622,7 +655,7 @@ async function getCachedResource(key, ttl, loader, isValid, sourceName = "Jolpic
             data: cached?.data ?? null,
             source: cached ? "stale-session" : "none",
             error,
-            message: friendlyApiError(error, sourceName, Boolean(cached))
+            message: cached ? savedDataNotice(cached.savedAt) : friendlyApiError(error, sourceName)
         };
     }
 
@@ -651,7 +684,7 @@ async function getCachedResource(key, ttl, loader, isValid, sourceName = "Jolpic
                 data: cached?.data ?? null,
                 source: cached ? "stale-session" : "none",
                 error,
-                message: friendlyApiError(error, sourceName, Boolean(cached))
+                message: cached ? savedDataNotice(cached.savedAt) : friendlyApiError(error, sourceName)
             };
         } finally {
             inFlightRequests.delete(key);
@@ -765,10 +798,30 @@ function normalizeRaces(rows) {
             location: [city, country].filter(Boolean).join(", ") || "Location unavailable",
             locality: city,
             country,
-            status: "COMPLETED",
+            status: raceStatus(row),
             sessions
         };
     }).sort((a, b) => a.round - b.round);
+}
+
+function raceStatus(row) {
+    if (verifiedResultRounds.has(Number(row?.round))) return "COMPLETED";
+    const date = row?.dateIso || row?.date;
+    return date && Date.parse(`${date}T23:59:59Z`) > Date.now()
+        ? "SCHEDULED"
+        : "RESULT NOT VERIFIED";
+}
+
+async function loadVerifiedRaceResults() {
+    const result = await getJolpicaCollection("results/1.json", raceCalendarPath);
+    if (result.data) {
+        verifiedResultRounds = new Set(jolpicaCollection(result.data, raceCalendarPath)
+            .filter(race => Array.isArray(race?.Results) && race.Results.length > 0)
+            .map(race => Number(race.round))
+            .filter(Number.isFinite));
+    }
+    if (result.error) dataWarnings.add(result.message);
+    return result;
 }
 
 function normalizeMatchText(value) {
@@ -853,6 +906,7 @@ async function loadRaceVisualData() {
         races = races.map(applyRaceVisual);
         directoryState.races.records = directoryState.races.records.map(applyRaceVisual);
     }
+    updateDataStatus();
     if (raceList) renderRaces();
     renderHomeRaceVisuals();
     if (document.body.dataset.page === "view") renderViewPage();
@@ -889,11 +943,12 @@ function recordResourceError(result, section) {
 
 function updateDataStatus() {
     const status = $(".topline span:last-child");
-    if (status) status.textContent = dataWarnings.size
-        ? [...dataWarnings].join(" · ")
+    const notices = [...dataWarnings].filter(Boolean);
+    if (status) status.textContent = notices.length
+        ? notices.join(" · ")
         : "Jolpica championship data · 2024 season";
     let visibleStatus = $("#apiDataStatus");
-    if (dataWarnings.size && !visibleStatus) {
+    if (notices.length && !visibleStatus) {
         visibleStatus = document.createElement("p");
         visibleStatus.id = "apiDataStatus";
         visibleStatus.className = "api-data-status";
@@ -901,8 +956,8 @@ function updateDataStatus() {
         $("main")?.prepend(visibleStatus);
     }
     if (visibleStatus) {
-        visibleStatus.hidden = !dataWarnings.size;
-        visibleStatus.textContent = [...dataWarnings].join(" · ");
+        visibleStatus.hidden = !notices.length;
+        visibleStatus.textContent = notices.join(" · ");
     }
 }
 
@@ -939,12 +994,22 @@ async function loadApiData() {
             allRacesLoaded = true;
         }
     };
-    if (["home", "teams", "standings", "search"].includes(page)) tasks.push(loadDrivers());
+    if (["home", "teams", "drivers", "standings", "search"].includes(page)) tasks.push(loadDrivers());
     if (["home", "teams", "drivers", "standings", "search"].includes(page)) tasks.push(loadConstructors());
-    if (["home", "search"].includes(page)) tasks.push(loadRaces());
-    if (page === "drivers") tasks.push(loadDirectoryPage("drivers", driverPage));
-    if (page === "races") tasks.push(loadDirectoryPage("races", racePage));
+    if (["home", "races", "search"].includes(page)) tasks.push(loadRaces());
+    if (["home", "races", "search"].includes(page)) tasks.push(loadVerifiedRaceResults());
     await Promise.all(tasks);
+    races = races.map(race => ({ ...race, status: raceStatus(race) }));
+    if (page === "drivers") {
+        directoryState.drivers.records = drivers.slice((driverPage - 1) * pageSize, driverPage * pageSize);
+        directoryState.drivers.total = drivers.length;
+        directoryState.drivers.page = driverPage;
+    }
+    if (page === "races") {
+        directoryState.races.records = races.slice((racePage - 1) * pageSize, racePage * pageSize);
+        directoryState.races.total = races.length;
+        directoryState.races.page = racePage;
+    } else directoryState.races.records = directoryState.races.records.map(race => ({ ...race, status: raceStatus(race) }));
     teams = teamStandings = teams.map(team => {
         const lineupDrivers = drivers.filter(driver => driver.teamIds.includes(team.id));
         return { ...team, lineupDrivers, driverLineup: lineupDrivers.map(driver => driver.fullName), driverCount: lineupDrivers.length };
@@ -1006,7 +1071,10 @@ async function loadIndividualRecord() {
             team.driverCount = lineup?.data || completeSnapshot ? team.driverLineup.length : null;
             if (lineup?.error) dataWarnings.add(lineup.message);
         }
-    } else races = normalizeRaces(rows);
+    } else {
+        await loadVerifiedRaceResults();
+        races = normalizeRaces(rows);
+    }
 }
 
 function getErrorMessage(error) {
@@ -1057,11 +1125,15 @@ function renderPagination(container, totalPages, currentPage, onSelect) {
 }
 
 function renderLoadingStates() {
-    if (driverRail) driverRail.innerHTML = '<div class="empty">LOADING 2024 DRIVER DATA...</div>';
-    if (driverGrid) driverGrid.innerHTML = '<div class="empty">LOADING DRIVER DIRECTORY...</div>';
-    if (teamGrid) teamGrid.innerHTML = '<div class="empty">LOADING 2024 TEAM DATA...</div>';
-    if (standingsTable) standingsTable.innerHTML = '<div class="empty">LOADING 2024 STANDINGS...</div>';
-    if (raceList) raceList.innerHTML = '<div class="empty">LOADING 2024 RACE SCHEDULE...</div>';
+    if (driverRail) driverRail.innerHTML = `<div class="empty">${racingLoader("Loading drivers…")}</div>`;
+    if (driverGrid) driverGrid.innerHTML = `<div class="empty">${racingLoader("Loading driver directory…")}</div>`;
+    if (teamGrid) teamGrid.innerHTML = `<div class="empty">${racingLoader("Loading teams…")}</div>`;
+    if (standingsTable) standingsTable.innerHTML = `<div class="empty">${racingLoader("Loading standings…")}</div>`;
+    if (raceList) raceList.innerHTML = `<div class="empty">${racingLoader("Fetching race calendar…")}</div>`;
+    const searchStatus = $("#searchStatus");
+    if (searchStatus) searchStatus.innerHTML = racingLoader("Loading archive search…");
+    const viewDetail = $("#viewDetail");
+    if (viewDetail) viewDetail.innerHTML = `<div class="empty">${racingLoader("Loading archive record…")}</div>`;
     const portraitStatus = $("#portraitStatus");
     if (portraitStatus) portraitStatus.textContent = "T1API portraits are checked as each image loads.";
 }
@@ -1149,7 +1221,7 @@ function renderSpotlightAndTicker() {
     }
     if (ticker[3]) {
         ticker[3].innerHTML = races.length
-            ? `<b>${races.length}</b> Grand Prix <span>Season complete</span>`
+            ? `<b>${races.length}</b> Grand Prix <span>2024 calendar</span>`
             : "2024 <span>RACE CALENDAR UNAVAILABLE</span>";
     }
 
@@ -1268,6 +1340,95 @@ function selectRailDriver(index, railDrivers) {
     }, 760);
 }
 
+function prepareFilterToolbars() {
+    const tools = $("body[data-page='teams'] .directory-tools");
+    if (tools && !tools.dataset.filterScope) {
+        tools.className = "directory-tools filter-toolbar";
+        tools.dataset.filterScope = "teams";
+        tools.innerHTML = `<div class="filter-primary"><input class="search form-control" id="teamSearch" type="search" placeholder="Search constructor…" aria-label="Search teams" data-param="q" data-chip-label="Search"><button class="filter-toggle" type="button" aria-expanded="false" aria-controls="teamFilters">Filters</button><div class="count" role="status"><b id="teamCount">0</b>results</div><div class="view-toggle" role="group" aria-label="Team view"><button type="button" data-view-for="teams" data-view="grid" aria-pressed="true">Grid</button><button type="button" data-view-for="teams" data-view="list" aria-pressed="false">List</button></div></div><div class="filter-panel" id="teamFilters"><label>Nationality<select class="search form-select" id="teamNationalityFilter" data-param="nationality" data-chip-label="Nationality"><option value="">All nationalities</option></select></label><label>Sort<select class="search form-select" id="teamSort" data-param="sort" data-default="position" data-chip-label="Sort"><option value="position">Championship position</option><option value="points">Points</option><option value="wins">Wins</option></select></label><button class="clear-filters" type="button">Clear all</button></div><div class="active-filters" aria-live="polite"></div>`;
+    }
+}
+
+function populateSelect(select, values, firstLabel) {
+    if (!select) return;
+    const current = select.value || new URLSearchParams(location.search).get(select.dataset.param) || "";
+    select.innerHTML = `<option value="">${escapeHTML(firstLabel)}</option>${[...new Set(values.filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b))).map(value => `<option value="${escapeHTML(value)}">${escapeHTML(value)}</option>`).join("")}`;
+    if ([...select.options].some(option => option.value === current)) select.value = current;
+}
+
+function populateFilterOptions() {
+    populateSelect($("#driverNationalityFilter"), drivers.map(driver => driver.nationality), "All nationalities");
+    populateSelect($("#teamNationalityFilter"), teams.map(team => team.nationality), "All nationalities");
+    populateSelect($("#raceCountryFilter"), races.map(race => race.country), "All countries");
+    populateSelect($("#raceStatusFilter"), races.map(race => race.status), "All statuses");
+    const teamOptions = teams.map(team => ({ id: team.id, name: team.name }));
+    [$("#driverTeamFilter"), $("#standingsTeamFilter")].forEach(select => {
+        if (!select) return;
+        const current = select.value || new URLSearchParams(location.search).get("team") || "";
+        select.innerHTML = `<option value="">All teams</option>${teamOptions.map(team => `<option value="${escapeHTML(team.id)}">${escapeHTML(team.name)}</option>`).join("")}`;
+        if (teamOptions.some(team => team.id === current)) select.value = current;
+    });
+}
+
+function restoreBrowseControls() {
+    const params = new URLSearchParams(location.search);
+    $$('[data-param]').forEach(control => {
+        const value = params.get(control.dataset.param);
+        if (value === null) return;
+        if (control.tagName !== "SELECT" || [...control.options].some(option => option.value === value)) control.value = value;
+    });
+    $$("[data-view-for]").forEach(button => {
+        const scope = button.dataset.viewFor;
+        const fallback = scope === "races" ? "list" : "grid";
+        const active = (params.get("view") || fallback) === button.dataset.view;
+        button.setAttribute("aria-pressed", String(active));
+    });
+}
+
+function selectedView(scope) {
+    return $(`[data-view-for="${scope}"][aria-pressed="true"]`)?.dataset.view || (scope === "races" ? "list" : "grid");
+}
+
+function sortBrowseRecords(records, key) {
+    const sorted = [...records];
+    if (key === "name") return sorted.sort((a, b) => String(a.fullName || a.name).localeCompare(String(b.fullName || b.name)));
+    if (key === "date") return sorted.sort((a, b) => a.dateValue - b.dateValue);
+    if (key === "points" || key === "wins") return sorted.sort((a, b) => (b[key] ?? -1) - (a[key] ?? -1) || (a.position ?? Infinity) - (b.position ?? Infinity));
+    return sorted.sort((a, b) => (a.position ?? a.round ?? Infinity) - (b.position ?? b.round ?? Infinity));
+}
+
+function syncBrowseUrl(scope, page = 1) {
+    const params = new URLSearchParams(location.search);
+    const toolbar = $(`[data-filter-scope="${scope}"]`);
+    $$('[data-param]', toolbar).forEach(control => {
+        const fallback = control.dataset.default || "";
+        if (control.value && control.value !== fallback) params.set(control.dataset.param, control.value);
+        else params.delete(control.dataset.param);
+    });
+    const view = selectedView(scope);
+    const defaultView = scope === "races" ? "list" : "grid";
+    if (view !== defaultView) params.set("view", view); else params.delete("view");
+    if (page > 1) params.set("page", String(page)); else params.delete("page");
+    history.replaceState({}, "", `${location.pathname}${params.size ? `?${params}` : ""}`);
+}
+
+function renderFilterMeta(scope) {
+    const toolbar = $(`[data-filter-scope="${scope}"]`);
+    if (!toolbar) return;
+    const chips = $(".active-filters", toolbar);
+    const controls = $$('[data-param]', toolbar).filter(control => control.value && control.value !== (control.dataset.default || ""));
+    chips.innerHTML = controls.map(control => {
+        const display = control.tagName === "SELECT" ? control.selectedOptions[0]?.textContent : control.value;
+        return `<button type="button" data-remove-param="${escapeHTML(control.dataset.param)}" aria-label="Remove ${escapeHTML(control.dataset.chipLabel)} filter"><span>${escapeHTML(control.dataset.chipLabel)}: ${escapeHTML(display)}</span><b aria-hidden="true">×</b></button>`;
+    }).join("");
+    chips.hidden = !controls.length;
+}
+
+function detailUrl(type, id) {
+    const returnTo = `${location.pathname.split('/').pop() || 'index.html'}${location.search}`;
+    return `view.html?type=${type}&id=${encodeURIComponent(id)}&return=${encodeURIComponent(returnTo)}`;
+}
+
 function renderDrivers() {
     if (!driverGrid) return;
     if (!apiLoaded) return;
@@ -1280,7 +1441,9 @@ function renderDrivers() {
 
     const query = normalizeMatchText($("#driverSearch")?.value || "");
     const selectedTeam = $("#driverTeamFilter")?.value || "";
-    const native = !query && !selectedTeam;
+    const nationality = $("#driverNationalityFilter")?.value || "";
+    const sort = $("#driverSort")?.value || "position";
+    const native = !query && !selectedTeam && !nationality && sort === "position";
     const state = directoryState.drivers;
     if (state.loading) return;
     if (state.error) {
@@ -1290,17 +1453,18 @@ function renderDrivers() {
         return;
     }
     const filtered = drivers.filter(driver => {
-        const matchesQuery = normalizeMatchText(`${driver.fullName} ${driver.team} ${driver.nationality} ${driver.code}`).includes(query);
-        return matchesQuery && (!selectedTeam || driver.teamIds.includes(selectedTeam));
+        const matchesQuery = normalizeMatchText(`${driver.fullName} ${driver.code} ${driver.number ?? ""}`).includes(query);
+        return matchesQuery && (!selectedTeam || driver.teamIds.includes(selectedTeam)) && (!nationality || driver.nationality === nationality);
     });
+    const ordered = sortBrowseRecords(filtered, sort);
     const pages = Math.max(1, Math.ceil((native ? state.total : filtered.length) / pageSize));
     driverPage = Math.min(driverPage, pages);
-    const visible = native ? state.records : filtered.slice((driverPage - 1) * pageSize, driverPage * pageSize);
+    const visible = native ? state.records : ordered.slice((driverPage - 1) * pageSize, driverPage * pageSize);
 
     $("#driverCount").textContent = String(native ? state.total : filtered.length);
     driverGrid.innerHTML = visible.length ? visible.map(driver => `
         <div class="col-12 col-md-6 col-xl-3">
-        <a class="driver-card card" style="--team:${driver.color}" href="view.html?type=driver&id=${encodeURIComponent(driver.id)}" aria-label="View ${escapeHTML(driver.fullName)} profile">
+        <a class="driver-card card" style="--team:${driver.color}" href="${detailUrl("driver", driver.id)}" aria-label="View ${escapeHTML(driver.fullName)} profile">
             ${portraitMarkup(driver, "driver")}
             <div>
             <small>${driver.position === null ? "NO STANDINGS" : `P${driver.position}`} / #${formatValue(driver.number)} / ${escapeHTML(driver.code)}</small>
@@ -1308,11 +1472,14 @@ function renderDrivers() {
                 <p>${escapeHTML(driver.team)} · ${SEASON} SEASON</p>
             </div>
         </a></div>
-    `).join("") : '<div class="empty">NOTHING ON THIS GRID.</div>';
+    `).join("") : '<div class="empty">No drivers match the selected filters.</div>';
+    driverGrid.classList.toggle("is-list-view", selectedView("drivers") === "list");
+    renderFilterMeta("drivers");
 
     renderPagination($("#driverPagination"), pages, driverPage, page => {
         if (native) return loadDirectoryPage("drivers", page);
         driverPage = page;
+        syncBrowseUrl("drivers", page);
         renderDrivers();
     });
 
@@ -1329,7 +1496,10 @@ function renderTeams() {
     }
 
     const query = normalizeMatchText($("#teamSearch")?.value || "");
-    const filtered = teams.filter(team => normalizeMatchText(`${team.name} ${team.nationality} ${(team.driverLineup || []).join(" ")}`).includes(query));
+    const nationality = $("#teamNationalityFilter")?.value || "";
+    const sort = $("#teamSort")?.value || "position";
+    const filtered = sortBrowseRecords(teams.filter(team => normalizeMatchText(team.name).includes(query)
+        && (!nationality || team.nationality === nationality)), sort);
     $("#teamCount").textContent = String(filtered.length);
     teamGrid.innerHTML = filtered.length ? filtered.map(team => {
         const visualColor = TEAM_2024_COLORS[team.id] || team.color;
@@ -1363,12 +1533,14 @@ function renderTeams() {
                 <div class="team-card-stats">
                     <div><small>POINTS</small><strong>${formatValue(team.points)}</strong></div>
                     <div><small>WINS</small><strong>${formatValue(team.wins)}</strong></div>
-                    <div><small>2024 CAR</small><strong>${escapeHTML(TEAM_2024_CAR_MODELS[team.id] || "—")}</strong></div>
+                    <div><small>2024 CAR · LOCAL REFERENCE</small><strong>${escapeHTML(TEAM_2024_CAR_MODELS[team.id] || "—")}</strong></div>
                 </div>
             </button>
         </div>
     `;
-    }).join("") : '<div class="empty">NO CONSTRUCTOR FOUND.</div>';
+    }).join("") : '<div class="empty">No constructors match the selected filters.</div>';
+    teamGrid.classList.toggle("is-list-view", selectedView("teams") === "list");
+    renderFilterMeta("teams");
 
     $$('.team-card', teamGrid).forEach(card => {
         card.addEventListener("click", () => {
@@ -1405,7 +1577,10 @@ function renderRaces() {
         return;
     }
     const query = normalizeMatchText($("#raceSearch")?.value || "");
-    const native = !query;
+    const country = $("#raceCountryFilter")?.value || "";
+    const status = $("#raceStatusFilter")?.value || "";
+    const sort = $("#raceSort")?.value || "round";
+    const native = !query && !country && !status && sort === "round";
     const state = directoryState.races;
     if (state.loading) return;
     if (state.error) {
@@ -1414,7 +1589,8 @@ function renderRaces() {
         renderPagination($("#racePagination"), Math.max(1, Math.ceil(state.total / pageSize)), state.page, page => loadDirectoryPage("races", page));
         return;
     }
-    const filtered = races.filter(race => normalizeMatchText(`${race.name} ${race.circuit} ${race.location} ${race.country}`).includes(query));
+    const filtered = sortBrowseRecords(races.filter(race => normalizeMatchText(`${race.name} ${race.circuit}`).includes(query)
+        && (!country || race.country === country) && (!status || race.status === status)), sort);
     const pages = Math.max(1, Math.ceil((native ? state.total : filtered.length) / pageSize));
     racePage = Math.min(racePage, pages);
     const visible = native ? state.records : filtered.slice((racePage - 1) * pageSize, racePage * pageSize);
@@ -1423,7 +1599,7 @@ function renderRaces() {
     if (raceDescription) {
         raceDescription.textContent = errors.races
             ? `2024 race calendar unavailable: ${errors.races}`
-            : "The complete 2024 Grand Prix calendar from Jolpica. All races in this archive are completed.";
+            : "The complete 2024 Grand Prix calendar from Jolpica. Completion is verified against returned race results.";
     }
     const footerNote = $(".footer-main > p");
     if (footerNote) {
@@ -1451,19 +1627,22 @@ function renderRaces() {
                     <h3>${escapeHTML(race.name)}</h3>
                     <span class="race-circuit">${escapeHTML(race.circuit)}${race.circuitType ? ` · ${escapeHTML(race.circuitType)}` : ""}</span>
                     <span class="race-meta"><span>${escapeHTML(race.date)}</span><span>${escapeHTML(race.location)}</span></span>
-                    <span class="race-stats"><span><small>RACE TIME · UTC</small>${escapeHTML(race.time)}</span><span><small>STATUS</small>${escapeHTML(race.status)}</span></span>
+                    <span class="race-stats"><span><small>RACE TIME · UTC</small>${escapeHTML(race.time)}</span><span><small>STATUS</small><span class="race-status-value">${raceStatusMarkup(race)}</span></span></span>
                     <span class="race-attribution">${escapeHTML(credit)}</span>
                     <span class="race-open" aria-hidden="true">VIEW RACE DETAILS <b>→</b></span>
                 </span>
             </button>
         `;
-    }).join("") : '<div class="empty">NO 2024 RACES FOUND.</div>';
+    }).join("") : '<div class="empty">No races match the selected filters.</div>';
+    raceList.classList.toggle("is-calendar-view", selectedView("races") === "calendar");
+    renderFilterMeta("races");
 
     bindRaceVisualFallbacks(raceList);
 
     renderPagination($("#racePagination"), pages, racePage, page => {
         if (native) return loadDirectoryPage("races", page);
         racePage = page;
+        syncBrowseUrl("races", page);
         renderRaces();
     });
 
@@ -1498,10 +1677,14 @@ function renderStandings() {
     }
 
     const query = normalizeMatchText($("#standingsSearch")?.value || "");
-    const records = (standingType === "drivers" ? driverStandings : teamStandings).filter(record =>
-        normalizeMatchText(`${record.fullName || record.name} ${record.team || ""} ${record.nationality} ${record.code || ""} ${(record.driverLineup || []).join(" ")}`).includes(query));
+    const team = $("#standingsTeamFilter")?.value || "";
+    const sort = $("#standingsSort")?.value || "position";
+    const records = sortBrowseRecords((standingType === "drivers" ? driverStandings : teamStandings).filter(record =>
+        normalizeMatchText(record.fullName || record.name).includes(query)
+        && (standingType !== "drivers" || !team || record.teamIds.includes(team))), sort);
     const search = $("#standingsSearch");
     if (search) search.placeholder = standingType === "drivers" ? "Search driver standings…" : "Search constructor standings…";
+    $("#standingsTeamFilterLabel")?.toggleAttribute("hidden", standingType !== "drivers");
     if ($("#standingsCount")) $("#standingsCount").textContent = String(records.length);
     standingsTable.innerHTML = records.length ? records.map((record, index) => {
         const name = standingType === "drivers" ? record.fullName : record.name;
@@ -1509,14 +1692,15 @@ function renderStandings() {
         const color = record.color || teamColor(record.id);
         const type = standingType === "drivers" ? "driver" : "team";
         return `
-            <a class="standing-row ${record.position <= 3 ? "top" : ""}" href="view.html?type=${type}&id=${encodeURIComponent(record.id)}" aria-label="View ${escapeHTML(name || "Unknown")} details">
+            <a class="standing-row ${record.position <= 3 ? `top podium-${record.position}` : ""}" href="${detailUrl(type, record.id)}" aria-label="View ${escapeHTML(name || "Unknown")} details">
                 <span>${record.position === null ? "—" : String(record.position).padStart(2, "0")}</span>
                 <span class="standing-name">${standingType === "drivers" ? portraitMarkup(record, "standing") : ""}<i style="background:${color}"></i>${escapeHTML(name || "Unknown")}</span>
                 <span>${escapeHTML(detail || "Unknown team")}</span>
                 <strong>${formatValue(record.points)} PTS</strong>
             </a>
         `;
-    }).join("") : '<div class="empty" role="status">NO MATCHING 2024 STANDINGS.</div>';
+    }).join("") : '<div class="empty" role="status">No standings match the selected filters.</div>';
+    renderFilterMeta("standings");
     bindPortraitFallbacks(standingsTable);
 }
 
@@ -1567,11 +1751,7 @@ function openDetail(type, record) {
         : isTeam
             ? [["POSITION", record.position === null ? "—" : `P${record.position}`], ["POINTS", record.points], ["WINS", record.wins]]
             : [["ROUND", record.round], ["RACE TIME", record.time], ["STATUS", record.status]];
-    const detailUrl = isDriver
-        ? `view.html?type=driver&id=${encodeURIComponent(record.id)}`
-        : isTeam
-            ? `view.html?type=team&id=${encodeURIComponent(record.id)}`
-            : `view.html?type=race&id=${encodeURIComponent(record.round)}`;
+    const recordUrl = detailUrl(type, isDriver || isTeam ? record.id : record.round);
     const imageMarkup = isDriver
         ? portraitMarkup(record, "modal")
         : isTeam && record.logo
@@ -1593,9 +1773,9 @@ function openDetail(type, record) {
             <h2>${escapeHTML(title || "Unknown")}</h2>
             <p>${escapeHTML(subtitle)}</p>
             <div class="modal-data">
-                ${stats.map(([label, value]) => `<div><small>${escapeHTML(label)}</small><b>${formatValue(value)}</b></div>`).join("")}
+                ${stats.map(([label, value]) => `<div><small>${escapeHTML(label)}</small><b class="${!isDriver && !isTeam && label === "STATUS" ? "race-status-value" : ""}">${!isDriver && !isTeam && label === "STATUS" ? raceStatusMarkup(record) : formatValue(value)}</b></div>`).join("")}
             </div>
-            <a class="cta red modal-detail-link" href="${detailUrl}">Open full details →</a>
+            <a class="cta red modal-detail-link" href="${recordUrl}">Open full details →</a>
             ${!isDriver && !isTeam && record.sessions?.length ? `<div class="modal-sessions"><h3>AVAILABLE WEEKEND SESSIONS</h3><ul>${record.sessions.map(session => `<li>${escapeHTML(session)}</li>`).join("")}</ul></div>` : ""}
         </div>
     `;
@@ -1622,19 +1802,20 @@ function setupInteractions() {
         state.error = "";
         const mount = kind === "drivers" ? driverGrid : raceList;
         mount.setAttribute("aria-busy", "true");
-        mount.innerHTML = '<div class="empty" role="status">SEARCHING THE 2024 ARCHIVE…</div>';
+        mount.innerHTML = `<div class="empty">${racingLoader(kind === "drivers" ? "Loading drivers…" : "Fetching race calendar…")}</div>`;
         try {
-            const query = kind === "drivers" ? $("#driverSearch").value.trim() : $("#raceSearch").value.trim();
-            const filtered = query || (kind === "drivers" && $("#driverTeamFilter").value);
+            const toolbar = $(`[data-filter-scope="${kind}"]`);
+            const filtered = $$('[data-param]', toolbar).some(control => control.value && control.value !== (control.dataset.default || ""));
             if (filtered) await ensureSearchCollection(kind);
             else {
+                syncBrowseUrl(kind, 1);
                 await loadDirectoryPage(kind, 1);
                 return;
             }
             if (request !== state.request) return;
             if (kind === "drivers") driverPage = 1;
             else racePage = 1;
-            updatePageUrl(1);
+            syncBrowseUrl(kind, 1);
         } catch (error) {
             if (request !== state.request) return;
             state.error = getErrorMessage(error);
@@ -1646,20 +1827,44 @@ function setupInteractions() {
             }
         }
     };
-    $("#driverSearch")?.addEventListener("input", () => {
-        clearTimeout(driverSearchTimer);
-        driverSearchTimer = setTimeout(() => updateDirectorySearch("drivers"), 150);
+    const applyBrowseChange = scope => {
+        if (scope === "drivers") return updateDirectorySearch("drivers");
+        if (scope === "races") return updateDirectorySearch("races");
+        syncBrowseUrl(scope, 1);
+        scope === "teams" ? renderTeams() : renderStandings();
+    };
+    $$(".filter-toolbar").forEach(toolbar => {
+        const scope = toolbar.dataset.filterScope;
+        $(".filter-toggle", toolbar)?.addEventListener("click", event => {
+            const expanded = event.currentTarget.getAttribute("aria-expanded") !== "true";
+            event.currentTarget.setAttribute("aria-expanded", String(expanded));
+            $(".filter-panel", toolbar)?.classList.toggle("is-open", expanded);
+        });
+        $$('select[data-param]', toolbar).forEach(control => control.addEventListener("change", () => applyBrowseChange(scope)));
+        const input = $('input[data-param]', toolbar);
+        input?.addEventListener("input", () => {
+            if (scope === "drivers") { clearTimeout(driverSearchTimer); driverSearchTimer = setTimeout(() => applyBrowseChange(scope), 150); }
+            else if (scope === "races") { clearTimeout(raceSearchTimer); raceSearchTimer = setTimeout(() => applyBrowseChange(scope), 150); }
+            else applyBrowseChange(scope);
+        });
+        $(".clear-filters", toolbar)?.addEventListener("click", () => {
+            $$('[data-param]', toolbar).forEach(control => { control.value = control.dataset.default || ""; });
+            applyBrowseChange(scope);
+        });
+        $(".active-filters", toolbar)?.addEventListener("click", event => {
+            const chip = event.target.closest("[data-remove-param]");
+            if (!chip) return;
+            const control = $(`[data-param="${CSS.escape(chip.dataset.removeParam)}"]`, toolbar);
+            if (control) control.value = control.dataset.default || "";
+            applyBrowseChange(scope);
+        });
     });
-    $("#driverTeamFilter")?.addEventListener("change", () => updateDirectorySearch("drivers"));
-    $("#teamSearch")?.addEventListener("input", renderTeams);
-    $("#standingsSearch")?.addEventListener("input", () => {
-        updateSearchUrl($("#standingsSearch").value, "replace");
-        renderStandings();
-    });
-    $("#raceSearch")?.addEventListener("input", () => {
-        clearTimeout(raceSearchTimer);
-        raceSearchTimer = setTimeout(() => updateDirectorySearch("races"), 150);
-    });
+    $$('[data-view-for]').forEach(button => button.addEventListener("click", () => {
+        const scope = button.dataset.viewFor;
+        $$(`[data-view-for="${scope}"]`).forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+        syncBrowseUrl(scope, Number(new URLSearchParams(location.search).get("page")) || 1);
+        scope === "drivers" ? renderDrivers() : scope === "teams" ? renderTeams() : renderRaces();
+    }));
     const searchForm = $("#searchForm");
     const searchInput = $("#siteSearch");
     const params = new URLSearchParams(window.location.search);
@@ -1705,8 +1910,11 @@ function setupInteractions() {
             tab.setAttribute("aria-pressed", String(tab === button));
         });
         standingType = button.dataset.tab;
+        if (standingType !== "drivers" && $("#standingsTeamFilter")) $("#standingsTeamFilter").value = "";
         const params = new URLSearchParams(window.location.search);
         params.set("tab", standingType);
+        if (standingType !== "drivers") params.delete("team");
+        params.delete("page");
         history.replaceState({}, "", `${window.location.pathname}?${params}`);
         renderStandings();
     }));
@@ -1784,17 +1992,17 @@ function renderSearchResults() {
     const results = [];
     for (const driver of drivers) {
         if (normalizeMatchText(`${driver.fullName} ${driver.team} ${driver.nationality} ${driver.code} ${driver.number}`).includes(query)) {
-            results.push({ type: 'driver', title: driver.fullName, description: `${driver.team} · ${driver.nationality}`, url: `view.html?type=driver&id=${encodeURIComponent(driver.id)}` });
+            results.push({ type: 'driver', title: driver.fullName, description: `${driver.team} · ${driver.nationality}`, url: detailUrl('driver', driver.id) });
         }
     }
     for (const team of teams) {
         if (normalizeMatchText(`${team.name} ${team.nationality} ${(team.driverLineup || []).join(' ')}`).includes(query)) {
-            results.push({ type: 'team', title: team.name, description: `2024 constructor · ${team.nationality}`, url: `view.html?type=team&id=${encodeURIComponent(team.id)}` });
+            results.push({ type: 'team', title: team.name, description: `2024 constructor · ${team.nationality}`, url: detailUrl('team', team.id) });
         }
     }
     for (const race of races) {
         if (normalizeMatchText(`${race.name} ${race.circuit} ${race.location} ${race.country} ${race.date} round ${race.round}`).includes(query)) {
-            results.push({ type: 'race', title: race.name, description: `Round ${race.round} · ${race.circuit} · ${race.location}`, url: `view.html?type=race&id=${encodeURIComponent(race.round)}` });
+            results.push({ type: 'race', title: race.name, description: `Round ${race.round} · ${race.circuit} · ${race.location}`, url: detailUrl('race', race.round) });
         }
     }
     const score = item => normalizeMatchText(item.title) === query ? 2 : normalizeMatchText(item.title).startsWith(query) ? 1 : 0;
@@ -1821,6 +2029,8 @@ function renderSearchResults() {
 }
 
 function viewListUrl(type) {
+    const requestedReturn = new URLSearchParams(location.search).get("return");
+    if (requestedReturn && /^(drivers|teams|races|standings)\.html(?:\?[^#]*)?$/.test(requestedReturn)) return requestedReturn;
     if (type === 'driver') return 'drivers.html';
     if (type === 'team') return 'teams.html';
     return 'races.html';
@@ -1882,19 +2092,23 @@ function renderViewPage() {
         return;
     }
     const circuitImage = record.visual?.image ? `<figure class="view-circuit race-modal-visual is-circuit"><img class="race-modal-image" src="${escapeHTML(record.visual.image)}" alt="${escapeHTML(record.visual.alt)}"><span class="race-modal-fallback" hidden>CIRCUIT ILLUSTRATION UNAVAILABLE</span><figcaption>OpenF1 circuit illustration</figcaption></figure>` : `<div class="view-record-art"><span>${String(record.round).padStart(2, '0')}</span><strong>2024 RACE ARCHIVE</strong></div>`;
-    mount.innerHTML = `<div class="view-record view-race-record">${circuitImage}<div class="view-record-copy"><a class="profile-back" href="${backUrl}">← BACK TO ${backLabel}</a><p class="eyebrow">2024 GRAND PRIX · ROUND ${String(record.round).padStart(2, '0')}</p><h1>${escapeHTML(record.name)}</h1><p>${escapeHTML(record.circuit)} · ${escapeHTML(record.location)}</p><div class="view-record-stats"><span>DATE <b>${escapeHTML(record.date)}</b></span><span>RACE TIME <b>${escapeHTML(record.time)}</b></span><span>STATUS <b>${escapeHTML(record.status)}</b></span></div><h2>WEEKEND SESSIONS</h2><ul class="view-session-list">${record.sessions?.map(session => `<li>${escapeHTML(session)}</li>`).join('') || '<li>Session schedule unavailable.</li>'}</ul></div></div>`;
+    mount.innerHTML = `<div class="view-record view-race-record">${circuitImage}<div class="view-record-copy"><a class="profile-back" href="${backUrl}">← BACK TO ${backLabel}</a><p class="eyebrow">2024 GRAND PRIX · ROUND ${String(record.round).padStart(2, '0')}</p><h1>${escapeHTML(record.name)}</h1><p>${escapeHTML(record.circuit)} · ${escapeHTML(record.location)}</p><div class="view-record-stats"><span>DATE <b>${escapeHTML(record.date)}</b></span><span>RACE TIME <b>${escapeHTML(record.time)}</b></span><span>STATUS <b class="race-status-value">${raceStatusMarkup(record)}</b></span></div><h2>WEEKEND SESSIONS</h2><ul class="view-session-list">${record.sessions?.map(session => `<li>${escapeHTML(session)}</li>`).join('') || '<li>Session schedule unavailable.</li>'}</ul></div></div>`;
     bindRaceVisualFallbacks(mount);}
 
 function initialize() {
+    prepareFilterToolbars();
+    restoreBrowseControls();
     updateChampionshipLabels();
     setActivePageNavigation();
     renderLoadingStates();
     setupInteractions();
     setupScrollEffects();
     if (document.body.dataset.page === "home") loadHomeCommonsImages();
-    loadApiData().then(() => {
-        const teamFilter = $('#driverTeamFilter');
-        if (teamFilter) teamFilter.innerHTML = `<option value="">All teams</option>${teams.map(team => `<option value="${escapeHTML(team.id)}">${escapeHTML(team.name)}</option>`).join('')}`;
+    loadApiData().then(async () => {
+        populateFilterOptions();
+        restoreBrowseControls();
+        if (document.body.dataset.page === "drivers" && $$('[data-param]', $("[data-filter-scope='drivers']")).some(control => control.value && control.value !== (control.dataset.default || ""))) await ensureSearchCollection("drivers");
+        if (document.body.dataset.page === "races" && $$('[data-param]', $("[data-filter-scope='races']")).some(control => control.value && control.value !== (control.dataset.default || ""))) await ensureSearchCollection("races");
         renderSpotlightAndTicker();
         renderRail();
         renderDrivers();

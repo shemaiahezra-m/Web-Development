@@ -6,6 +6,8 @@
   if (!logoImages.length && !favicon) return;
 
   function applyLogo(asset) {
+    window.f1InsiderBrandCredit = asset;
+    window.dispatchEvent(new CustomEvent("f1insider:brand-credit", { detail: asset }));
     if (favicon) {
       const icon = new Image();
       icon.onload = () => {
@@ -33,7 +35,7 @@
       }, { once: true });
       image.addEventListener("error", showFallback, { once: true });
       image.src = asset.image;
-      image.title = `${asset.title} · ${asset.license} · Wikimedia Commons`;
+      image.title = "Formula One mark";
       image.hidden = false;
       if (image.complete && image.naturalWidth > 0) {
         image.classList.add("is-loaded");
@@ -70,6 +72,8 @@
       const info = page?.imageinfo?.[0];
       const metadata = info?.extmetadata || {};
       const license = metadata.LicenseShortName?.value?.replace(/<[^>]*>/g, "").trim();
+      const artist = metadata.Artist?.value?.replace(/<[^>]*>/g, "").trim();
+      const licenseUrl = /^https:\/\//i.test(metadata.LicenseUrl?.value || "") ? metadata.LicenseUrl.value : info.descriptionurl;
       if (page?.missing !== undefined || info?.mime !== "image/svg+xml" || !info?.thumburl || !license) {
         throw new Error("Commons did not return the verified Formula One logo asset.");
       }
@@ -77,7 +81,9 @@
         image: info.thumburl,
         favicon: /^https:\/\//i.test(info.url || "") ? info.url : "",
         title: String(page.title || "Formula One logo").replace(/^File:/, ""),
+        artist: artist || "Creator not listed",
         license,
+        licenseUrl,
         source: info.descriptionurl || ""
       };
       const check = new Image();

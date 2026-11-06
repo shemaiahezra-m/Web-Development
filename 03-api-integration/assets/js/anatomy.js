@@ -7,12 +7,10 @@
   const savedResponses = new Map();
   const failedRequests = new Set();
   const features = [
-    { id: "cockpit", label: "Inside the Cockpit" },
-    { id: "replay", label: "Race Replay" },
+    { id: "cockpit", label: "Telemetry" },
+    { id: "strategy", label: "Stints" },
     { id: "overtakes", label: "Overtake Central" },
-    { id: "control", label: "Race Control" },
-    { id: "strategy", label: "Tire Strategy" },
-    { id: "grid", label: "Grid vs. Results" }
+    { id: "control", label: "Race Control" }
   ];
   let meetings = [];
   let sessions = [];
@@ -31,9 +29,20 @@
   const selectedDriver = () => drivers.find((driver) => String(driver.driver_number) === $("#driverSelect").value);
   const selectedMeeting = () => meetings.find((meeting) => String(meeting.meeting_key) === $("#meetingSelect").value);
   const timeLabel = (date) => date ? new Date(date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }) : "—";
+  const racingLoader = (label) => window.F1Motion?.loadingMarkup?.(label) || `<span role="status">${escapeHTML(label)}</span>`;
   const driverLabel = (number) => {
     const driver = drivers.find((item) => Number(item.driver_number) === Number(number));
     return driver ? `${driver.name_acronym} · ${driver.full_name}` : `Car ${number ?? "—"}`;
+  };
+  const showSavedDataNotice = (savedAt) => {
+    const timestamp = Number.isFinite(savedAt)
+      ? ` Last updated ${new Date(savedAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}.`
+      : "";
+    const status = $("#analysisDataStatus");
+    if (status) {
+      status.hidden = false;
+      status.textContent = `Showing previously saved data. Live updates are temporarily unavailable.${timestamp}`;
+    }
   };
 
   async function openF1(endpoint, params = {}) {
@@ -49,7 +58,7 @@
     if (!cached || !Number.isFinite(cached.savedAt) || !Array.isArray(cached.data)) cached = null;
     if (cached && Date.now() - cached.savedAt < CACHE_TTL) return cached.data;
     if (failedRequests.has(cacheKey)) {
-      if (cached) return cached.data;
+      if (cached) { showSavedDataNotice(cached.savedAt); return cached.data; }
       throw new Error("OpenF1 is temporarily unavailable for this selection. Try again later.");
     }
     if (inFlight.has(cacheKey)) return inFlight.get(cacheKey);
@@ -67,8 +76,7 @@
     }).catch(error => {
       failedRequests.add(cacheKey);
       if (cached) {
-        const status = $("#analysisDataStatus");
-        if (status) { status.hidden = false; status.textContent = "OpenF1 could not refresh. Showing the last saved session data."; }
+        showSavedDataNotice(cached.savedAt);
         return cached.data;
       }
       throw error;
@@ -78,17 +86,18 @@
   }
 
   function showState(message, error = false) {
-    $("#featureContent").innerHTML = `<p class="analysis-state ${error ? "error" : ""}" role="status">${escapeHTML(message)}</p>`;
+    $("#featureContent").innerHTML = error
+      ? `<p class="analysis-state error" role="status">${escapeHTML(message)}</p>`
+      : `<div class="analysis-state">${racingLoader(message)}</div>`;
   }
 
   function renderFeatureTabs() {
-    $("#featureTabs").innerHTML = features.map((feature, index) => `<button type="button" class="${feature.id === activeFeature ? "active" : ""}" data-feature="${feature.id}" aria-pressed="${feature.id === activeFeature}"><span>${String(index + 1).padStart(2, "0")}</span>${feature.label}</button>`).join("");
-    document.querySelectorAll("#featureTabs [data-feature]").forEach((button) => button.addEventListener("click", () => {
-      activeFeature = button.dataset.feature;
-      clearInterval(replayTimer);
-      renderFeatureTabs();
-      renderFeature();
-    }));
+    const select = $("#analysisCategory");
+    if (!select) return;
+    const sessionName = selectedSession()?.session_name || "";
+    const available = features.filter(feature => feature.id !== "overtakes" || /race|sprint/i.test(sessionName));
+    if (!available.some(feature => feature.id === activeFeature)) activeFeature = available[0]?.id || "cockpit";
+    select.innerHTML = available.map(feature => `<option value="${feature.id}" ${feature.id === activeFeature ? "selected" : ""}>${escapeHTML(feature.label)}</option>`).join("");
   }
 
   function outputHead(title, note = "") {
@@ -195,7 +204,7 @@
     const teammate = drivers.find((item) => item.driver_number !== driver.driver_number && item.team_name === driver.team_name)
       || drivers.find((item) => item.driver_number !== driver.driver_number);
     const compareOptions = drivers.filter((item) => item.driver_number !== driver.driver_number).map((item) => `<option value="${item.driver_number}" ${item.driver_number === teammate?.driver_number ? "selected" : ""}>${escapeHTML(item.name_acronym)} · ${escapeHTML(item.team_name)}</option>`).join("");
-    $("#featureContent").innerHTML = `<div class="analysis-output">${outputHead("Tire Strategy", "Compare the session stints")}${compareOptions ? `<div class="strategy-header"><label for="strategyCompare">Compare with<select class="strategy-compare" id="strategyCompare">${compareOptions}</select></label></div>` : ""}<div class="strategy-rows" id="strategyRows"><p class="analysis-state">Loading tyre stints…</p></div></div>`;
+    $("#featureContent").innerHTML = `<div class="analysis-output">${outputHead("Tire Strategy", "Compare the session stints")}${compareOptions ? `<div class="strategy-header"><label for="strategyCompare">Compare with<select class="strategy-compare" id="strategyCompare">${compareOptions}</select></label></div>` : ""}<div class="strategy-rows" id="strategyRows"><div class="analysis-state">${racingLoader("Loading tyre stints…")}</div></div></div>`;
     const compareNumber = Number($("#strategyCompare")?.value || teammate?.driver_number);
     const compareDriver = drivers.find((item) => Number(item.driver_number) === compareNumber);
     const [firstStints, secondStints] = await Promise.all([
@@ -225,7 +234,7 @@
       const status = result.dsq ? "DSQ" : result.dns ? "DNS" : result.dnf ? "DNF" : "—";
       return { driver: driverLabel(result.driver_number), start, finish, status, change: Number.isFinite(start) && finish !== null ? start - finish : null };
     });
-    $("#featureContent").innerHTML = `<div class="analysis-output">${outputHead("Grid vs. Results", "First position sample to finish")}${positions.length ? "" : `<p class="analysis-state">OpenF1 returned no starting-position samples for this session.</p>`}${rows.length ? `<div class="position-list">${rows.map((row) => `<div class="position-row"><strong>${escapeHTML(row.driver)}</strong><span>${row.start == null ? "—" : `P${row.start}`}</span><span class="position-line"><i style="left:${row.start == null ? 0 : (row.start - 1) / Math.max(1, rows.length - 1) * 100}%"></i>${row.finish === null ? "" : `<b style="left:${(row.finish - 1) / Math.max(1, rows.length - 1) * 100}%"></b>`}</span><span>${row.finish === null ? row.status : `P${escapeHTML(row.finish)}`}</span><span class="position-change ${row.change > 0 ? "gain" : ""}">${row.change == null ? "—" : `${row.change > 0 ? "+" : ""}${row.change}`}</span></div>`).join("")}</div>` : `<p class="analysis-state">No classification results were returned.</p>`}</div>`;
+    $("#featureContent").innerHTML = `<div class="analysis-output">${outputHead("Opening Position vs. Result", "First recorded position sample; not the official starting grid")}${positions.length ? "" : `<p class="analysis-state">OpenF1 returned no position samples for this session.</p>`}${rows.length ? `<div class="position-list">${rows.map((row) => `<div class="position-row"><strong>${escapeHTML(row.driver)}</strong><span>${row.start == null ? "—" : `P${row.start}`}</span><span class="position-line"><i style="left:${row.start == null ? 0 : (row.start - 1) / Math.max(1, rows.length - 1) * 100}%"></i>${row.finish === null ? "" : `<b style="left:${(row.finish - 1) / Math.max(1, rows.length - 1) * 100}%"></b>`}</span><span>${row.finish === null ? row.status : `P${escapeHTML(row.finish)}`}</span><span class="position-change ${row.change > 0 ? "gain" : ""}">${row.change == null ? "—" : `${row.change > 0 ? "+" : ""}${row.change}`}</span></div>`).join("")}</div>` : `<p class="analysis-state">No classification results were returned.</p>`}</div>`;
   }
 
   async function renderFeature() {
@@ -237,7 +246,7 @@
     if (!session || !driver) return;
     const feature = features.find((item) => item.id === activeFeature);
     root.setAttribute("aria-busy", "true");
-    root.innerHTML = `<p class="analysis-state" role="status">Loading ${escapeHTML(feature.label.toLowerCase())}…</p>`;
+    root.innerHTML = `<div class="analysis-state">${racingLoader(`Loading ${feature.label.toLowerCase()}…`)}</div>`;
     try {
       if (activeFeature === "cockpit") {
         const records = await openF1("car_data", { session_key: session.session_key, driver_number: driver.driver_number, ...getWindow(session) });
@@ -275,6 +284,7 @@
     $("#sessionSelect").innerHTML = choices.map((session) => `<option value="${session.session_key}">${escapeHTML(session.session_name)}</option>`).join("");
     const preferred = choices.find((session) => session.session_name === "Race") || choices[0];
     if (preferred) $("#sessionSelect").value = String(preferred.session_key);
+    renderFeatureTabs();
     return preferred;
   }
 
@@ -306,6 +316,7 @@
   }
 
   async function initializeAnalysis() {
+    showState("Loading the 2024 race archive…");
     try {
       const [meetingData, sessionData] = await Promise.all([openF1("meetings", { year: YEAR }), openF1("sessions", { year: YEAR })]);
       sessions = sessionData;
@@ -316,8 +327,9 @@
       if (!populateSessions()) throw new Error("No 2024 race sessions were found.");
       await loadDrivers();
       $("#meetingSelect").addEventListener("change", () => { populateSessions(); loadDrivers(); });
-      $("#sessionSelect").addEventListener("change", loadDrivers);
+      $("#sessionSelect").addEventListener("change", () => { renderFeatureTabs(); loadDrivers(); });
       $("#driverSelect").addEventListener("change", renderFeature);
+      $("#analysisCategory").addEventListener("change", event => { activeFeature = event.target.value; renderFeature(); });
     } catch (error) {
       showState(error.message || "The 2024 race archive could not be loaded.", true);
     }

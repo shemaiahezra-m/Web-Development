@@ -1,30 +1,48 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Search the F1 INSIDER 2024 Formula 1 archive." />
     <title>Search — F1 INSIDER</title>
     <link id="siteFavicon" rel="icon" href="data:," />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Anta&family=Urbanist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Anta&family=Urbanist:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
     <link rel="stylesheet" href="assets/css/style.css" />
 </head>
+
 <body data-page="search">
-    <div class="topline d-none d-sm-flex"><span>F1 INSIDER / ARCHIVE SEARCH</span><span>Jolpica · 2024 season</span></div>
+    <div class="topline d-none d-sm-flex"><span>F1 INSIDER / ARCHIVE SEARCH</span><span>Jolpica · 2024 season</span>
+    </div>
     <header class="navbar navbar-expand-lg">
-        <a class="brand" href="index.html"><img class="brand-f1-image" alt="Formula One logo" hidden><span class="brand-f1-fallback">F1</span><span>INSIDER</span></a>
-        <button class="menu navbar-toggler d-lg-none" id="menuButton" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-label="Toggle menu" aria-expanded="false">MENU</button>
-        <nav id="nav" class="collapse navbar-collapse navbar-nav flex-row flex-wrap gap-3"><a class="nav-link" href="index.html">Home</a><a class="nav-link" href="drivers.html">Drivers</a><a class="nav-link" href="teams.html">Teams</a><a class="nav-link" href="races.html">Races</a><a class="nav-link" href="standings.html">Standings</a><a class="nav-link" href="search.html">Search</a><a class="nav-link" href="anatomy.html">Analysis</a></nav>
+        <a class="brand" href="index.html"><img class="brand-f1-image" alt="Formula One logo" hidden><span
+                class="brand-f1-fallback">F1</span><span>INSIDER</span></a>
+        <button class="menu navbar-toggler d-lg-none" id="menuButton" type="button" data-bs-toggle="collapse"
+            data-bs-target="#nav" aria-controls="nav" aria-label="Toggle menu" aria-expanded="false">MENU</button>
+        <nav id="nav" class="collapse navbar-collapse navbar-nav flex-row flex-wrap gap-3"><a class="nav-link"
+                href="index.html">Home</a><a class="nav-link" href="drivers.html">Drivers</a><a class="nav-link"
+                href="teams.html">Teams</a><a class="nav-link" href="races.html">Races</a><a class="nav-link"
+                href="standings.html">Standings</a><a class="nav-link" href="search.html">Search</a><a class="nav-link"
+                href="anatomy.html">Analysis</a></nav>
         <div class="season d-none d-md-flex">Season <b>2024</b></div>
     </header>
     <main>
         <section class="section search-section page-directory container-fluid">
-            <div class="section-heading"><div><p class="eyebrow">Search the archive</p><h2>FIND YOUR<br />FORMULA 1.</h2></div><p>Search 2024 drivers, constructors, and Grand Prix from the live Jolpica archive.</p></div>
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Search the archive</p>
+                    <h2>FIND YOUR<br />FORMULA 1.</h2>
+                </div>
+                <p>Search 2024 drivers, constructors, and Grand Prix from the live Jolpica archive.</p>
+            </div>
             <form id="searchForm" class="archive-search-form d-flex flex-wrap gap-2">
-                <input class="search form-control" id="siteSearch" type="search" name="q" placeholder="Search drivers, teams, or races..." aria-label="Search the 2024 F1 archive" />
+                <input class="search form-control" id="siteSearch" type="search" name="q"
+                    placeholder="Search drivers, teams, or races..." aria-label="Search the 2024 F1 archive" />
                 <button class="cta red btn btn-danger" type="submit">Search →</button>
             </form>
             <p class="search-status" id="searchStatus" aria-live="polite">Loading 2024 Formula 1 data...</p>
@@ -32,11 +50,33 @@
             <div class="pagination" id="searchPagination"></div>
         </section>
     </main>
-    <footer><div class="footer-main"><div><div class="footer-brand"><img class="brand-f1-image" alt="Formula One logo" hidden><span class="brand-f1-fallback">F1</span><span>INSIDER</span></div><p>THE WORLD OF FORMULA 1,<br />IN ONE PLACE.</p></div><div class="footer-links"><a href="drivers.html">Drivers</a><a href="teams.html">Teams</a><a href="races.html">Races</a><a href="standings.html">Standings</a><a href="search.html">Search</a><a href="anatomy.html">Analysis</a></div><p>Search results are rendered from Jolpica 2024 driver, constructor, and calendar data.</p></div><div class="copyright"><span>Jolpica · 2024 season archive</span><span>© 2026 F1 INSIDER</span></div></footer>
-    <div class="modal fade f1-modal" id="detailModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"><div class="modal-content"><button class="modal-close btn" id="modalClose" data-bs-dismiss="modal" aria-label="Close">×</button><div class="modal-content-inner" id="modalContent"></div></div></div></div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <footer>
+        <div class="footer-main">
+            <div>
+                <div class="footer-brand"><img class="brand-f1-image" alt="Formula One logo" hidden><span
+                        class="brand-f1-fallback">F1</span><span>INSIDER</span></div>
+                <p>THE WORLD OF FORMULA 1,<br />IN ONE PLACE.</p>
+            </div>
+            <div class="footer-links"><a href="drivers.html">Drivers</a><a href="teams.html">Teams</a><a
+                    href="races.html">Races</a><a href="standings.html">Standings</a><a href="search.html">Search</a><a
+                    href="anatomy.html">Analysis</a></div>
+            <p>Search results are rendered from Jolpica 2024 driver, constructor, and calendar data.</p>
+        </div>
+        <div class="copyright"><span>Jolpica · 2024 season archive</span><span>© 2026 F1 INSIDER</span></div>
+    </footer>
+    <div class="modal fade f1-modal" id="detailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content"><button class="modal-close btn" id="modalClose" data-bs-dismiss="modal"
+                    aria-label="Close">×</button>
+                <div class="modal-content-inner" id="modalContent"></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
     <script src="assets/js/brand.js"></script>
     <script src="assets/js/motion.js"></script>
     <script src="assets/js/script.js"></script>
 </body>
+
 </html>

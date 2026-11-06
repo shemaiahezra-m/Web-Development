@@ -23,7 +23,7 @@ T1API provides driver portraits through the documented media endpoint:
 
 - `https://api.t1f1.com/api/static/media/drivers/{DRIVER_CODE}`
 
-T1API's JSON portrait directory does not permit browser `fetch()` from the static site origin due to CORS. The site therefore requests individual documented image endpoints through image elements, matches codes with Jolpica driver records, and shows initials if an image fails to load. It does not use a server proxy. Team logos are omitted unless an individual asset is verified in a browser.
+T1API's JSON portrait directory does not permit browser `fetch()` from the static site origin due to CORS. The site therefore requests individual documented driver image endpoints through image elements, matches codes with Jolpica driver records, and shows initials if an image fails to load. It does not use a server proxy. The site does not request or display team logos; team monograms are locally authored presentation metadata.
 
 Checks on 2026-11-04 against the [T1API reference documentation](https://docs.t1f1.com/docs/endpoints) and live responses:
 
@@ -38,10 +38,12 @@ The browser caches failed portrait URLs for one hour to avoid retrying unavailab
 
 Wikimedia Commons Action API supplies the homepage editorial photographs and the F1 INSIDER Formula One brand mark. The site reads thumbnail URLs and attribution metadata from API responses; the brand mark is requested by file title (`Formula_One_logo.svg`) and successful metadata is cached in session storage. Its Commons metadata identifies the logo as public domain.
 
-All data is requested in the browser. The site uses session storage to cache successful JSON responses for the current tab session. No API keys or backend services are required.
+All data is requested in the browser. The site uses session storage to cache successful JSON responses for the current tab session. Normal cache reuse is silent; a subtle notice appears only when a refresh fails and previously saved data must be used, including the last successful update time when available. No API keys or backend services are required.
 
 Jolpica and OpenF1 meeting metadata expire after 30 days; Analysis responses after seven days; Commons editorial queries after seven days; the Commons brand mark after 30 days. Expired valid JSON remains available if refresh fails, with a visible warning. Failed responses and empty refreshes do not overwrite saved nonempty records. Matching concurrent requests share a promise. Failed requests are not repeatedly retried during the same document session. Storage being unavailable does not prevent in-memory reuse. Complete responses saved under the older Jolpica cache keys also remain usable after a failed refresh; their real records are filtered or paged locally for the offline fallback, without rewriting their saved timestamp.
 
-Analysis uses OpenF1 `meetings`, `sessions`, `drivers`, `car_data`, `location`, `overtakes`, `laps`, `race_control`, `stints`, `position`, and `session_result`. Meeting metadata uses the same session-cache key as the race directory. Telemetry and replay show the first two minutes for one selected driver. Grid vs. Results compares the first recorded position with the returned finish, and displays returned DNF/DNS/DSQ flags when the finish is null; it is not an official starting-grid feed.
+Analysis uses OpenF1 `meetings`, `sessions`, `drivers`, `car_data`, `location`, `overtakes`, `laps`, `race_control`, `stints`, `position`, and `session_result`. Meeting metadata uses the same session-cache key as the race directory. Telemetry and replay show the first two minutes for one selected driver. Opening Position vs. Result compares the first recorded position sample with the returned finish and displays returned DNF/DNS/DSQ flags when the finish is null. It is explicitly not presented as an official starting-grid feed.
+
+Jolpica calendar responses used by the site do not provide a verified completion status. The site therefore uses the cached `results/1.json` collection to verify that each round has an official classified result: verified rounds are labeled `COMPLETED`, future unverified rounds are labeled `SCHEDULED`, and past rounds without a returned result remain `RESULT NOT VERIFIED`. Constructor car names, team colors, monograms, country abbreviations, and the educational car-anatomy descriptions are locally authored presentation metadata, not API response fields.
 
 See [IMPLEMENTATION_REPORT.md](IMPLEMENTATION_REPORT.md) for the browser checks, endpoint evidence, and remaining verification limits.

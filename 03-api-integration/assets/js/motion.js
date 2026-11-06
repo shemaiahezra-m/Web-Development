@@ -11,6 +11,33 @@
     syncMotionPreference();
     reducedMotion?.addEventListener?.("change", syncMotionPreference);
 
+    const flagSvg = `<svg class="racing-loader-flag" viewBox="0 0 34 24" aria-hidden="true"><path class="racing-loader-pole" d="M4 2v20"/><path class="racing-loader-cloth" d="M5 3h24v15H5z"/><path d="M5 3h6v5H5zm12 0h6v5h-6zm6 5h6v5h-6zM11 8h6v5h-6zm-6 5h6v5H5zm12 0h6v5h-6z"/></svg>`;
+    const loadingMarkup = label => `<span class="racing-loader" role="status"><span class="racing-loader-track">${flagSvg}<i aria-hidden="true"></i></span><span>${String(label || "Loading…")}</span></span>`;
+    window.F1Motion = { ...(window.F1Motion || {}), flagSvg, loadingMarkup };
+
+    const showStartLights = () => {
+        if (document.body.dataset.page !== "home" || root.classList.contains("reduce-motion")) return;
+        try {
+            if (sessionStorage.getItem("f1insider.start-lights-shown")) return;
+            sessionStorage.setItem("f1insider.start-lights-shown", "1");
+        } catch (_) {}
+        const loader = document.createElement("div");
+        loader.className = "start-lights-loader";
+        loader.setAttribute("aria-label", "F1 INSIDER loading");
+        loader.innerHTML = `<div class="start-lights-brand"><strong>F1</strong><span>INSIDER</span></div><div class="start-lights-gantry" aria-hidden="true">${Array.from({ length: 5 }, (_, index) => `<i style="--light:${index}"></i>`).join("")}</div><p>READY FOR LIGHTS OUT</p>`;
+        document.body.append(loader);
+        requestAnimationFrame(() => loader.classList.add("is-running"));
+        window.setTimeout(() => loader.classList.add("is-lights-out"), 610);
+        window.setTimeout(() => loader.classList.add("is-finished"), 760);
+        window.setTimeout(() => loader.remove(), 980);
+    };
+    showStartLights();
+
+    const transitionLine = document.createElement("span");
+    transitionLine.className = "race-transition-line";
+    transitionLine.setAttribute("aria-hidden", "true");
+    document.body.append(transitionLine);
+
     const revealSelector = [
         ".section-heading > *", ".driver-card", ".team-card-item", ".race-card", ".standing-row",
         ".rail-card", ".explore-card", ".event-panel", ".ticker > div",
@@ -126,7 +153,9 @@
             if (destination.origin !== window.location.origin || destination.pathname === window.location.pathname) return;
             event.preventDefault();
             root.classList.add("page-leaving");
-            window.setTimeout(() => window.location.assign(destination.href), 140);
+            transitionLine.classList.remove("is-active");
+            requestAnimationFrame(() => transitionLine.classList.add("is-active"));
+            window.setTimeout(() => window.location.assign(destination.href), 180);
         });
     }
 })();
